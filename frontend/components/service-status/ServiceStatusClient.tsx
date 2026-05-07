@@ -8,7 +8,6 @@ import {
   Card,
   CardContent,
   Chip,
-  Container,
   Stack,
   Tab,
   Table,
@@ -39,7 +38,9 @@ export type AnnouncementPublic = {
   createdAt: string;
 };
 
-function formatArea(i: Pick<IncidentPublic, "country" | "district" | "postalCode">) {
+function formatArea(
+  i: Pick<IncidentPublic, "country" | "district" | "postalCode">,
+) {
   return `${i.country} — ${i.district} (${i.postalCode})`;
 }
 
@@ -64,7 +65,10 @@ export default function ServiceStatusClient({
   const [tab, setTab] = useState(0);
 
   const active = useMemo(
-    () => incidents.filter((i) => !i.resolvedAt).sort((a, b) => +new Date(b.createdAt) - +new Date(a.createdAt)),
+    () =>
+      incidents
+        .filter((i) => !i.resolvedAt)
+        .sort((a, b) => +new Date(b.createdAt) - +new Date(a.createdAt)),
     [incidents],
   );
 
@@ -77,17 +81,21 @@ export default function ServiceStatusClient({
   );
 
   return (
-    <Container maxWidth="lg" sx={{ py: { xs: 3, md: 5 } }}>
+    <Box>
       <Stack spacing={1} sx={{ mb: 3 }}>
-        <Typography variant="overline" sx={{ fontWeight: 700, letterSpacing: 0.12, color: "primary.main" }}>
+        <Typography
+          variant="overline"
+          sx={{ fontWeight: 700, letterSpacing: 0.12, color: "primary.main" }}
+        >
           Network operations
         </Typography>
         <Typography variant="h4" component="h1" sx={{ fontWeight: 700 }}>
           Service status
         </Typography>
         <Typography color="text.secondary" sx={{ maxWidth: 720 }}>
-          Live view of maintenance and outages by area, company notices, and recently cleared incidents. Available to
-          everyone — sign-in not required.
+          Live view of maintenance and outages by area, company notices, and
+          recently cleared incidents. Available to everyone — sign-in not
+          required.
         </Typography>
       </Stack>
 
@@ -101,25 +109,50 @@ export default function ServiceStatusClient({
           "& .MuiTab-root": { textTransform: "none", fontWeight: 700 },
         }}
       >
-        <Tab icon={<CloudOffIcon />} iconPosition="start" label={`Current impacts (${active.length})`} />
-        <Tab icon={<AnnouncementIcon />} iconPosition="start" label={`Notices (${announcements.length})`} />
-        <Tab icon={<HistoryIcon />} iconPosition="start" label={`Resolved history (${resolved.length})`} />
+        <Tab
+          icon={<CloudOffIcon />}
+          iconPosition="start"
+          label={`Current impacts (${active.length})`}
+        />
+        <Tab
+          icon={<AnnouncementIcon />}
+          iconPosition="start"
+          label={`Notices (${announcements.length})`}
+        />
+        <Tab
+          icon={<HistoryIcon />}
+          iconPosition="start"
+          label={`Resolved history (${resolved.length})`}
+        />
       </Tabs>
 
       {tab === 0 && (
         <Stack spacing={2}>
           {active.length === 0 ? (
             <Typography color="text.secondary">
-              There are no active service impacts reported right now. Check notices or resolved history for recent
-              activity.
+              There are no active service impacts reported right now. Check
+              notices or resolved history for recent activity.
             </Typography>
           ) : (
             active.map((incident) => (
-              <Card key={incident.id} variant="outlined" sx={{ borderRadius: 2 }}>
+              <Card
+                key={incident.id}
+                variant="outlined"
+                sx={{ borderRadius: 2 }}
+              >
                 <CardContent>
                   <Stack spacing={1.25}>
-                    <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap">
-                      <Chip size="small" color="warning" label="Active impact" />
+                    <Stack
+                      direction="row"
+                      spacing={1}
+                      alignItems="center"
+                      flexWrap="wrap"
+                    >
+                      <Chip
+                        size="small"
+                        color="warning"
+                        label="Active impact"
+                      />
                       <Typography variant="caption" color="text.secondary">
                         Reported {formatWhen(incident.createdAt)}
                       </Typography>
@@ -141,12 +174,22 @@ export default function ServiceStatusClient({
       {tab === 1 && (
         <Stack spacing={2}>
           {announcements.length === 0 ? (
-            <Typography color="text.secondary">No active general notices.</Typography>
+            <Typography color="text.secondary">
+              No active general notices.
+            </Typography>
           ) : (
             announcements.map((n) => (
-              <Card key={n.id} variant="outlined" sx={{ borderRadius: 2, bgcolor: "rgba(236, 72, 153, 0.06)" }}>
+              <Card
+                key={n.id}
+                variant="outlined"
+                sx={{ borderRadius: 2, bgcolor: "rgba(236, 72, 153, 0.06)" }}
+              >
                 <CardContent>
-                  <Typography variant="caption" color="text.secondary" sx={{ display: "block", mb: 1 }}>
+                  <Typography
+                    variant="caption"
+                    color="text.secondary"
+                    sx={{ display: "block", mb: 1 }}
+                  >
                     Posted {formatWhen(n.createdAt)}
                   </Typography>
                   <Typography variant="body1" sx={{ lineHeight: 1.65 }}>
@@ -163,8 +206,8 @@ export default function ServiceStatusClient({
         <Box>
           {resolved.length === 0 ? (
             <Typography color="text.secondary">
-              No resolved incidents on record yet. When operations clears an active impact, it appears here with the
-              cleared time.
+              No resolved incidents on record yet. When operations clears an
+              active impact, it appears here with the cleared time.
             </Typography>
           ) : (
             <TableContainer>
@@ -180,10 +223,16 @@ export default function ServiceStatusClient({
                 <TableBody>
                   {resolved.map((row) => (
                     <TableRow key={row.id}>
-                      <TableCell sx={{ fontWeight: 600 }}>{formatArea(row)}</TableCell>
+                      <TableCell sx={{ fontWeight: 600 }}>
+                        {formatArea(row)}
+                      </TableCell>
                       <TableCell>{row.message}</TableCell>
-                      <TableCell align="right">{formatWhen(row.createdAt)}</TableCell>
-                      <TableCell align="right">{row.resolvedAt ? formatWhen(row.resolvedAt) : "—"}</TableCell>
+                      <TableCell align="right">
+                        {formatWhen(row.createdAt)}
+                      </TableCell>
+                      <TableCell align="right">
+                        {row.resolvedAt ? formatWhen(row.resolvedAt) : "—"}
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -193,7 +242,11 @@ export default function ServiceStatusClient({
         </Box>
       )}
 
-      <Typography variant="caption" color="text.secondary" sx={{ display: "block", mt: 4 }}>
+      <Typography
+        variant="caption"
+        color="text.secondary"
+        sx={{ display: "block", mt: 4 }}
+      >
         Need your account?{" "}
         <Link href="/login" style={{ color: "inherit", fontWeight: 700 }}>
           Sign in
@@ -204,6 +257,6 @@ export default function ServiceStatusClient({
         </Link>
         .
       </Typography>
-    </Container>
+    </Box>
   );
 }

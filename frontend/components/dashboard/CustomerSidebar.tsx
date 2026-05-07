@@ -1,29 +1,27 @@
 "use client";
 
-import AssignmentTurnedInIcon from "@mui/icons-material/AssignmentTurnedIn";
-import CampaignIcon from "@mui/icons-material/Campaign";
-import DashboardCustomizeIcon from "@mui/icons-material/DashboardCustomize";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
 import RouterIcon from "@mui/icons-material/Router";
 import { Box, Button, Stack, Typography } from "@mui/material";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const LINKS = [
-  { href: "/admin/dashboard", label: "Subscriptions", icon: AssignmentTurnedInIcon },
-  { href: "/admin/plans", label: "Plan CMS", icon: DashboardCustomizeIcon },
-  { href: "/admin/network", label: "Service status", icon: RouterIcon },
-  { href: "/admin/announcements", label: "Announcements", icon: CampaignIcon },
+  { href: "/dashboard", label: "Overview", icon: AccountCircleIcon },
+  { href: "/plans", label: "Plans & upgrade", icon: ReceiptLongIcon },
+  { href: "/service-status", label: "Service status", icon: RouterIcon },
 ];
 
 function linkSelected(pathname: string, href: string) {
-  if (href === "/admin/dashboard") {
-    return pathname === "/admin/dashboard";
+  if (href === "/dashboard") {
+    return pathname === "/dashboard";
   }
 
   return pathname.startsWith(href);
 }
 
-export default function AdminSidebar() {
+export default function CustomerSidebar() {
   const pathname = usePathname();
 
   return (
@@ -37,7 +35,7 @@ export default function AdminSidebar() {
         }}
       >
         <Typography variant="subtitle2" sx={{ mb: 1.25, fontWeight: 700, color: "text.primary" }}>
-          Console
+          Account
         </Typography>
         <Stack direction="row" spacing={1} sx={{ overflowX: "auto", pb: 0.5 }}>
           {LINKS.map(({ href, label, icon: Icon }) => {
@@ -67,7 +65,7 @@ export default function AdminSidebar() {
 
       <Box
         component="nav"
-        aria-label="Admin operations"
+        aria-label="Customer account"
         sx={{
           display: { xs: "none", md: "flex" },
           flexDirection: "column",
@@ -88,7 +86,7 @@ export default function AdminSidebar() {
           variant="subtitle2"
           sx={{ mb: 2, fontWeight: 700, color: "text.primary", letterSpacing: "0.02em" }}
         >
-          Operations
+          Account
         </Typography>
         <Stack spacing={0.5} sx={{ flex: 1 }}>
           {LINKS.map(({ href, label, icon: Icon }) => {

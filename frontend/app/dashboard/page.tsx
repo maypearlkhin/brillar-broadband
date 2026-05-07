@@ -4,7 +4,6 @@ import {
   Card,
   CardContent,
   Chip,
-  Grid,
   Stack,
   Table,
   TableBody,
@@ -123,8 +122,15 @@ export default async function DashboardPage() {
         </Alert>
       )}
 
-      <Grid container spacing={3}>
-        <Grid item xs={12} md={8}>
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: { xs: "column", md: "row" },
+          gap: 3,
+          alignItems: "stretch",
+        }}
+      >
+        <Box sx={{ flex: { md: 2 }, minWidth: 0 }}>
           <Card variant="outlined" sx={{ borderRadius: 1 }}>
             <CardContent>
               <Stack spacing={3}>
@@ -244,9 +250,9 @@ export default async function DashboardPage() {
               </Stack>
             </CardContent>
           </Card>
-        </Grid>
+        </Box>
 
-        <Grid item xs={12} md={4}>
+        <Box sx={{ flex: { md: 1 }, minWidth: 0 }}>
           <Stack spacing={2}>
             <Card variant="outlined" sx={{ borderRadius: 1 }}>
               <CardContent>
@@ -288,8 +294,8 @@ export default async function DashboardPage() {
               </CardContent>
             </Card>
           </Stack>
-        </Grid>
-      </Grid>
+        </Box>
+      </Box>
     </Stack>
   );
 }

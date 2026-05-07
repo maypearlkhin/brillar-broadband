@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Box } from "@mui/material";
 import Providers from "@/components/Providers";
 import AppHeader from "@/components/AppHeader";
-import ServiceAlertsBar from "@/components/ServiceAlertsBar";
 
 export const metadata: Metadata = {
   title: "Brillar Broadband",
@@ -15,7 +14,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <Providers>
           <AppHeader />
-          <ServiceAlertsBar />
           <Box component="main">{children}</Box>
         </Providers>
       </body>

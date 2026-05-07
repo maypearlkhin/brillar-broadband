@@ -1,6 +1,6 @@
 import AnnouncementIcon from "@mui/icons-material/Announcement";
 import CloudOffIcon from "@mui/icons-material/CloudOff";
-import { Box, Button, Container, Stack, Typography } from "@mui/material";
+import { Box, Button, Stack, Typography } from "@mui/material";
 import Link from "next/link";
 import { axiosServer } from "@/lib/axiosServer";
 
@@ -28,7 +28,11 @@ async function fetchCounts() {
   }
 }
 
-/** Thin strip below the header — summary counts + link to the full service status page (public). */
+/**
+ * Inline service-notice card. Renders inside a content column (e.g. under the
+ * greeting in the customer/admin shell) — no full-bleed strip styling, so it
+ * sits naturally with the rest of the page content.
+ */
 export default async function ServiceAlertsBar() {
   const { active, announcements } = await fetchCounts();
 
@@ -41,61 +45,63 @@ export default async function ServiceAlertsBar() {
       component="aside"
       aria-label="Service notices and outages"
       sx={{
-        borderBottom: "1px solid",
+        border: "1px solid",
         borderColor: "divider",
+        borderRadius: 1,
         backgroundColor: "rgba(253, 242, 248, 0.97)",
+        px: 2,
+        py: 1.5,
+        mb: 3,
       }}
     >
-      <Container maxWidth="lg" sx={{ py: 1.25 }}>
-        <Stack
-          direction={{ xs: "column", sm: "row" }}
-          spacing={1.5}
-          alignItems={{ sm: "center" }}
-          justifyContent="space-between"
-        >
-          <Stack direction="row" spacing={1.5} alignItems="flex-start">
-            <Box
-              sx={{
-                mt: 0.25,
-                color: active > 0 ? "warning.dark" : "primary.main",
-                display: "flex",
-              }}
-            >
-              {active > 0 ? <CloudOffIcon fontSize="small" /> : <AnnouncementIcon fontSize="small" />}
-            </Box>
-            <Box>
-              <Typography variant="subtitle2" sx={{ fontWeight: 800, lineHeight: 1.3 }}>
-                Service impacts &amp; notices
-              </Typography>
-              <Typography variant="caption" color="text.secondary">
-                {active > 0 ? (
-                  <>
-                    <strong>{active}</strong> active area impact{active !== 1 ? "s" : ""}
-                    {announcements > 0 ? " · " : ""}
-                  </>
-                ) : (
-                  <>No active area impacts{announcements > 0 ? " · " : ""}</>
-                )}
-                {announcements > 0 ? (
-                  <>
-                    <strong>{announcements}</strong> company notice{announcements !== 1 ? "s" : ""}
-                  </>
-                ) : null}
-              </Typography>
-            </Box>
-          </Stack>
-          <Button
-            component={Link}
-            href="/service-status"
-            variant="contained"
-            color="primary"
-            size="small"
-            sx={{ alignSelf: { xs: "stretch", sm: "center" }, fontWeight: 700 }}
+      <Stack
+        direction={{ xs: "column", sm: "row" }}
+        spacing={1.5}
+        alignItems={{ sm: "center" }}
+        justifyContent="space-between"
+      >
+        <Stack direction="row" spacing={1.5} alignItems="flex-start">
+          <Box
+            sx={{
+              mt: 0.25,
+              color: active > 0 ? "warning.dark" : "primary.main",
+              display: "flex",
+            }}
           >
-            View full status
-          </Button>
+            {active > 0 ? <CloudOffIcon fontSize="small" /> : <AnnouncementIcon fontSize="small" />}
+          </Box>
+          <Box>
+            <Typography variant="subtitle2" sx={{ fontWeight: 800, lineHeight: 1.3 }}>
+              Service impacts &amp; notices
+            </Typography>
+            <Typography variant="caption" color="text.secondary">
+              {active > 0 ? (
+                <>
+                  <strong>{active}</strong> active area impact{active !== 1 ? "s" : ""}
+                  {announcements > 0 ? " · " : ""}
+                </>
+              ) : (
+                <>No active area impacts{announcements > 0 ? " · " : ""}</>
+              )}
+              {announcements > 0 ? (
+                <>
+                  <strong>{announcements}</strong> company notice{announcements !== 1 ? "s" : ""}
+                </>
+              ) : null}
+            </Typography>
+          </Box>
         </Stack>
-      </Container>
+        <Button
+          component={Link}
+          href="/service-status"
+          variant="contained"
+          color="primary"
+          size="small"
+          sx={{ alignSelf: { xs: "stretch", sm: "center" }, fontWeight: 700 }}
+        >
+          View full status
+        </Button>
+      </Stack>
     </Box>
   );
 }

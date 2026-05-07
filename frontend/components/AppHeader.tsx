@@ -73,11 +73,11 @@ export default function AppHeader() {
           alignItems="center"
           sx={{ display: { xs: "none", sm: "flex" } }}
         >
-          <Button component={Link} href="/service-status" sx={{ color: "common.white" }} size="small">
-            Service status
-          </Button>
           {!user && (
             <>
+              <Button component={Link} href="/service-status" sx={{ color: "common.white" }} size="small">
+                Service status
+              </Button>
               <Button component={Link} href="/#plans" sx={{ color: "common.white" }} size="small">
                 Plans
               </Button>
@@ -85,11 +85,6 @@ export default function AppHeader() {
                 Register
               </Button>
             </>
-          )}
-          {user && user.role === "customer" && (
-            <Button component={Link} href="/plans" sx={{ color: "common.white" }} size="small">
-              Plans & upgrade
-            </Button>
           )}
         </Stack>
 

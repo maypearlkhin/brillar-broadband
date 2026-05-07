@@ -1,9 +1,23 @@
 import { Box } from "@mui/material";
-import AdminSidebar from "@/components/admin/AdminSidebar";
+import CustomerSidebar from "@/components/dashboard/CustomerSidebar";
 import ServiceAlertsBar from "@/components/ServiceAlertsBar";
 import SessionGreeting from "@/components/SessionGreeting";
 
-export default function AdminLayout({ children }: { children: React.ReactNode }) {
+/**
+ * Layout shell for the authenticated customer area: sticky sidebar on the left,
+ * scrollable content column on the right. Mirrors the admin shell so the UI
+ * feels consistent between roles.
+ *
+ * `showAlerts` defaults to true. Set it to false on routes that already render
+ * the same information natively (e.g. `/service-status`).
+ */
+export default function CustomerShell({
+  children,
+  showAlerts = true,
+}: {
+  children: React.ReactNode;
+  showAlerts?: boolean;
+}) {
   return (
     <Box
       sx={{
@@ -15,7 +29,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         flex: 1,
       }}
     >
-      <AdminSidebar />
+      <CustomerSidebar />
       <Box
         sx={{
           flex: 1,
@@ -25,7 +39,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         }}
       >
         <SessionGreeting />
-        <ServiceAlertsBar />
+        {showAlerts && <ServiceAlertsBar />}
         {children}
       </Box>
     </Box>
