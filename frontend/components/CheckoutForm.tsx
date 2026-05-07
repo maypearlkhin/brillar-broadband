@@ -314,7 +314,7 @@ function ReceiptSummary({ plan, fields, orderDateLabel }: ReceiptSummaryProps) {
       <Stack spacing={1.25} sx={{ mt: 1.5 }}>
         <ReceiptRow label="Order date" value={orderDateLabel} />
         <ReceiptRow label="Plan" value={plan.name} />
-        <ReceiptRow label="Amount" value={`$${amount} / month`} emphasize />
+        <ReceiptRow label="Amount" value={`S$${amount} / month`} emphasize />
         <Divider sx={{ borderStyle: "dashed" }} />
         <ReceiptRow label="Cardholder" value={nameLine} mono />
         <ReceiptRow label="Card" value={panLine} mono small />
@@ -574,7 +574,7 @@ export default function CheckoutForm({ plan }: { plan: PlanCardData }) {
                 </Typography>
                 <Stack direction="row" alignItems="baseline" spacing={0.5} sx={{ mt: 2, mb: 2 }}>
                   <Typography variant="h3" component="span" sx={{ fontWeight: 800, color: "primary.main" }}>
-                    ${plan.monthlyPrice}
+                    S${plan.monthlyPrice}
                   </Typography>
                   <Typography component="span" color="text.secondary" variant="h6">
                     /month

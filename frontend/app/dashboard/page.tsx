@@ -171,7 +171,7 @@ export default async function DashboardPage() {
                         </TableRow>
                         <TableRow>
                           <TableCell sx={{ color: "text.secondary" }}>Monthly</TableCell>
-                          <TableCell>${latestPlan.monthlyPrice}</TableCell>
+                          <TableCell>S${latestPlan.monthlyPrice}</TableCell>
                         </TableRow>
                         <TableRow>
                           <TableCell sx={{ color: "text.secondary" }}>Provision status</TableCell>
@@ -230,7 +230,7 @@ export default async function DashboardPage() {
                               </TableCell>
                               <TableCell>{plan.name}</TableCell>
                               <TableCell>{plan.downloadSpeedMbps} Mbps</TableCell>
-                              <TableCell>${plan.monthlyPrice}</TableCell>
+                              <TableCell>S${plan.monthlyPrice}</TableCell>
                               <TableCell>
                                 <Chip
                                   size="small"

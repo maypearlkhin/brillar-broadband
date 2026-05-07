@@ -1,4 +1,3 @@
-import Cookies from "js-cookie";
 import { TOKEN_COOKIE } from "./authConstants";
 
 /**
@@ -14,19 +13,36 @@ import { TOKEN_COOKIE } from "./authConstants";
 
 const SEVEN_DAYS_IN_DAYS = 7;
 
+function canUseDocumentCookie() {
+  return typeof document !== "undefined";
+}
+
 export function setAuthToken(token: string) {
-  Cookies.set(TOKEN_COOKIE, token, {
-    expires: SEVEN_DAYS_IN_DAYS,
-    sameSite: "lax",
-    secure: typeof window !== "undefined" && window.location.protocol === "https:",
-    path: "/"
-  });
+  if (!canUseDocumentCookie()) {
+    return;
+  }
+
+  const expires = new Date(Date.now() + SEVEN_DAYS_IN_DAYS * 24 * 60 * 60 * 1000).toUTCString();
+  const secure = window.location.protocol === "https:" ? "; Secure" : "";
+  document.cookie = `${TOKEN_COOKIE}=${encodeURIComponent(token)}; Expires=${expires}; Path=/; SameSite=Lax${secure}`;
 }
 
 export function getAuthToken(): string | undefined {
-  return Cookies.get(TOKEN_COOKIE);
+  if (!canUseDocumentCookie()) {
+    return undefined;
+  }
+
+  return document.cookie
+    .split(";")
+    .map((part) => part.trim())
+    .find((part) => part.startsWith(`${TOKEN_COOKIE}=`))
+    ?.slice(TOKEN_COOKIE.length + 1);
 }
 
 export function clearAuthToken() {
-  Cookies.remove(TOKEN_COOKIE, { path: "/" });
+  if (!canUseDocumentCookie()) {
+    return;
+  }
+
+  document.cookie = `${TOKEN_COOKIE}=; Expires=Thu, 01 Jan 1970 00:00:00 GMT; Path=/; SameSite=Lax`;
 }

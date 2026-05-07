@@ -2,14 +2,14 @@
 > brillar-broadband@0.1.0 dev
 > concurrently -n api,web -c blue,green "npm run dev -w backend" "npm run dev -w frontend"
 
-[web] 
-[web] > brillar-broadband-frontend@0.1.0 dev
-[web] > next dev
-[web] 
 [api] 
 [api] > brillar-broadband-backend@0.1.0 dev
 [api] > nodemon src/index.js
 [api] 
+[web] 
+[web] > brillar-broadband-frontend@0.1.0 dev
+[web] > next dev
+[web] 
 [api] [33m[nodemon] 3.1.14[39m
 [api] [33m[nodemon] to restart at any time, enter `rs`[39m
 [api] [33m[nodemon] watching path(s): src\**\*[39m
@@ -21,51 +21,110 @@
 [web] 
 [web]  ✓ Starting...
 [api] Brillar API listening on http://127.0.0.1:4000
-[api] Auth cookie: brillar_token (httpOnly)
+[api] Auth: Bearer token in Authorization header
 [web] npm error code ENOWORKSPACES
 [web] npm error This command does not support workspaces.
-[web] npm error A complete log of this run can be found in: C:\Users\DELL\AppData\Local\npm-cache\_logs\2026-05-07T05_54_17_256Z-debug-0.log
-[web]  ✓ Ready in 2.6s
+[web] npm error A complete log of this run can be found in: C:\Users\DELL\AppData\Local\npm-cache\_logs\2026-05-07T14_00_11_775Z-debug-0.log
+[web]  ✓ Ready in 2.7s
+[web]  ○ Compiling /middleware ...
+[web]  ⨯ ./lib/authStorage.ts:1:1
+[web] Module not found: Can't resolve 'js-cookie'
+[web] [0m[31m[1m>[22m[39m[90m 1 |[39m [36mimport[39m [33mCookies[39m [36mfrom[39m [32m"js-cookie"[39m[33m;[39m[0m
+[web] [0m [90m   |[39m [31m[1m^[22m[39m[0m
+[web] [0m [90m 2 |[39m [36mimport[39m { [33mTOKEN_COOKIE[39m } [36mfrom[39m [32m"./authConstants"[39m[33m;[39m[0m
+[web] [0m [90m 3 |[39m[0m
+[web] [0m [90m 4 |[39m [90m/**[39m[0m
+[web] 
+[web] https://nextjs.org/docs/messages/module-not-found
+[web] 
+[web] Import trace for requested module:
+[web] ./components/LogoutButton.tsx
+[web]  ⨯ ./lib/authStorage.ts:1:1
+[web] Module not found: Can't resolve 'js-cookie'
+[web] [0m[31m[1m>[22m[39m[90m 1 |[39m [36mimport[39m [33mCookies[39m [36mfrom[39m [32m"js-cookie"[39m[33m;[39m[0m
+[web] [0m [90m   |[39m [31m[1m^[22m[39m[0m
+[web] [0m [90m 2 |[39m [36mimport[39m { [33mTOKEN_COOKIE[39m } [36mfrom[39m [32m"./authConstants"[39m[33m;[39m[0m
+[web] [0m [90m 3 |[39m[0m
+[web] [0m [90m 4 |[39m [90m/**[39m[0m
+[web] 
+[web] https://nextjs.org/docs/messages/module-not-found
+[web] 
+[web] Import trace for requested module:
+[web] ./components/LogoutButton.tsx
+[web]  GET /admin/plans 500 in 12438ms
+[web]  ⨯ ./lib/authStorage.ts:1:1
+[web] Module not found: Can't resolve 'js-cookie'
+[web] [0m[31m[1m>[22m[39m[90m 1 |[39m [36mimport[39m [33mCookies[39m [36mfrom[39m [32m"js-cookie"[39m[33m;[39m[0m
+[web] [0m [90m   |[39m [31m[1m^[22m[39m[0m
+[web] [0m [90m 2 |[39m [36mimport[39m { [33mTOKEN_COOKIE[39m } [36mfrom[39m [32m"./authConstants"[39m[33m;[39m[0m
+[web] [0m [90m 3 |[39m[0m
+[web] [0m [90m 4 |[39m [90m/**[39m[0m
+[web] 
+[web] https://nextjs.org/docs/messages/module-not-found
+[web] 
+[web] Import trace for requested module:
+[web] ./components/LogoutButton.tsx
+[web]  GET / 500 in 6779ms
+[web]  ✓ Compiled /_not-found in 883ms (1044 modules)
 [web]  ○ Compiling /admin/plans ...
-[web]  ✓ Compiled /admin/plans in 4.7s (1910 modules)
-[web]  GET /admin/plans 200 in 5090ms
-[api] [32m[nodemon] restarting due to changes...[39m
-[api] [32m[nodemon] starting `node src/index.js`[39m
-[api] Brillar API listening on http://127.0.0.1:4000
-[api] Auth cookie: brillar_token (httpOnly)
-[web]  GET /admin/plans 200 in 77ms
-[web]  ✓ Compiled /middleware in 364ms (154 modules)
-[web]  ○ Compiling / ...
-[web]  ✓ Compiled / in 1842ms (1845 modules)
-[web]  GET / 200 in 2613ms
-[web]  ○ Compiling /login ...
-[web]  ✓ Compiled /login in 833ms (1938 modules)
-[web]  ○ Compiling /admin/dashboard ...
-[web]  ✓ Compiled /admin/dashboard in 1355ms (2008 modules)
-[web]  GET /admin/dashboard 200 in 2036ms
-[web]  ✓ Compiled /admin/plans in 316ms (1201 modules)
-[web]  ○ Compiling /service-status ...
-[web]  ✓ Compiled /service-status in 1951ms (2020 modules)
-[web]  ✓ Compiled /admin/dashboard in 325ms (1180 modules)
-[web]  ✓ Compiled / in 328ms (1222 modules)
-[web]  ○ Compiling /dashboard ...
-[web]  ✓ Compiled /dashboard in 1678ms (2106 modules)
-[web]  GET /dashboard 200 in 2294ms
-[web]  GET /dashboard 200 in 111ms
-[web]  ○ Compiling /plans ...
-[web]  ✓ Compiled /plans in 1102ms (2111 modules)
+[web]  ✓ Compiled / in 880ms (1158 modules)
+[web]  ✓ Compiled (1203 modules)
+[web]  GET / 200 in 1430ms
+[web]  GET /admin/plans 200 in 2077ms
+[web]  GET / 200 in 182ms
+[web]  GET / 200 in 154ms
+[web]  GET / 200 in 160ms
+[web]  GET / 200 in 222ms
 [web]  ○ Compiling /register ...
-[web]  ✓ Compiled /register in 2.6s (2136 modules)
-[web]  ✓ Compiled /login in 474ms (1233 modules)
-[web]  GET /admin/dashboard 200 in 544ms
-[web]  ✓ Compiled /admin/plans in 335ms (1243 modules)
-[web]  GET /dashboard 200 in 499ms
+[web]  ✓ Compiled /register in 2.2s (2181 modules)
+[web]  ○ Compiling /login ...
+[web]  ✓ Compiled /login in 690ms (2190 modules)
+[web]  ○ Compiling /plans ...
+[web]  ✓ Compiled /plans in 1362ms (2218 modules)
+[web]  GET /plans 200 in 2073ms
+[web]  ○ Compiling /dashboard ...
+[web]  ✓ Compiled /dashboard in 987ms (2276 modules)
+[web]  ○ Compiling /service-status ...
+[web]  ✓ Compiled /service-status in 1560ms (2319 modules)
+[web]  ○ Compiling /checkout/[planId] ...
+[web]  ✓ Compiled /checkout/[planId] in 1300ms (2321 modules)
+[web]  ○ Compiling / ...
+[web]  ✓ Compiled / in 514ms (1268 modules)
+[web]  ○ Compiling /admin/dashboard ...
+[web]  ✓ Compiled /admin/dashboard in 1262ms (2355 modules)
+[web]  GET /admin/dashboard 200 in 1807ms
+[web]  ○ Compiling /admin/plans ...
+[web]  ✓ Compiled /admin/plans in 605ms (1298 modules)
+[web]  ○ Compiling /admin/network ...
+[web]  ✓ Compiled /admin/network in 990ms (2392 modules)
+[web]  ○ Compiling /admin/announcements ...
+[web]  ✓ Compiled /admin/announcements in 723ms (2378 modules)
+[web]  ✓ Compiled in 2.3s (2340 modules)
+[web]  GET /admin/plans 200 in 235ms
+[web]  GET / 200 in 191ms
+[web]  GET /admin/dashboard 200 in 159ms
+[web]  ○ Compiling /dashboard ...
+[web]  ✓ Compiled /dashboard in 1144ms (1282 modules)
+[web]  GET /dashboard 200 in 1616ms
+[web]  GET /dashboard 200 in 132ms
+[web]  ○ Compiling /plans ...
+[web]  ✓ Compiled /plans in 555ms (1286 modules)
+[web]  GET /admin/dashboard 200 in 280ms
 [api] [32m[nodemon] restarting due to changes...[39m
 [api] [32m[nodemon] starting `node src/index.js`[39m
 [api] Brillar API listening on http://127.0.0.1:4000
-[api] Auth cookie: brillar_token (httpOnly)
-[web]  GET /login?next=%2Fplans 200 in 135ms
-[web]  GET /admin/plans 200 in 102ms
-[web]  GET /plans 200 in 231ms
-[web]  GET /admin/dashboard 200 in 181ms
-[web]  GET /dashboard 200 in 134ms
+[api] Auth: Bearer token in Authorization header
+[web]  ✓ Compiled in 3.3s (2460 modules)
+[web]  ○ Compiling /admin/integration ...
+[web]  ✓ Compiled /admin/integration in 1259ms (2316 modules)
+[web]  GET /admin/integration 200 in 1641ms
+[web]  GET /admin/dashboard 200 in 172ms
+[web]  ○ Compiling / ...
+[web]  ✓ Compiled / in 671ms (1246 modules)
+[web]  GET /dashboard 200 in 413ms
+[web]  GET /admin/dashboard 200 in 207ms
+[api] [32m[nodemon] restarting due to changes...[39m
+[api] [32m[nodemon] starting `node src/index.js`[39m
+[web]  ✓ Compiled in 1524ms (2299 modules)
+[api] Brillar API listening on http://127.0.0.1:4000
+[api] Auth: Bearer token in Authorization header

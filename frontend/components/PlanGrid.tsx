@@ -72,7 +72,7 @@ export default function PlanGrid({
                   </Stack>
                   <Box>
                     <Typography variant="h4" component="p" fontWeight={600} sx={{ display: "inline" }}>
-                      ${plan.monthlyPrice}
+                      S${plan.monthlyPrice}
                     </Typography>
                     <Typography component="span" variant="body2" color="text.secondary">
                       {" "}

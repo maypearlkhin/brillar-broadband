@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { registerAnnouncementRoutes } from "./announcementRoutes.js";
+import { registerIntegrationRoutes } from "./integrationRoutes.js";
 import { registerNetworkRoutes } from "./networkRoutes.js";
 import { registerPlanCategoryRoutes } from "./planCategoryRoutes.js";
 import { registerPlanRoutes } from "./planRoutes.js";
@@ -13,6 +14,7 @@ export function createApiRouter() {
   registerServiceZoneRoutes(router);
   registerPlanCategoryRoutes(router);
   registerPlanRoutes(router);
+  registerIntegrationRoutes(router);
   registerNetworkRoutes(router);
   registerAnnouncementRoutes(router);
   registerUserAuthRoutes(router);

@@ -361,7 +361,7 @@ export default function PlanCmsPanel() {
                         </Stack>
                         <Stack direction="row" spacing={2} alignItems="baseline">
                           <Typography variant="h4" fontWeight={700}>
-                            ${plan.monthlyPrice}
+                            S${plan.monthlyPrice}
                           </Typography>
                           <Typography color="text.secondary">{plan.downloadSpeedMbps} Mbps</Typography>
                         </Stack>
@@ -424,7 +424,7 @@ export default function PlanCmsPanel() {
               fullWidth
             />
             <TextField
-              label="Monthly price (USD)"
+              label="Monthly price (SGD)"
               type="number"
               inputProps={{ min: 0, step: 0.01 }}
               value={planForm.monthlyPrice}

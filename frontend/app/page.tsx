@@ -392,7 +392,7 @@ export default async function HomePage() {
             Residential plans
           </Typography>
           <Typography color="text.secondary" sx={{ maxWidth: 640, lineHeight: 1.7 }}>
-            Two catalogue lines — three tiers in each. All prices in USD per month. Sign in to complete checkout;
+            Two catalogue lines — three tiers in each. All prices in SGD per month. Sign in to complete checkout;
             compare speed, price, and feature bullets the way network teams review tiering.
           </Typography>
         </Stack>

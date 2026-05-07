@@ -133,7 +133,7 @@ export default function AdminSubscriptionsTable({
                   >
                     <Typography>{subscription.planName}</Typography>
                     <Typography variant="body2" color="text.secondary">
-                      {subscription.downloadSpeedMbps} Mbps, ${subscription.monthlyPrice}/month
+                      {subscription.downloadSpeedMbps} Mbps, S${subscription.monthlyPrice}/month
                     </Typography>
                   </TableCell>
                   <TableCell
