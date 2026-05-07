@@ -10,8 +10,7 @@ const planSchema = new mongoose.Schema(
     },
     name: {
       type: String,
-      required: true,
-      trim: true
+      required: true
     },
     monthlyPrice: {
       type: Number,

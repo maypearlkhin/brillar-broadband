@@ -2,7 +2,6 @@ import AnnouncementIcon from "@mui/icons-material/Announcement";
 import CloudOffIcon from "@mui/icons-material/CloudOff";
 import { Box, Button, Container, Stack, Typography } from "@mui/material";
 import Link from "next/link";
-import { getServerApiBaseUrl } from "@/lib/backend";
 
 export const dynamic = "force-dynamic";
 
@@ -12,10 +11,10 @@ type Incident = {
 
 async function fetchCounts() {
   try {
-    const base = getServerApiBaseUrl();
+    const api = (process.env.BACKEND_URL ?? "http://127.0.0.1:4000").replace(/\/$/, "");
     const [netRes, annRes] = await Promise.all([
-      fetch(`${base}/api/network/status`, { cache: "no-store" }),
-      fetch(`${base}/api/announcements`, { cache: "no-store" }),
+      fetch(`${api}/api/network/status`, { cache: "no-store" }),
+      fetch(`${api}/api/announcements`, { cache: "no-store" }),
     ]);
 
     const netJson = netRes.ok ? await netRes.json() : { incidents: [] };

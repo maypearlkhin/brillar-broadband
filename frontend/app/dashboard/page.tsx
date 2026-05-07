@@ -19,8 +19,8 @@ import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
 import RouterIcon from "@mui/icons-material/Router";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { cookies } from "next/headers";
 import { getCurrentUserFromCookies } from "@/lib/auth";
-import { backendFetch } from "@/lib/backend";
 import { formatServiceZone } from "@/lib/serviceZones";
 
 export const dynamic = "force-dynamic";
@@ -62,7 +62,16 @@ export default async function DashboardPage() {
     redirect("/admin/dashboard");
   }
 
-  const response = await backendFetch("/api/me/subscription");
+  const api = (process.env.BACKEND_URL ?? "http://127.0.0.1:4000").replace(/\/$/, "");
+  const cookieStore = cookies();
+  const cookieHeader = cookieStore
+    .getAll()
+    .map((c) => `${c.name}=${c.value}`)
+    .join("; ");
+  const response = await fetch(`${api}/api/me/subscription`, {
+    cache: "no-store",
+    headers: cookieHeader ? { cookie: cookieHeader } : {}
+  });
 
   if (response.status === 401) {
     redirect("/login?next=/dashboard");

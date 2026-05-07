@@ -4,8 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "node --watch src/index.js",
-    "build": "node --check src/index.js && node --check src/routes/api.js",
+    "dev": "nodemon src/index.js",
+    "build": "node --check src/index.js && node --check src/api/router/index.js",
     "start": "node src/index.js"
   },
   "dependencies": {
@@ -15,5 +15,8 @@
     "express": "^4.21.2",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.4.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
   }
 }

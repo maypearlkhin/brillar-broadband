@@ -5,12 +5,12 @@ import PlanCatalogSections from "@/components/PlanCatalogSections";
 import SessionGreeting from "@/components/SessionGreeting";
 import { type PlanCardData } from "@/components/PlanGrid";
 import { getCurrentUserFromCookies } from "@/lib/auth";
-import { getServerApiBaseUrl } from "@/lib/backend";
 
 export const dynamic = "force-dynamic";
 
 async function getPlans(): Promise<PlanCardData[]> {
-  const response = await fetch(`${getServerApiBaseUrl()}/api/plans`, { cache: "no-store" });
+  const api = (process.env.BACKEND_URL ?? "http://127.0.0.1:4000").replace(/\/$/, "");
+  const response = await fetch(`${api}/api/plans`, { cache: "no-store" });
 
   if (!response.ok) {
     return [];

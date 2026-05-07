@@ -8,10 +8,10 @@ import {
   Typography
 } from "@mui/material";
 import { redirect } from "next/navigation";
+import { cookies } from "next/headers";
 import AdminSubscriptionsTable, {
   type AdminSubscriptionRow
 } from "@/components/AdminSubscriptionsTable";
-import { backendFetch } from "@/lib/backend";
 
 export const dynamic = "force-dynamic";
 
@@ -37,7 +37,16 @@ type ApiSubscription = {
 };
 
 export default async function AdminDashboardPage() {
-  const response = await backendFetch("/api/admin/subscriptions");
+  const api = (process.env.BACKEND_URL ?? "http://127.0.0.1:4000").replace(/\/$/, "");
+  const cookieStore = cookies();
+  const cookieHeader = cookieStore
+    .getAll()
+    .map((c) => `${c.name}=${c.value}`)
+    .join("; ");
+  const response = await fetch(`${api}/api/admin/subscriptions`, {
+    cache: "no-store",
+    headers: cookieHeader ? { cookie: cookieHeader } : {}
+  });
 
   if (response.status === 403 || response.status === 401) {
     redirect("/dashboard");

@@ -3,17 +3,13 @@ import cors from "cors";
 import express from "express";
 import { connectToDatabase } from "./db.js";
 import { authCookieOptions } from "./auth.js";
-import { createApiRouter } from "./routes/api.js";
+import { createApiRouter } from "./api/router/index.js";
 
 const app = express();
 
-const corsOrigins = process.env.CORS_ORIGIN?.split(",")
-  .map((origin) => origin.trim())
-  .filter(Boolean);
-
 app.use(
   cors({
-    origin: corsOrigins?.length ? corsOrigins : true,
+    origin: true,
     credentials: true
   })
 );

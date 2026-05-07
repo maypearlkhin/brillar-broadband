@@ -1,7 +1,7 @@
 import bcrypt from "bcryptjs";
-import Plan from "./models/Plan.js";
-import ServiceZone from "./models/ServiceZone.js";
-import User from "./models/User.js";
+import Plan from "./models/planModel.js";
+import ServiceZone from "./models/serviceZoneModel.js";
+import User from "./models/userModel.js";
 
 /** Two residential catalogue lines × 3 plans each (order = categorySortOrder, then price). */
 export const DEFAULT_PLANS = [

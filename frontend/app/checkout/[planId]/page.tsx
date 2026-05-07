@@ -2,7 +2,6 @@ import { Container } from "@mui/material";
 import { notFound } from "next/navigation";
 import CheckoutForm from "@/components/CheckoutForm";
 import SessionGreeting from "@/components/SessionGreeting";
-import { getServerApiBaseUrl } from "@/lib/backend";
 
 export const dynamic = "force-dynamic";
 
@@ -13,7 +12,8 @@ type CheckoutPageProps = {
 };
 
 export default async function CheckoutPage({ params }: CheckoutPageProps) {
-  const response = await fetch(`${getServerApiBaseUrl()}/api/plans/${params.planId}`, {
+  const api = (process.env.BACKEND_URL ?? "http://127.0.0.1:4000").replace(/\/$/, "");
+  const response = await fetch(`${api}/api/plans/${params.planId}`, {
     cache: "no-store"
   });
 

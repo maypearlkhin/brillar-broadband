@@ -2,7 +2,6 @@ import ServiceStatusClient, {
   type AnnouncementPublic,
   type IncidentPublic,
 } from "@/components/service-status/ServiceStatusClient";
-import { getServerApiBaseUrl } from "@/lib/backend";
 
 export const metadata = {
   title: "Service status · Brillar Broadband",
@@ -12,12 +11,12 @@ export const metadata = {
 export const dynamic = "force-dynamic";
 
 async function loadStatus(): Promise<{ incidents: IncidentPublic[]; announcements: AnnouncementPublic[] }> {
-  const base = getServerApiBaseUrl();
+  const api = (process.env.BACKEND_URL ?? "http://127.0.0.1:4000").replace(/\/$/, "");
 
   try {
     const [netRes, annRes] = await Promise.all([
-      fetch(`${base}/api/network/status`, { cache: "no-store" }),
-      fetch(`${base}/api/announcements`, { cache: "no-store" }),
+      fetch(`${api}/api/network/status`, { cache: "no-store" }),
+      fetch(`${api}/api/announcements`, { cache: "no-store" }),
     ]);
 
     const incidentsJson = netRes.ok ? await netRes.json() : { incidents: [] };
