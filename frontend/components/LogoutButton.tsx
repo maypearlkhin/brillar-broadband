@@ -4,6 +4,7 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import { Button } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { postData } from "@/lib/api";
+import { clearAuthToken } from "@/lib/authStorage";
 
 type LogoutButtonProps = {
   /** `navbar`: white text on pink app bar. `toolbar`: outlined in page body. */
@@ -14,7 +15,12 @@ export default function LogoutButton({ variant = "toolbar" }: LogoutButtonProps)
   const router = useRouter();
 
   async function handleLogout() {
-    await postData("/api/auth/logout");
+    try {
+      await postData("/api/auth/logout");
+    } catch {
+      /* even if the server call fails, drop the local session */
+    }
+    clearAuthToken();
     router.push("/");
     router.refresh();
   }

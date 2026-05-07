@@ -1,5 +1,5 @@
 import bcrypt from "bcryptjs";
-import { authCookieOptions, signJwt } from "../../auth.js";
+import { signJwt } from "../../auth.js";
 import ServiceZone from "../../models/serviceZoneModel.js";
 import User from "../../models/userModel.js";
 
@@ -104,10 +104,8 @@ export async function login(req, res) {
       name: user.name || ""
     });
 
-    const opts = authCookieOptions();
-    const { name: cookieName, ...cookieOpts } = opts;
-    res.cookie(cookieName, token, cookieOpts);
-
+    /* Token is returned in the body; the client stores it in a JS cookie on its own
+       origin and sends it back as `Authorization: Bearer …`. */
     return res.json({
       token,
       user: {
@@ -125,8 +123,7 @@ export async function login(req, res) {
 }
 
 export async function logout(_req, res) {
-  const opts = authCookieOptions();
-  const { name: cookieName, path } = opts;
-  res.clearCookie(cookieName, { path });
+  /* Logout is client-driven: the browser deletes its own cookie. JWTs are stateless
+     so there's nothing to revoke server-side in this demo. */
   return res.json({ message: "Logged out." });
 }

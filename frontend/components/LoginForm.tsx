@@ -15,6 +15,7 @@ import Link from "next/link";
 import { FormEvent, useState } from "react";
 import { isAxiosError } from "axios";
 import { postData } from "@/lib/api";
+import { setAuthToken } from "@/lib/authStorage";
 
 function getSafeRedirect(nextPath: string | undefined, role: string | undefined) {
   if (role === "admin") {
@@ -46,6 +47,13 @@ export default function LoginForm({ nextPath }: { nextPath?: string }) {
 
     try {
       const { data } = await postData("/api/auth/login", { email, password });
+
+      if (!data?.token) {
+        setError("Login failed.");
+        return;
+      }
+
+      setAuthToken(data.token);
       window.location.assign(getSafeRedirect(nextPath, data.user?.role));
     } catch (err) {
       if (isAxiosError(err)) {
