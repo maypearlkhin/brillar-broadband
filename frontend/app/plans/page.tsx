@@ -5,20 +5,17 @@ import PlanCatalogSections from "@/components/PlanCatalogSections";
 import SessionGreeting from "@/components/SessionGreeting";
 import { type PlanCardData } from "@/components/PlanGrid";
 import { getCurrentUserFromCookies } from "@/lib/auth";
+import { axiosServer } from "@/lib/axiosServer";
 
 export const dynamic = "force-dynamic";
 
 async function getPlans(): Promise<PlanCardData[]> {
-  const api = (process.env.BACKEND_URL ?? "http://127.0.0.1:4000").replace(/\/$/, "");
-  const response = await fetch(`${api}/api/plans`, { cache: "no-store" });
-
-  if (!response.ok) {
+  try {
+    const { data } = await axiosServer().get<{ plans: PlanCardData[] }>("/api/plans");
+    return data.plans ?? [];
+  } catch {
     return [];
   }
-
-  const data = (await response.json()) as { plans: PlanCardData[] };
-
-  return data.plans ?? [];
 }
 
 export default async function PlansPage() {

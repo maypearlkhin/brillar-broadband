@@ -18,8 +18,10 @@ import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FormEvent, useEffect, useState } from "react";
+import { isAxiosError } from "axios";
 import type { ServiceZone } from "@/lib/serviceZones";
 import { formatServiceZone } from "@/lib/serviceZones";
+import { getData, postData } from "@/lib/api";
 
 export default function RegisterForm({ nextPath }: { nextPath?: string }) {
   const router = useRouter();
@@ -38,13 +40,7 @@ export default function RegisterForm({ nextPath }: { nextPath?: string }) {
 
     async function loadZones() {
       try {
-        const response = await fetch("/api/service-zones", { cache: "no-store" });
-        const data = await response.json();
-
-        if (!response.ok) {
-          throw new Error(data.message || "Unable to load service zones.");
-        }
-
+        const { data } = await getData("/api/service-zones");
         const list = (data.zones ?? []) as ServiceZone[];
 
         if (!cancelled) {
@@ -61,7 +57,9 @@ export default function RegisterForm({ nextPath }: { nextPath?: string }) {
           setZones([]);
           setSelectedPostal("");
           setZonesError(
-            loadError instanceof Error ? loadError.message : "Unable to load service zones."
+            isAxiosError(loadError)
+              ? loadError.response?.data?.message || "Unable to load service zones."
+              : "Unable to load service zones."
           );
         }
       }
@@ -92,30 +90,26 @@ export default function RegisterForm({ nextPath }: { nextPath?: string }) {
 
     setIsSubmitting(true);
 
-    const response = await fetch("/api/auth/register", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
+    try {
+      await postData("/api/auth/register", {
         name: fullName.trim(),
         email,
         password,
         serviceZone: zone
-      })
-    });
+      });
 
-    const data = await response.json();
-    setIsSubmitting(false);
-
-    if (!response.ok) {
-      setError(data.message || "Registration failed.");
-      return;
+      const loginNext = nextPath || "/plans";
+      router.push(`/login?next=${encodeURIComponent(loginNext)}`);
+      router.refresh();
+    } catch (submitErr) {
+      setError(
+        isAxiosError(submitErr)
+          ? submitErr.response?.data?.message || "Registration failed."
+          : "Registration failed."
+      );
+    } finally {
+      setIsSubmitting(false);
     }
-
-    const loginNext = nextPath || "/plans";
-    router.push(`/login?next=${encodeURIComponent(loginNext)}`);
-    router.refresh();
   }
 
   const zonesReady = zones.length > 0 && Boolean(selectedPostal);

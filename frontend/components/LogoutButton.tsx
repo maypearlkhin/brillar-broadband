@@ -3,6 +3,7 @@
 import LogoutIcon from "@mui/icons-material/Logout";
 import { Button } from "@mui/material";
 import { useRouter } from "next/navigation";
+import { postData } from "@/lib/api";
 
 type LogoutButtonProps = {
   /** `navbar`: white text on pink app bar. `toolbar`: outlined in page body. */
@@ -13,7 +14,7 @@ export default function LogoutButton({ variant = "toolbar" }: LogoutButtonProps)
   const router = useRouter();
 
   async function handleLogout() {
-    await fetch("/api/auth/logout", { method: "POST" });
+    await postData("/api/auth/logout");
     router.push("/");
     router.refresh();
   }

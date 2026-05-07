@@ -24,7 +24,9 @@ import {
 } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { FormEvent, useMemo, useState } from "react";
+import { isAxiosError } from "axios";
 import type { PlanCardData } from "@/components/PlanGrid";
+import { postData } from "@/lib/api";
 
 type CheckoutFields = {
   cardName: string;
@@ -434,22 +436,7 @@ export default function CheckoutForm({ plan }: { plan: PlanCardData }) {
     await delay(2200 + Math.floor(Math.random() * 900));
 
     try {
-      const response = await fetch("/api/checkout", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ planId: plan.id }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        setError(data.message || "Checkout failed.");
-        setProcessingOpen(false);
-        setIsSubmitting(false);
-        return;
-      }
+      await postData("/api/checkout", { planId: plan.id });
 
       const completedAt = new Date();
       const installBy = randomInstallDate(completedAt);
@@ -464,10 +451,14 @@ export default function CheckoutForm({ plan }: { plan: PlanCardData }) {
 
       setSuccessInstallLabel(installLabel);
       setSuccessOpen(true);
-    } catch {
+    } catch (err) {
       setProcessingOpen(false);
       setIsSubmitting(false);
-      setError("Something went wrong. Please try again.");
+      setError(
+        isAxiosError(err)
+          ? err.response?.data?.message || "Checkout failed."
+          : "Something went wrong. Please try again."
+      );
     }
   }
 

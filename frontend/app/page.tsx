@@ -23,20 +23,17 @@ import {
 import Link from "next/link";
 import PlanCatalogSections from "@/components/PlanCatalogSections";
 import { type PlanCardData } from "@/components/PlanGrid";
+import { axiosServer } from "@/lib/axiosServer";
 
 export const dynamic = "force-dynamic";
 
 async function getPlans(): Promise<PlanCardData[]> {
-  const api = (process.env.BACKEND_URL ?? "http://127.0.0.1:4000").replace(/\/$/, "");
-  const response = await fetch(`${api}/api/plans`, { cache: "no-store" });
-
-  if (!response.ok) {
+  try {
+    const { data } = await axiosServer().get<{ plans: PlanCardData[] }>("/api/plans");
+    return data.plans ?? [];
+  } catch {
     return [];
   }
-
-  const data = (await response.json()) as { plans: PlanCardData[] };
-
-  return data.plans ?? [];
 }
 
 const trustItems = [

@@ -19,6 +19,8 @@ import {
 } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { FormEvent, useEffect, useState } from "react";
+import { isAxiosError } from "axios";
+import { deleteData, getData, postData } from "@/lib/api";
 
 type AnnouncementRow = {
   id: string;
@@ -37,15 +39,12 @@ export default function AnnouncementsAdminPanel() {
 
   async function refresh() {
     setLoadError("");
-    const response = await fetch("/api/admin/announcements", { cache: "no-store" });
-
-    if (!response.ok) {
+    try {
+      const { data } = await getData("/api/admin/announcements");
+      setItems(data.announcements ?? []);
+    } catch {
       setLoadError("Unable to load announcements.");
-      return;
     }
-
-    const data = await response.json();
-    setItems(data.announcements ?? []);
   }
 
   useEffect(() => {
@@ -63,23 +62,18 @@ export default function AnnouncementsAdminPanel() {
 
     setSubmitting(true);
 
-    const response = await fetch("/api/announcements", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ message: message.trim() })
-    });
-
-    const data = await response.json();
-    setSubmitting(false);
-
-    if (!response.ok) {
-      setError(data.message || "Unable to publish.");
-      return;
+    try {
+      await postData("/api/announcements", { message: message.trim() });
+      setMessage("");
+      await refresh();
+      router.refresh();
+    } catch (err) {
+      setError(
+        isAxiosError(err) ? err.response?.data?.message || "Unable to publish." : "Unable to publish."
+      );
+    } finally {
+      setSubmitting(false);
     }
-
-    setMessage("");
-    await refresh();
-    router.refresh();
   }
 
   async function removeAnnouncement(id: string) {
@@ -87,18 +81,15 @@ export default function AnnouncementsAdminPanel() {
       return;
     }
 
-    const response = await fetch(`/api/announcements/${encodeURIComponent(id)}`, {
-      method: "DELETE"
-    });
-
-    if (!response.ok) {
-      const data = await response.json();
-      setLoadError(data.message || "Unable to remove.");
-      return;
+    try {
+      await deleteData(`/api/announcements/${encodeURIComponent(id)}`);
+      await refresh();
+      router.refresh();
+    } catch (err) {
+      setLoadError(
+        isAxiosError(err) ? err.response?.data?.message || "Unable to remove." : "Unable to remove."
+      );
     }
-
-    await refresh();
-    router.refresh();
   }
 
   return (

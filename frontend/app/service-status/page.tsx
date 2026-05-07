@@ -2,6 +2,7 @@ import ServiceStatusClient, {
   type AnnouncementPublic,
   type IncidentPublic,
 } from "@/components/service-status/ServiceStatusClient";
+import { axiosServer } from "@/lib/axiosServer";
 
 export const metadata = {
   title: "Service status · Brillar Broadband",
@@ -11,19 +12,15 @@ export const metadata = {
 export const dynamic = "force-dynamic";
 
 async function loadStatus(): Promise<{ incidents: IncidentPublic[]; announcements: AnnouncementPublic[] }> {
-  const api = (process.env.BACKEND_URL ?? "http://127.0.0.1:4000").replace(/\/$/, "");
-
   try {
+    const api = axiosServer();
     const [netRes, annRes] = await Promise.all([
-      fetch(`${api}/api/network/status`, { cache: "no-store" }),
-      fetch(`${api}/api/announcements`, { cache: "no-store" }),
+      api.get<{ incidents: IncidentPublic[] }>("/api/network/status"),
+      api.get<{ announcements: AnnouncementPublic[] }>("/api/announcements"),
     ]);
 
-    const incidentsJson = netRes.ok ? await netRes.json() : { incidents: [] };
-    const annJson = annRes.ok ? await annRes.json() : { announcements: [] };
-
-    const incidents = (incidentsJson.incidents ?? []) as IncidentPublic[];
-    const announcements = (annJson.announcements ?? []) as AnnouncementPublic[];
+    const incidents = netRes.data.incidents ?? [];
+    const announcements = annRes.data.announcements ?? [];
 
     return {
       incidents: incidents.map((i) => ({

@@ -2,6 +2,7 @@ import AnnouncementIcon from "@mui/icons-material/Announcement";
 import CloudOffIcon from "@mui/icons-material/CloudOff";
 import { Box, Button, Container, Stack, Typography } from "@mui/material";
 import Link from "next/link";
+import { axiosServer } from "@/lib/axiosServer";
 
 export const dynamic = "force-dynamic";
 
@@ -11,18 +12,15 @@ type Incident = {
 
 async function fetchCounts() {
   try {
-    const api = (process.env.BACKEND_URL ?? "http://127.0.0.1:4000").replace(/\/$/, "");
+    const api = axiosServer();
     const [netRes, annRes] = await Promise.all([
-      fetch(`${api}/api/network/status`, { cache: "no-store" }),
-      fetch(`${api}/api/announcements`, { cache: "no-store" }),
+      api.get<{ incidents: Incident[] }>("/api/network/status"),
+      api.get<{ announcements: unknown[] }>("/api/announcements"),
     ]);
 
-    const netJson = netRes.ok ? await netRes.json() : { incidents: [] };
-    const annJson = annRes.ok ? await annRes.json() : { announcements: [] };
-
-    const incidents = (netJson.incidents ?? []) as Incident[];
+    const incidents = netRes.data.incidents ?? [];
     const active = incidents.filter((i) => !i.resolvedAt).length;
-    const announcements = (annJson.announcements ?? []).length;
+    const announcements = (annRes.data.announcements ?? []).length;
 
     return { active, announcements };
   } catch {

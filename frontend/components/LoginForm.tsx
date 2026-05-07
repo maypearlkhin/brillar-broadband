@@ -13,6 +13,8 @@ import {
 import LoginIcon from "@mui/icons-material/Login";
 import Link from "next/link";
 import { FormEvent, useState } from "react";
+import { isAxiosError } from "axios";
+import { postData } from "@/lib/api";
 
 function getSafeRedirect(nextPath: string | undefined, role: string | undefined) {
   if (role === "admin") {
@@ -42,23 +44,18 @@ export default function LoginForm({ nextPath }: { nextPath?: string }) {
     setError("");
     setIsSubmitting(true);
 
-    const response = await fetch("/api/auth/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ email, password })
-    });
-
-    const data = await response.json();
-    setIsSubmitting(false);
-
-    if (!response.ok) {
-      setError(data.message || "Login failed.");
-      return;
+    try {
+      const { data } = await postData("/api/auth/login", { email, password });
+      window.location.assign(getSafeRedirect(nextPath, data.user?.role));
+    } catch (err) {
+      if (isAxiosError(err)) {
+        setError(err.response?.data?.message || "Login failed.");
+      } else {
+        setError("Login failed.");
+      }
+    } finally {
+      setIsSubmitting(false);
     }
-
-    window.location.assign(getSafeRedirect(nextPath, data.user?.role));
   }
 
   return (

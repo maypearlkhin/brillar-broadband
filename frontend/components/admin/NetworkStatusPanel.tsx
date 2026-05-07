@@ -22,8 +22,10 @@ import {
 } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { FormEvent, useEffect, useState } from "react";
+import { isAxiosError } from "axios";
 import type { ServiceZone } from "@/lib/serviceZones";
 import { formatServiceZone } from "@/lib/serviceZones";
+import { deleteData, getData, postData } from "@/lib/api";
 
 type IncidentRow = {
   id: string;
@@ -47,37 +49,32 @@ export default function NetworkStatusPanel() {
 
   async function refresh() {
     setLoadError("");
-    const [zonesRes, incidentRes] = await Promise.all([
-      fetch("/api/service-zones", { cache: "no-store" }),
-      fetch("/api/network/status", { cache: "no-store" })
-    ]);
+    try {
+      const [zonesRes, incidentRes] = await Promise.all([
+        getData("/api/service-zones"),
+        getData("/api/network/status")
+      ]);
 
-    if (!zonesRes.ok) {
-      setLoadError("Unable to load service zones.");
-      return;
-    }
-
-    if (!incidentRes.ok) {
+      setZones(zonesRes.data.zones ?? []);
+      setIncidents(
+        (incidentRes.data.incidents ?? []).map(
+          (row: IncidentRow & { createdAt: string | Date; resolvedAt?: string | null }) => ({
+            ...row,
+            createdAt:
+              typeof row.createdAt === "string"
+                ? row.createdAt
+                : new Date(row.createdAt).toISOString(),
+            resolvedAt: row.resolvedAt
+              ? typeof row.resolvedAt === "string"
+                ? row.resolvedAt
+                : new Date(row.resolvedAt).toISOString()
+              : null
+          })
+        )
+      );
+    } catch {
       setLoadError("Unable to load incidents.");
-      return;
     }
-
-    const zonesData = await zonesRes.json();
-    const incidentData = await incidentRes.json();
-
-    setZones(zonesData.zones ?? []);
-    setIncidents(
-      (incidentData.incidents ?? []).map(
-        (row: IncidentRow & { createdAt: string | Date; resolvedAt?: string | null }) => ({
-          ...row,
-          createdAt:
-            typeof row.createdAt === "string"
-              ? row.createdAt
-              : new Date(row.createdAt).toISOString(),
-          resolvedAt: row.resolvedAt ? (typeof row.resolvedAt === "string" ? row.resolvedAt : new Date(row.resolvedAt).toISOString()) : null
-        })
-      )
-    );
   }
 
   useEffect(() => {
@@ -101,26 +98,23 @@ export default function NetworkStatusPanel() {
 
     setSubmitting(true);
 
-    const response = await fetch("/api/network/status", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
+    try {
+      await postData("/api/network/status", {
         location: zone,
         message: message.trim()
-      })
-    });
-
-    const data = await response.json();
-    setSubmitting(false);
-
-    if (!response.ok) {
-      setError(data.message || "Unable to create incident.");
-      return;
+      });
+      setMessage("");
+      await refresh();
+      router.refresh();
+    } catch (err) {
+      setError(
+        isAxiosError(err)
+          ? err.response?.data?.message || "Unable to create incident."
+          : "Unable to create incident."
+      );
+    } finally {
+      setSubmitting(false);
     }
-
-    setMessage("");
-    await refresh();
-    router.refresh();
   }
 
   async function removeIncident(id: string) {
@@ -128,18 +122,15 @@ export default function NetworkStatusPanel() {
       return;
     }
 
-    const response = await fetch(`/api/network/status/${encodeURIComponent(id)}`, {
-      method: "DELETE"
-    });
-
-    if (!response.ok) {
-      const data = await response.json();
-      setLoadError(data.message || "Unable to delete.");
-      return;
+    try {
+      await deleteData(`/api/network/status/${encodeURIComponent(id)}`);
+      await refresh();
+      router.refresh();
+    } catch (err) {
+      setLoadError(
+        isAxiosError(err) ? err.response?.data?.message || "Unable to delete." : "Unable to delete."
+      );
     }
-
-    await refresh();
-    router.refresh();
   }
 
   const activeIncidents = incidents.filter((i) => !i.resolvedAt);

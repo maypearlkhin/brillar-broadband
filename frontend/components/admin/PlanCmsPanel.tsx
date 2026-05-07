@@ -24,6 +24,8 @@ import {
 } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { isAxiosError } from "axios";
+import { deleteData, getData, putData } from "@/lib/api";
 
 export type PlanRow = {
   id: string;
@@ -55,15 +57,12 @@ export default function PlanCmsPanel() {
 
   async function loadPlans() {
     setLoadError("");
-    const response = await fetch("/api/admin/plans", { cache: "no-store" });
-
-    if (!response.ok) {
+    try {
+      const { data } = await getData("/api/admin/plans");
+      setPlans(data.plans ?? []);
+    } catch {
       setLoadError("Unable to load plans.");
-      return;
     }
-
-    const data = await response.json();
-    setPlans(data.plans ?? []);
   }
 
   useEffect(() => {
@@ -125,22 +124,14 @@ export default function PlanCmsPanel() {
       payload.categorySortOrder = categorySortOrder;
     }
 
-    const response = await fetch(`/api/plans/${encodeURIComponent(editing.id)}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload)
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      setError(data.message || "Update failed.");
-      return;
+    try {
+      await putData(`/api/plans/${encodeURIComponent(editing.id)}`, payload);
+      setEditing(null);
+      await loadPlans();
+      router.refresh();
+    } catch (err) {
+      setError(isAxiosError(err) ? err.response?.data?.message || "Update failed." : "Update failed.");
     }
-
-    setEditing(null);
-    await loadPlans();
-    router.refresh();
   }
 
   async function deactivatePlan(plan: PlanRow) {
@@ -148,18 +139,15 @@ export default function PlanCmsPanel() {
       return;
     }
 
-    const response = await fetch(`/api/plans/${encodeURIComponent(plan.id)}`, {
-      method: "DELETE"
-    });
-
-    if (!response.ok) {
-      const data = await response.json();
-      setLoadError(data.message || "Unable to deactivate.");
-      return;
+    try {
+      await deleteData(`/api/plans/${encodeURIComponent(plan.id)}`);
+      await loadPlans();
+      router.refresh();
+    } catch (err) {
+      setLoadError(
+        isAxiosError(err) ? err.response?.data?.message || "Unable to deactivate." : "Unable to deactivate."
+      );
     }
-
-    await loadPlans();
-    router.refresh();
   }
 
   return (

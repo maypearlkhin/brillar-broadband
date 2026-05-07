@@ -19,8 +19,9 @@ import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
 import RouterIcon from "@mui/icons-material/Router";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { cookies } from "next/headers";
+import { isAxiosError } from "axios";
 import { getCurrentUserFromCookies } from "@/lib/auth";
+import { axiosServer } from "@/lib/axiosServer";
 import { formatServiceZone } from "@/lib/serviceZones";
 
 export const dynamic = "force-dynamic";
@@ -62,22 +63,7 @@ export default async function DashboardPage() {
     redirect("/admin/dashboard");
   }
 
-  const api = (process.env.BACKEND_URL ?? "http://127.0.0.1:4000").replace(/\/$/, "");
-  const cookieStore = cookies();
-  const cookieHeader = cookieStore
-    .getAll()
-    .map((c) => `${c.name}=${c.value}`)
-    .join("; ");
-  const response = await fetch(`${api}/api/me/subscription`, {
-    cache: "no-store",
-    headers: cookieHeader ? { cookie: cookieHeader } : {}
-  });
-
-  if (response.status === 401) {
-    redirect("/login?next=/dashboard");
-  }
-
-  const data = (await response.json()) as {
+  type DashboardResponse = {
     user: {
       email: string;
       serviceZone: { country: string; district: string; postalCode: string };
@@ -90,6 +76,18 @@ export default async function DashboardPage() {
       createdAt?: string;
     } | null;
   };
+
+  let data: DashboardResponse;
+
+  try {
+    const response = await axiosServer().get<DashboardResponse>("/api/me/subscription");
+    data = response.data;
+  } catch (err) {
+    if (isAxiosError(err) && err.response?.status === 401) {
+      redirect("/login?next=/dashboard");
+    }
+    throw err;
+  }
 
   const subscriptions = data.subscriptions ?? [];
   const user = data.user;

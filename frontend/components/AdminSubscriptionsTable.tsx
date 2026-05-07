@@ -18,6 +18,8 @@ import CheckIcon from "@mui/icons-material/Check";
 import CloseIcon from "@mui/icons-material/Close";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { isAxiosError } from "axios";
+import { patchData } from "@/lib/api";
 
 export type AdminSubscriptionRow = {
   id: string;
@@ -56,23 +58,18 @@ export default function AdminSubscriptionsTable({
     setError("");
     setActiveId(subscriptionId);
 
-    const response = await fetch("/api/admin/subscriptions", {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ subscriptionId, action })
-    });
-
-    const data = await response.json();
-    setActiveId("");
-
-    if (!response.ok) {
-      setError(data.message || "Unable to update subscription.");
-      return;
+    try {
+      await patchData("/api/admin/subscriptions", { subscriptionId, action });
+      router.refresh();
+    } catch (err) {
+      setError(
+        isAxiosError(err)
+          ? err.response?.data?.message || "Unable to update subscription."
+          : "Unable to update subscription."
+      );
+    } finally {
+      setActiveId("");
     }
-
-    router.refresh();
   }
 
   if (subscriptions.length === 0) {
