@@ -1,20 +1,8 @@
 import { Box } from "@mui/material";
-import { redirect } from "next/navigation";
 import AdminSidebar from "@/components/admin/AdminSidebar";
 import SessionGreeting from "@/components/SessionGreeting";
-import { getCurrentUserFromCookies } from "@/lib/auth";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
-  const user = getCurrentUserFromCookies();
-
-  if (!user) {
-    redirect("/login?next=/admin/dashboard");
-  }
-
-  if (user.role !== "admin") {
-    redirect("/dashboard");
-  }
-
   return (
     <Box
       sx={{

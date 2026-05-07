@@ -23,6 +23,7 @@ export type PlanCardData = {
   categoryId?: string;
   categoryTitle?: string;
   categorySortOrder?: number;
+  planSortOrder?: number;
 };
 
 type PlanGridProps = {

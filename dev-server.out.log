@@ -1,0 +1,71 @@
+
+> brillar-broadband@0.1.0 dev
+> concurrently -n api,web -c blue,green "npm run dev -w backend" "npm run dev -w frontend"
+
+[web] 
+[web] > brillar-broadband-frontend@0.1.0 dev
+[web] > next dev
+[web] 
+[api] 
+[api] > brillar-broadband-backend@0.1.0 dev
+[api] > nodemon src/index.js
+[api] 
+[api] [33m[nodemon] 3.1.14[39m
+[api] [33m[nodemon] to restart at any time, enter `rs`[39m
+[api] [33m[nodemon] watching path(s): src\**\*[39m
+[api] [33m[nodemon] watching extensions: js,json,cjs[39m
+[api] [32m[nodemon] starting `node src/index.js`[39m
+[web]   ▲ Next.js 14.2.4
+[web]   - Local:        http://localhost:3000
+[web]   - Environments: .env.local, .env
+[web] 
+[web]  ✓ Starting...
+[api] Brillar API listening on http://127.0.0.1:4000
+[api] Auth cookie: brillar_token (httpOnly)
+[web] npm error code ENOWORKSPACES
+[web] npm error This command does not support workspaces.
+[web] npm error A complete log of this run can be found in: C:\Users\DELL\AppData\Local\npm-cache\_logs\2026-05-07T05_54_17_256Z-debug-0.log
+[web]  ✓ Ready in 2.6s
+[web]  ○ Compiling /admin/plans ...
+[web]  ✓ Compiled /admin/plans in 4.7s (1910 modules)
+[web]  GET /admin/plans 200 in 5090ms
+[api] [32m[nodemon] restarting due to changes...[39m
+[api] [32m[nodemon] starting `node src/index.js`[39m
+[api] Brillar API listening on http://127.0.0.1:4000
+[api] Auth cookie: brillar_token (httpOnly)
+[web]  GET /admin/plans 200 in 77ms
+[web]  ✓ Compiled /middleware in 364ms (154 modules)
+[web]  ○ Compiling / ...
+[web]  ✓ Compiled / in 1842ms (1845 modules)
+[web]  GET / 200 in 2613ms
+[web]  ○ Compiling /login ...
+[web]  ✓ Compiled /login in 833ms (1938 modules)
+[web]  ○ Compiling /admin/dashboard ...
+[web]  ✓ Compiled /admin/dashboard in 1355ms (2008 modules)
+[web]  GET /admin/dashboard 200 in 2036ms
+[web]  ✓ Compiled /admin/plans in 316ms (1201 modules)
+[web]  ○ Compiling /service-status ...
+[web]  ✓ Compiled /service-status in 1951ms (2020 modules)
+[web]  ✓ Compiled /admin/dashboard in 325ms (1180 modules)
+[web]  ✓ Compiled / in 328ms (1222 modules)
+[web]  ○ Compiling /dashboard ...
+[web]  ✓ Compiled /dashboard in 1678ms (2106 modules)
+[web]  GET /dashboard 200 in 2294ms
+[web]  GET /dashboard 200 in 111ms
+[web]  ○ Compiling /plans ...
+[web]  ✓ Compiled /plans in 1102ms (2111 modules)
+[web]  ○ Compiling /register ...
+[web]  ✓ Compiled /register in 2.6s (2136 modules)
+[web]  ✓ Compiled /login in 474ms (1233 modules)
+[web]  GET /admin/dashboard 200 in 544ms
+[web]  ✓ Compiled /admin/plans in 335ms (1243 modules)
+[web]  GET /dashboard 200 in 499ms
+[api] [32m[nodemon] restarting due to changes...[39m
+[api] [32m[nodemon] starting `node src/index.js`[39m
+[api] Brillar API listening on http://127.0.0.1:4000
+[api] Auth cookie: brillar_token (httpOnly)
+[web]  GET /login?next=%2Fplans 200 in 135ms
+[web]  GET /admin/plans 200 in 102ms
+[web]  GET /plans 200 in 231ms
+[web]  GET /admin/dashboard 200 in 181ms
+[web]  GET /dashboard 200 in 134ms

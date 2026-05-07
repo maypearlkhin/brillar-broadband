@@ -2,7 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { jwtVerify } from "jose";
 import { TOKEN_COOKIE } from "@/lib/authConstants";
 
-const PROTECTED_PREFIXES = ["/dashboard", "/checkout", "/admin", "/plans"];
+const PROTECTED_PREFIXES = ["/dashboard", "/checkout", "/plans"];
 
 async function verifyToken(token: string) {
   const secret = process.env.JWT_SECRET;
@@ -54,13 +54,6 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(loginUrl);
   }
 
-  if (pathname.startsWith("/admin") && currentUser.role !== "admin") {
-    const dashboardUrl = request.nextUrl.clone();
-    dashboardUrl.pathname = "/dashboard";
-    dashboardUrl.search = "";
-    return NextResponse.redirect(dashboardUrl);
-  }
-
   return NextResponse.next();
 }
 
@@ -70,8 +63,6 @@ export const config = {
     "/dashboard",
     "/dashboard/:path*",
     "/checkout/:path*",
-    "/admin",
-    "/admin/:path*",
     "/plans",
     "/plans/:path*"
   ]

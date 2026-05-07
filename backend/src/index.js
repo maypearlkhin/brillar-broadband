@@ -7,7 +7,12 @@ import { createApiRouter } from "./api/router/index.js";
 
 const app = express();
 
-app.use(cors());
+app.use(
+  cors({
+    origin: process.env.CORS_ORIGIN?.split(",").map((origin) => origin.trim()) ?? "http://localhost:3000",
+    credentials: true
+  })
+);
 
 app.use(express.json());
 

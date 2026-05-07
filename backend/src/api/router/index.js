@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { registerAnnouncementRoutes } from "./announcementRoutes.js";
 import { registerNetworkRoutes } from "./networkRoutes.js";
+import { registerPlanCategoryRoutes } from "./planCategoryRoutes.js";
 import { registerPlanRoutes } from "./planRoutes.js";
 import { registerServiceZoneRoutes } from "./serviceZoneRoutes.js";
 import { registerSubscriptionRoutes } from "./subscriptionRoutes.js";
@@ -10,6 +11,7 @@ export function createApiRouter() {
   const router = Router();
 
   registerServiceZoneRoutes(router);
+  registerPlanCategoryRoutes(router);
   registerPlanRoutes(router);
   registerNetworkRoutes(router);
   registerAnnouncementRoutes(router);

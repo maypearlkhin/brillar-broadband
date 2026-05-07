@@ -1,31 +1,34 @@
 "use client";
 
-import EditIcon from "@mui/icons-material/Edit";
+import AddIcon from "@mui/icons-material/Add";
 import BlockIcon from "@mui/icons-material/Block";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import EditIcon from "@mui/icons-material/Edit";
 import {
   Alert,
   Box,
   Button,
+  Card,
+  CardActions,
+  CardContent,
+  Chip,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
+  Divider,
+  FormControlLabel,
+  Grid,
   IconButton,
   Stack,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
+  Switch,
   TextField,
-  Typography,
-  Chip
+  Typography
 } from "@mui/material";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { isAxiosError } from "axios";
-import { deleteData, getData, putData } from "@/lib/api";
+import { deleteData, getData, postData, putData } from "@/lib/api";
 
 export type PlanRow = {
   id: string;
@@ -36,64 +39,179 @@ export type PlanRow = {
   categoryId?: string;
   categoryTitle?: string;
   categorySortOrder?: number;
+  planSortOrder?: number;
   isActive: boolean;
 };
+
+type PlanCategory = {
+  id: string;
+  title: string;
+  sortOrder: number;
+  isActive: boolean;
+};
+
+type PlanForm = {
+  name: string;
+  monthlyPrice: string;
+  downloadSpeedMbps: string;
+  featuresText: string;
+  isActive: boolean;
+};
+
+const emptyPlanForm: PlanForm = {
+  name: "",
+  monthlyPrice: "",
+  downloadSpeedMbps: "",
+  featuresText: "",
+  isActive: true
+};
+
+function formFromPlan(plan: PlanRow): PlanForm {
+  return {
+    name: plan.name,
+    monthlyPrice: String(plan.monthlyPrice),
+    downloadSpeedMbps: String(plan.downloadSpeedMbps),
+    featuresText: plan.features.join("\n"),
+    isActive: plan.isActive
+  };
+}
 
 export default function PlanCmsPanel() {
   const router = useRouter();
   const [plans, setPlans] = useState<PlanRow[]>([]);
+  const [categories, setCategories] = useState<PlanCategory[]>([]);
   const [error, setError] = useState("");
   const [loadError, setLoadError] = useState("");
-  const [editing, setEditing] = useState<PlanRow | null>(null);
-  const [form, setForm] = useState({
-    name: "",
-    monthlyPrice: "",
-    downloadSpeedMbps: "",
-    featuresText: "",
-    categoryId: "",
-    categoryTitle: "",
-    categorySortOrder: ""
-  });
+  const [editingPlan, setEditingPlan] = useState<PlanRow | null>(null);
+  const [planCategory, setPlanCategory] = useState<PlanCategory | null>(null);
+  const [planForm, setPlanForm] = useState<PlanForm>(emptyPlanForm);
+  const [categoryDialogOpen, setCategoryDialogOpen] = useState(false);
+  const [editingCategory, setEditingCategory] = useState<PlanCategory | null>(null);
+  const [categoryTitle, setCategoryTitle] = useState("");
 
-  async function loadPlans() {
+  const sections = useMemo(
+    () =>
+      [...categories]
+        .sort((a, b) => a.sortOrder - b.sortOrder)
+        .map((category) => ({
+          category,
+          plans: plans
+            .filter((plan) => plan.categoryId === category.id)
+            .sort((a, b) => {
+              const ao = a.planSortOrder ?? 999;
+              const bo = b.planSortOrder ?? 999;
+              if (ao !== bo) {
+                return ao - bo;
+              }
+              return a.monthlyPrice - b.monthlyPrice;
+            })
+        })),
+    [categories, plans]
+  );
+
+  async function loadData() {
     setLoadError("");
     try {
-      const { data } = await getData("/api/admin/plans");
-      setPlans(data.plans ?? []);
+      const [plansResponse, categoriesResponse] = await Promise.all([
+        getData("/api/admin/plans"),
+        getData("/api/plan-categories")
+      ]);
+      setPlans(plansResponse.data.plans ?? []);
+      setCategories(categoriesResponse.data.categories ?? []);
     } catch {
-      setLoadError("Unable to load plans.");
+      setLoadError("Unable to load plan categories.");
     }
   }
 
   useEffect(() => {
-    loadPlans();
+    loadData();
   }, []);
 
-  function openEdit(plan: PlanRow) {
-    setEditing(plan);
-    setForm({
-      name: plan.name,
-      monthlyPrice: String(plan.monthlyPrice),
-      downloadSpeedMbps: String(plan.downloadSpeedMbps),
-      featuresText: plan.features.join("\n"),
-      categoryId: plan.categoryId ?? "",
-      categoryTitle: plan.categoryTitle ?? "",
-      categorySortOrder:
-        plan.categorySortOrder !== undefined && plan.categorySortOrder !== null
-          ? String(plan.categorySortOrder)
-          : ""
-    });
+  function openCategoryCreate() {
+    setEditingCategory(null);
+    setCategoryTitle("");
+    setCategoryDialogOpen(true);
+    setError("");
+  }
+
+  function openCategoryEdit(category: PlanCategory) {
+    setEditingCategory(category);
+    setCategoryTitle(category.title);
+    setCategoryDialogOpen(true);
+    setError("");
+  }
+
+  async function saveCategory() {
+    setError("");
+
+    if (!categoryTitle.trim()) {
+      setError("Category name is required.");
+      return;
+    }
+
+    try {
+      if (editingCategory) {
+        await putData(`/api/plan-categories/${encodeURIComponent(editingCategory.id)}`, {
+          title: categoryTitle.trim()
+        });
+      } else {
+        await postData("/api/plan-categories", { title: categoryTitle.trim() });
+      }
+
+      setCategoryDialogOpen(false);
+      setEditingCategory(null);
+      await loadData();
+      router.refresh();
+    } catch (err) {
+      setError(isAxiosError(err) ? err.response?.data?.message || "Category save failed." : "Category save failed.");
+    }
+  }
+
+  async function deactivateCategory(category: PlanCategory) {
+    try {
+      await deleteData(`/api/plan-categories/${encodeURIComponent(category.id)}`);
+      await loadData();
+      router.refresh();
+    } catch (err) {
+      setLoadError(
+        isAxiosError(err) ? err.response?.data?.message || "Unable to deactivate category." : "Unable to deactivate category."
+      );
+    }
+  }
+
+  function openPlanCreate(category: PlanCategory) {
+    setEditingPlan(null);
+    setPlanCategory(category);
+    setPlanForm(emptyPlanForm);
+    setError("");
+  }
+
+  function openPlanEdit(plan: PlanRow, category: PlanCategory) {
+    setEditingPlan(plan);
+    setPlanCategory(category);
+    setPlanForm(formFromPlan(plan));
+    setError("");
+  }
+
+  function closePlanDialog() {
+    setEditingPlan(null);
+    setPlanCategory(null);
     setError("");
   }
 
   async function savePlan() {
-    if (!editing) {
+    if (!planCategory) {
       return;
     }
 
     setError("");
-    const monthlyPrice = Number(form.monthlyPrice);
-    const downloadSpeedMbps = Number(form.downloadSpeedMbps);
+    const monthlyPrice = Number(planForm.monthlyPrice);
+    const downloadSpeedMbps = Number(planForm.downloadSpeedMbps);
+
+    if (!planForm.name.trim()) {
+      setError("Plan name is required.");
+      return;
+    }
 
     if (!Number.isFinite(monthlyPrice) || monthlyPrice < 0) {
       setError("Monthly price must be a valid number.");
@@ -105,183 +223,232 @@ export default function PlanCmsPanel() {
       return;
     }
 
-    const features = form.featuresText
+    const features = planForm.featuresText
       .split("\n")
       .map((line) => line.trim())
       .filter(Boolean);
 
-    const categorySortOrder = Number(form.categorySortOrder);
-    const payload: Record<string, unknown> = {
-      name: form.name.trim(),
+    const payload = {
+      name: planForm.name.trim(),
       monthlyPrice,
       downloadSpeedMbps,
       features,
-      categoryId: form.categoryId.trim(),
-      categoryTitle: form.categoryTitle.trim()
+      categoryId: planCategory.id,
+      isActive: planForm.isActive
     };
 
-    if (form.categorySortOrder.trim() !== "" && Number.isFinite(categorySortOrder)) {
-      payload.categorySortOrder = categorySortOrder;
-    }
-
     try {
-      await putData(`/api/plans/${encodeURIComponent(editing.id)}`, payload);
-      setEditing(null);
-      await loadPlans();
+      if (editingPlan) {
+        await putData(`/api/plans/${encodeURIComponent(editingPlan.id)}`, payload);
+      } else {
+        await postData("/api/plans", payload);
+      }
+
+      closePlanDialog();
+      await loadData();
       router.refresh();
     } catch (err) {
-      setError(isAxiosError(err) ? err.response?.data?.message || "Update failed." : "Update failed.");
+      setError(isAxiosError(err) ? err.response?.data?.message || "Plan save failed." : "Plan save failed.");
     }
   }
 
-  async function deactivatePlan(plan: PlanRow) {
-    if (!window.confirm(`Deactivate plan "${plan.name}"? It will disappear from the storefront.`)) {
-      return;
-    }
-
+  async function setPlanActive(plan: PlanRow, isActive: boolean) {
     try {
-      await deleteData(`/api/plans/${encodeURIComponent(plan.id)}`);
-      await loadPlans();
+      if (isActive) {
+        await putData(`/api/plans/${encodeURIComponent(plan.id)}`, { isActive: true });
+      } else {
+        await deleteData(`/api/plans/${encodeURIComponent(plan.id)}`);
+      }
+
+      await loadData();
       router.refresh();
     } catch (err) {
-      setLoadError(
-        isAxiosError(err) ? err.response?.data?.message || "Unable to deactivate." : "Unable to deactivate."
-      );
+      setLoadError(isAxiosError(err) ? err.response?.data?.message || "Unable to update plan." : "Unable to update plan.");
     }
   }
 
   return (
     <Stack spacing={3}>
-      <Box>
-        <Typography variant="h4">Plan CMS</Typography>
-        <Typography color="text.secondary" sx={{ mt: 1 }}>
-          Edit pricing and speeds. Changes apply immediately on the homepage for active plans.
-        </Typography>
-      </Box>
+      <Stack direction={{ xs: "column", sm: "row" }} spacing={2} justifyContent="space-between" alignItems="flex-start">
+        <Box>
+          <Typography variant="h4">Plan CMS</Typography>
+          <Typography color="text.secondary" sx={{ mt: 1 }}>
+            Create category grids, then add plan cards inside each category.
+          </Typography>
+        </Box>
+        <Button startIcon={<AddIcon />} variant="contained" onClick={openCategoryCreate}>
+          Add category
+        </Button>
+      </Stack>
 
       {loadError && <Alert severity="error">{loadError}</Alert>}
       {error && <Alert severity="error">{error}</Alert>}
 
-      <TableContainer>
-        <Table size="small">
-          <TableHead>
-            <TableRow>
-              <TableCell>Plan</TableCell>
-              <TableCell>Category</TableCell>
-              <TableCell align="right">Price / mo</TableCell>
-              <TableCell align="right">Mbps</TableCell>
-              <TableCell>Status</TableCell>
-              <TableCell align="right">Actions</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {plans.map((plan) => (
-              <TableRow key={plan.id}>
-                <TableCell>
-                  <Typography fontWeight={700}>{plan.name}</Typography>
-                  <Typography variant="caption" color="text.secondary">
-                    {plan.id}
+      <Stack spacing={4}>
+        {sections.map(({ category, plans: categoryPlans }) => (
+          <Box key={category.id}>
+            <Stack
+              direction={{ xs: "column", sm: "row" }}
+              spacing={1.5}
+              justifyContent="space-between"
+              alignItems={{ xs: "flex-start", sm: "center" }}
+              sx={{ mb: 2 }}
+            >
+              <Box>
+                <Stack direction="row" spacing={1} alignItems="center">
+                  <Typography variant="h5" sx={{ fontWeight: 700 }}>
+                    {category.title}
                   </Typography>
-                </TableCell>
-                <TableCell>
-                  <Typography variant="body2">{plan.categoryTitle ?? "—"}</Typography>
-                  <Typography variant="caption" color="text.secondary" display="block">
-                    {plan.categoryId ?? ""}
-                  </Typography>
-                </TableCell>
-                <TableCell align="right">${plan.monthlyPrice}</TableCell>
-                <TableCell align="right">{plan.downloadSpeedMbps}</TableCell>
-                <TableCell>
-                  <Chip
-                    size="small"
-                    label={plan.isActive ? "Active" : "Inactive"}
-                    color={plan.isActive ? "success" : "default"}
-                  />
-                </TableCell>
-                <TableCell align="right">
-                  <IconButton
-                    aria-label="Edit plan"
-                    onClick={() => openEdit(plan)}
-                    disabled={!plan.isActive}
-                  >
-                    <EditIcon />
-                  </IconButton>
-                  <IconButton
-                    aria-label="Deactivate plan"
-                    onClick={() => deactivatePlan(plan)}
-                    disabled={!plan.isActive}
-                  >
-                    <BlockIcon />
-                  </IconButton>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+                  <Chip size="small" label={category.isActive ? "Active" : "Inactive"} />
+                </Stack>
+                <Typography variant="caption" color="text.secondary">
+                  {categoryPlans.length} {categoryPlans.length === 1 ? "plan" : "plans"}
+                </Typography>
+              </Box>
+              <Stack direction="row" spacing={1}>
+                <Button size="small" startIcon={<AddIcon />} onClick={() => openPlanCreate(category)}>
+                  Add plan
+                </Button>
+                <IconButton aria-label="Edit category" onClick={() => openCategoryEdit(category)}>
+                  <EditIcon />
+                </IconButton>
+                <IconButton aria-label="Deactivate category" onClick={() => deactivateCategory(category)}>
+                  <BlockIcon />
+                </IconButton>
+              </Stack>
+            </Stack>
 
-      <Dialog open={Boolean(editing)} onClose={() => setEditing(null)} maxWidth="sm" fullWidth>
-        <DialogTitle>Edit plan</DialogTitle>
+            <Grid container spacing={2}>
+              {categoryPlans.map((plan) => (
+                <Grid item xs={12} md={4} key={plan.id}>
+                  <Card
+                    variant="outlined"
+                    sx={{
+                      height: "100%",
+                      borderRadius: 1,
+                      borderTop: "3px solid",
+                      borderTopColor: plan.isActive ? "primary.main" : "divider",
+                      opacity: plan.isActive ? 1 : 0.62
+                    }}
+                  >
+                    <CardContent>
+                      <Stack spacing={1.5}>
+                        <Stack direction="row" justifyContent="space-between" spacing={1}>
+                          <Box>
+                            <Typography variant="h6" fontWeight={700}>
+                              {plan.name}
+                            </Typography>
+                            <Typography variant="caption" color="text.secondary">
+                              {plan.id}
+                            </Typography>
+                          </Box>
+                          <Chip
+                            size="small"
+                            label={plan.isActive ? "Active" : "Inactive"}
+                            color={plan.isActive ? "success" : "default"}
+                          />
+                        </Stack>
+                        <Stack direction="row" spacing={2} alignItems="baseline">
+                          <Typography variant="h4" fontWeight={700}>
+                            ${plan.monthlyPrice}
+                          </Typography>
+                          <Typography color="text.secondary">{plan.downloadSpeedMbps} Mbps</Typography>
+                        </Stack>
+                        <Divider />
+                        <Stack spacing={0.75}>
+                          {plan.features.map((feature) => (
+                            <Typography key={feature} variant="body2" color="text.secondary">
+                              {feature}
+                            </Typography>
+                          ))}
+                        </Stack>
+                      </Stack>
+                    </CardContent>
+                    <CardActions sx={{ justifyContent: "space-between", px: 2, pb: 2 }}>
+                      <Button size="small" startIcon={<EditIcon />} onClick={() => openPlanEdit(plan, category)}>
+                        Edit
+                      </Button>
+                      <IconButton
+                        aria-label={plan.isActive ? "Deactivate plan" : "Reactivate plan"}
+                        onClick={() => setPlanActive(plan, !plan.isActive)}
+                      >
+                        {plan.isActive ? <BlockIcon /> : <CheckCircleIcon />}
+                      </IconButton>
+                    </CardActions>
+                  </Card>
+                </Grid>
+              ))}
+            </Grid>
+          </Box>
+        ))}
+      </Stack>
+
+      <Dialog open={categoryDialogOpen} onClose={() => setCategoryDialogOpen(false)} maxWidth="xs" fullWidth>
+        <DialogTitle>{editingCategory ? "Edit category" : "Add category"}</DialogTitle>
+        <DialogContent>
+          <TextField
+            label="Category name"
+            value={categoryTitle}
+            onChange={(event) => setCategoryTitle(event.target.value)}
+            fullWidth
+            sx={{ mt: 1 }}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setCategoryDialogOpen(false)}>Cancel</Button>
+          <Button variant="contained" onClick={saveCategory}>
+            Save
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog open={Boolean(planCategory)} onClose={closePlanDialog} maxWidth="sm" fullWidth>
+        <DialogTitle>{editingPlan ? "Edit plan" : `Add plan to ${planCategory?.title ?? "category"}`}</DialogTitle>
         <DialogContent>
           <Stack spacing={2} sx={{ mt: 1 }}>
             <TextField
               label="Name"
-              value={form.name}
-              onChange={(event) => setForm((f) => ({ ...f, name: event.target.value }))}
+              value={planForm.name}
+              onChange={(event) => setPlanForm((f) => ({ ...f, name: event.target.value }))}
               fullWidth
             />
             <TextField
               label="Monthly price (USD)"
               type="number"
               inputProps={{ min: 0, step: 0.01 }}
-              value={form.monthlyPrice}
-              onChange={(event) => setForm((f) => ({ ...f, monthlyPrice: event.target.value }))}
+              value={planForm.monthlyPrice}
+              onChange={(event) => setPlanForm((f) => ({ ...f, monthlyPrice: event.target.value }))}
               fullWidth
             />
             <TextField
               label="Download speed (Mbps)"
               type="number"
               inputProps={{ min: 1, step: 1 }}
-              value={form.downloadSpeedMbps}
-              onChange={(event) =>
-                setForm((f) => ({ ...f, downloadSpeedMbps: event.target.value }))
-              }
+              value={planForm.downloadSpeedMbps}
+              onChange={(event) => setPlanForm((f) => ({ ...f, downloadSpeedMbps: event.target.value }))}
               fullWidth
             />
             <TextField
               label="Features (one per line)"
-              value={form.featuresText}
-              onChange={(event) => setForm((f) => ({ ...f, featuresText: event.target.value }))}
+              value={planForm.featuresText}
+              onChange={(event) => setPlanForm((f) => ({ ...f, featuresText: event.target.value }))}
               multiline
               minRows={4}
               fullWidth
             />
-            <TextField
-              label="Category ID"
-              value={form.categoryId}
-              onChange={(event) => setForm((f) => ({ ...f, categoryId: event.target.value }))}
-              fullWidth
-              helperText="Same ID on all plans in one catalogue line (e.g. res_everyday)."
-            />
-            <TextField
-              label="Category title"
-              value={form.categoryTitle}
-              onChange={(event) => setForm((f) => ({ ...f, categoryTitle: event.target.value }))}
-              fullWidth
-            />
-            <TextField
-              label="Category sort order"
-              type="number"
-              inputProps={{ step: 1 }}
-              value={form.categorySortOrder}
-              onChange={(event) => setForm((f) => ({ ...f, categorySortOrder: event.target.value }))}
-              fullWidth
-              helperText="Lower numbers appear first on the storefront."
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={planForm.isActive}
+                  onChange={(event) => setPlanForm((f) => ({ ...f, isActive: event.target.checked }))}
+                />
+              }
+              label="Active on storefront"
             />
           </Stack>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setEditing(null)}>Cancel</Button>
+          <Button onClick={closePlanDialog}>Cancel</Button>
           <Button variant="contained" onClick={savePlan}>
             Save
           </Button>

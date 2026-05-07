@@ -1,5 +1,6 @@
 import bcrypt from "bcryptjs";
 import Plan from "./models/planModel.js";
+import PlanCategory from "./models/planCategoryModel.js";
 import ServiceZone from "./models/serviceZoneModel.js";
 import User from "./models/userModel.js";
 
@@ -14,6 +15,7 @@ export const DEFAULT_PLANS = [
     categoryId: "res_everyday",
     categoryTitle: "Residential · Everyday fibre",
     categorySortOrder: 0,
+    planSortOrder: 0,
     isActive: true
   },
   {
@@ -25,6 +27,7 @@ export const DEFAULT_PLANS = [
     categoryId: "res_everyday",
     categoryTitle: "Residential · Everyday fibre",
     categorySortOrder: 0,
+    planSortOrder: 1,
     isActive: true
   },
   {
@@ -36,6 +39,7 @@ export const DEFAULT_PLANS = [
     categoryId: "res_everyday",
     categoryTitle: "Residential · Everyday fibre",
     categorySortOrder: 0,
+    planSortOrder: 2,
     isActive: true
   },
   {
@@ -47,6 +51,7 @@ export const DEFAULT_PLANS = [
     categoryId: "res_performance",
     categoryTitle: "Residential · Performance & gaming",
     categorySortOrder: 1,
+    planSortOrder: 0,
     isActive: true
   },
   {
@@ -58,6 +63,7 @@ export const DEFAULT_PLANS = [
     categoryId: "res_performance",
     categoryTitle: "Residential · Performance & gaming",
     categorySortOrder: 1,
+    planSortOrder: 1,
     isActive: true
   },
   {
@@ -69,6 +75,22 @@ export const DEFAULT_PLANS = [
     categoryId: "res_performance",
     categoryTitle: "Residential · Performance & gaming",
     categorySortOrder: 1,
+    planSortOrder: 2,
+    isActive: true
+  }
+];
+
+const DEFAULT_PLAN_CATEGORIES = [
+  {
+    id: "res_everyday",
+    title: "Residential Â· Everyday fibre",
+    sortOrder: 0,
+    isActive: true
+  },
+  {
+    id: "res_performance",
+    title: "Residential Â· Performance & gaming",
+    sortOrder: 1,
     isActive: true
   }
 ];
@@ -116,6 +138,12 @@ export async function seedDatabase() {
     );
 
     await User.updateOne({ email: "admin@brillar.com" }, { $set: { name: "Brillar Admin" } });
+
+    await Promise.all(
+      DEFAULT_PLAN_CATEGORIES.map((category) =>
+        PlanCategory.updateOne({ id: category.id }, { $set: category }, { upsert: true })
+      )
+    );
 
     await Promise.all(
       DEFAULT_PLANS.map((plan) => Plan.updateOne({ id: plan.id }, { $set: plan }, { upsert: true }))
