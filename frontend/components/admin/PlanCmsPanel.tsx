@@ -167,14 +167,16 @@ export default function PlanCmsPanel() {
     }
   }
 
-  async function deactivateCategory(category: PlanCategory) {
+  async function setCategoryActive(category: PlanCategory, isActive: boolean) {
     try {
-      await deleteData(`/api/plan-categories/${encodeURIComponent(category.id)}`);
+      await putData(`/api/plan-categories/${encodeURIComponent(category.id)}`, { isActive });
       await loadData();
       router.refresh();
     } catch (err) {
       setLoadError(
-        isAxiosError(err) ? err.response?.data?.message || "Unable to deactivate category." : "Unable to deactivate category."
+        isAxiosError(err)
+          ? err.response?.data?.message || "Unable to update category."
+          : "Unable to update category."
       );
     }
   }
@@ -299,7 +301,11 @@ export default function PlanCmsPanel() {
                   <Typography variant="h5" sx={{ fontWeight: 700 }}>
                     {category.title}
                   </Typography>
-                  <Chip size="small" label={category.isActive ? "Active" : "Inactive"} />
+                  <Chip
+                    size="small"
+                    label={category.isActive ? "Active" : "Inactive"}
+                    color={category.isActive ? "success" : "default"}
+                  />
                 </Stack>
                 <Typography variant="caption" color="text.secondary">
                   {categoryPlans.length} {categoryPlans.length === 1 ? "plan" : "plans"}
@@ -312,8 +318,13 @@ export default function PlanCmsPanel() {
                 <IconButton aria-label="Edit category" onClick={() => openCategoryEdit(category)}>
                   <EditIcon />
                 </IconButton>
-                <IconButton aria-label="Deactivate category" onClick={() => deactivateCategory(category)}>
-                  <BlockIcon />
+                <IconButton
+                  aria-label={category.isActive ? "Deactivate category" : "Reactivate category"}
+                  title={category.isActive ? "Deactivate category" : "Reactivate category"}
+                  color={category.isActive ? "default" : "success"}
+                  onClick={() => setCategoryActive(category, !category.isActive)}
+                >
+                  {category.isActive ? <BlockIcon /> : <CheckCircleIcon />}
                 </IconButton>
               </Stack>
             </Stack>

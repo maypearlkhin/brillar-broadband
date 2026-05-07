@@ -65,6 +65,8 @@ export async function updateCategory(req, res) {
     return res.status(404).json({ message: "Category not found." });
   }
 
+  const previousActive = category.isActive;
+
   if (req.body.title !== undefined) {
     category.title = cleanTitle(req.body.title) || category.title;
   }
@@ -80,8 +82,11 @@ export async function updateCategory(req, res) {
     categorySortOrder: category.sortOrder
   };
 
-  if (!category.isActive) {
-    planUpdate.isActive = false;
+  /* Cascade isActive **both ways** when the flag actually changed:
+     - deactivating a category → all its plans go inactive
+     - reactivating a category → all its plans come back active */
+  if (previousActive !== category.isActive) {
+    planUpdate.isActive = category.isActive;
   }
 
   await Plan.updateMany({ categoryId: category.id }, { $set: planUpdate });
