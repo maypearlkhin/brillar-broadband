@@ -35,6 +35,9 @@ export type PlanRow = {
   name: string;
   monthlyPrice: number;
   downloadSpeedMbps: number;
+  price90Days?: number;
+  price180Days?: number;
+  price365Days?: number;
   features: string[];
   categoryId?: string;
   categoryTitle?: string;
@@ -54,6 +57,9 @@ type PlanForm = {
   name: string;
   monthlyPrice: string;
   downloadSpeedMbps: string;
+  price90Days: string;
+  price180Days: string;
+  price365Days: string;
   featuresText: string;
   isActive: boolean;
 };
@@ -62,6 +68,9 @@ const emptyPlanForm: PlanForm = {
   name: "",
   monthlyPrice: "",
   downloadSpeedMbps: "",
+  price90Days: "",
+  price180Days: "",
+  price365Days: "",
   featuresText: "",
   isActive: true
 };
@@ -71,6 +80,9 @@ function formFromPlan(plan: PlanRow): PlanForm {
     name: plan.name,
     monthlyPrice: String(plan.monthlyPrice),
     downloadSpeedMbps: String(plan.downloadSpeedMbps),
+    price90Days: plan.price90Days !== undefined ? String(plan.price90Days) : "",
+    price180Days: plan.price180Days !== undefined ? String(plan.price180Days) : "",
+    price365Days: plan.price365Days !== undefined ? String(plan.price365Days) : "",
     featuresText: plan.features.join("\n"),
     isActive: plan.isActive
   };
@@ -209,6 +221,9 @@ export default function PlanCmsPanel() {
     setError("");
     const monthlyPrice = Number(planForm.monthlyPrice);
     const downloadSpeedMbps = Number(planForm.downloadSpeedMbps);
+    const price90Days = Number(planForm.price90Days || 0);
+    const price180Days = Number(planForm.price180Days || 0);
+    const price365Days = Number(planForm.price365Days || 0);
 
     if (!planForm.name.trim()) {
       setError("Plan name is required.");
@@ -225,6 +240,11 @@ export default function PlanCmsPanel() {
       return;
     }
 
+    if (![price90Days, price180Days, price365Days].every((price) => Number.isFinite(price) && price >= 0)) {
+      setError("90Days, 180Days, and 365Days amounts must be valid numbers.");
+      return;
+    }
+
     const features = planForm.featuresText
       .split("\n")
       .map((line) => line.trim())
@@ -234,6 +254,9 @@ export default function PlanCmsPanel() {
       name: planForm.name.trim(),
       monthlyPrice,
       downloadSpeedMbps,
+      price90Days,
+      price180Days,
+      price365Days,
       features,
       categoryId: planCategory.id,
       isActive: planForm.isActive
@@ -365,6 +388,33 @@ export default function PlanCmsPanel() {
                           </Typography>
                           <Typography color="text.secondary">{plan.downloadSpeedMbps} Mbps</Typography>
                         </Stack>
+                        <Grid container spacing={1}>
+                          {[
+                            ["90Days", plan.price90Days ?? 0],
+                            ["180Days", plan.price180Days ?? 0],
+                            ["365Days", plan.price365Days ?? 0]
+                          ].map(([label, value]) => (
+                            <Grid item xs={4} key={String(label)}>
+                              <Box
+                                sx={{
+                                  border: "1px solid",
+                                  borderColor: "divider",
+                                  borderRadius: 1,
+                                  px: 1,
+                                  py: 0.75,
+                                  bgcolor: "rgba(236, 72, 153, 0.04)"
+                                }}
+                              >
+                                <Typography variant="caption" color="text.secondary" display="block">
+                                  {label}
+                                </Typography>
+                                <Typography variant="body2" sx={{ fontWeight: 700 }}>
+                                  S${value}
+                                </Typography>
+                              </Box>
+                            </Grid>
+                          ))}
+                        </Grid>
                         <Divider />
                         <Stack spacing={0.75}>
                           {plan.features.map((feature) => (
@@ -439,6 +489,38 @@ export default function PlanCmsPanel() {
               onChange={(event) => setPlanForm((f) => ({ ...f, downloadSpeedMbps: event.target.value }))}
               fullWidth
             />
+            <Grid container spacing={2}>
+              <Grid item xs={12} sm={4}>
+                <TextField
+                  label="90Days amount"
+                  type="number"
+                  inputProps={{ min: 0, step: 0.01 }}
+                  value={planForm.price90Days}
+                  onChange={(event) => setPlanForm((f) => ({ ...f, price90Days: event.target.value }))}
+                  fullWidth
+                />
+              </Grid>
+              <Grid item xs={12} sm={4}>
+                <TextField
+                  label="180Days amount"
+                  type="number"
+                  inputProps={{ min: 0, step: 0.01 }}
+                  value={planForm.price180Days}
+                  onChange={(event) => setPlanForm((f) => ({ ...f, price180Days: event.target.value }))}
+                  fullWidth
+                />
+              </Grid>
+              <Grid item xs={12} sm={4}>
+                <TextField
+                  label="365Days amount"
+                  type="number"
+                  inputProps={{ min: 0, step: 0.01 }}
+                  value={planForm.price365Days}
+                  onChange={(event) => setPlanForm((f) => ({ ...f, price365Days: event.target.value }))}
+                  fullWidth
+                />
+              </Grid>
+            </Grid>
             <TextField
               label="Features (one per line)"
               value={planForm.featuresText}

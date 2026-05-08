@@ -39,8 +39,21 @@ async function loadStatus(): Promise<{ incidents: IncidentPublic[]; announcement
   }
 }
 
-export default async function ServiceStatusPage() {
+export default async function ServiceStatusPage({
+  searchParams,
+}: {
+  searchParams?: { tab?: string };
+}) {
+  const validTabs = new Set(["active", "notices", "resolved"]);
+  const tabFromUrl = searchParams?.tab;
+  const initialTab = validTabs.has(String(tabFromUrl)) ? (tabFromUrl as "active" | "notices" | "resolved") : "active";
   const { incidents, announcements } = await loadStatus();
 
-  return <ServiceStatusClient incidents={incidents} announcements={announcements} />;
+  return (
+    <ServiceStatusClient
+      incidents={incidents}
+      announcements={announcements}
+      initialTab={initialTab}
+    />
+  );
 }

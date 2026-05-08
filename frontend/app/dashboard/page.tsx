@@ -36,6 +36,10 @@ type SubscriptionPayload = {
   _id: string;
   planId: PlanPayload | null;
   status: string;
+  billingTerm?: string;
+  amount?: number;
+  startDate?: string | null;
+  endDate?: string | null;
   createdAt: string;
 };
 
@@ -49,6 +53,14 @@ function getStatusColor(status: string) {
   }
 
   return "warning";
+}
+
+function formatDate(value?: string | null) {
+  if (!value) {
+    return "N/A";
+  }
+
+  return new Date(value).toLocaleDateString();
 }
 
 export default async function DashboardPage() {
@@ -174,6 +186,22 @@ export default async function DashboardPage() {
                           <TableCell>S${latestPlan.monthlyPrice}</TableCell>
                         </TableRow>
                         <TableRow>
+                          <TableCell sx={{ color: "text.secondary" }}>Purchased term</TableCell>
+                          <TableCell>{latestSubscription.billingTerm ?? "30"}Days</TableCell>
+                        </TableRow>
+                        <TableRow>
+                          <TableCell sx={{ color: "text.secondary" }}>Paid amount</TableCell>
+                          <TableCell>S${latestSubscription.amount ?? latestPlan.monthlyPrice}</TableCell>
+                        </TableRow>
+                        <TableRow>
+                          <TableCell sx={{ color: "text.secondary" }}>Start date</TableCell>
+                          <TableCell>{formatDate(latestSubscription.startDate)}</TableCell>
+                        </TableRow>
+                        <TableRow>
+                          <TableCell sx={{ color: "text.secondary" }}>End date</TableCell>
+                          <TableCell>{formatDate(latestSubscription.endDate)}</TableCell>
+                        </TableRow>
+                        <TableRow>
                           <TableCell sx={{ color: "text.secondary" }}>Provision status</TableCell>
                           <TableCell>{latestSubscription.status}</TableCell>
                         </TableRow>
@@ -212,6 +240,9 @@ export default async function DashboardPage() {
                           <TableCell>Plan</TableCell>
                           <TableCell>Speed</TableCell>
                           <TableCell>Price</TableCell>
+                          <TableCell>Term</TableCell>
+                          <TableCell>Start date</TableCell>
+                          <TableCell>End date</TableCell>
                           <TableCell>Status</TableCell>
                         </TableRow>
                       </TableHead>
@@ -231,6 +262,9 @@ export default async function DashboardPage() {
                               <TableCell>{plan.name}</TableCell>
                               <TableCell>{plan.downloadSpeedMbps} Mbps</TableCell>
                               <TableCell>S${plan.monthlyPrice}</TableCell>
+                              <TableCell>{subscription.billingTerm ?? "30"}Days</TableCell>
+                              <TableCell>{formatDate(subscription.startDate)}</TableCell>
+                              <TableCell>{formatDate(subscription.endDate)}</TableCell>
                               <TableCell>
                                 <Chip
                                   size="small"

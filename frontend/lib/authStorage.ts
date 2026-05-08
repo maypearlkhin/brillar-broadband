@@ -24,7 +24,7 @@ export function setAuthToken(token: string) {
 
   const expires = new Date(Date.now() + SEVEN_DAYS_IN_DAYS * 24 * 60 * 60 * 1000).toUTCString();
   const secure = window.location.protocol === "https:" ? "; Secure" : "";
-  document.cookie = `${TOKEN_COOKIE}=${encodeURIComponent(token)}; Expires=${expires}; Path=/; SameSite=Lax${secure}`;
+  document.cookie = `${TOKEN_COOKIE}=${token}; Expires=${expires}; Path=/; SameSite=Lax${secure}`;
 }
 
 export function getAuthToken(): string | undefined {
@@ -32,11 +32,21 @@ export function getAuthToken(): string | undefined {
     return undefined;
   }
 
-  return document.cookie
+  const raw = document.cookie
     .split(";")
     .map((part) => part.trim())
     .find((part) => part.startsWith(`${TOKEN_COOKIE}=`))
     ?.slice(TOKEN_COOKIE.length + 1);
+
+  if (!raw) {
+    return undefined;
+  }
+
+  try {
+    return decodeURIComponent(raw);
+  } catch {
+    return raw;
+  }
 }
 
 export function clearAuthToken() {

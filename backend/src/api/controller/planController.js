@@ -1,5 +1,6 @@
 import Plan from "../../models/planModel.js";
 import PlanCategory from "../../models/planCategoryModel.js";
+import mongoose from "mongoose";
 
 function slugifyPlanId(value) {
   return String(value)
@@ -13,12 +14,20 @@ function cleanTitle(value) {
   return String(value ?? "").replace(/Â·/g, "·").trim();
 }
 
+function numericPrice(value, fallback = 0) {
+  const n = Number(value);
+  return Number.isFinite(n) && n >= 0 ? n : fallback;
+}
+
 export function serializePlanDoc(plan) {
   return {
     id: plan.id,
     name: plan.name,
     monthlyPrice: plan.monthlyPrice,
     downloadSpeedMbps: plan.downloadSpeedMbps,
+    price90Days: numericPrice(plan.price90Days),
+    price180Days: numericPrice(plan.price180Days),
+    price365Days: numericPrice(plan.price365Days),
     features: plan.features,
     categoryId: plan.categoryId,
     categoryTitle: cleanTitle(plan.categoryTitle),
@@ -49,7 +58,17 @@ export async function listActivePlans(_req, res) {
 }
 
 export async function getPlanById(req, res) {
-  const plan = await Plan.findOne({ id: req.params.planId, isActive: true }).lean();
+  const planId = String(req.params.planId ?? "").trim();
+  const match = [{ id: planId }];
+
+  if (mongoose.Types.ObjectId.isValid(planId)) {
+    match.push({ _id: planId });
+  }
+
+  const plan = await Plan.findOne({
+    isActive: true,
+    $or: match
+  }).lean();
 
   const category = plan ? await PlanCategory.findOne({ id: plan.categoryId, isActive: true }).lean() : null;
 
@@ -76,6 +95,9 @@ export async function createPlan(req, res) {
   const name = String(body.name ?? "").trim();
   const monthlyPrice = Number(body.monthlyPrice);
   const downloadSpeedMbps = Number(body.downloadSpeedMbps);
+  const price90Days = numericPrice(body.price90Days);
+  const price180Days = numericPrice(body.price180Days);
+  const price365Days = numericPrice(body.price365Days);
   const categoryId = String(body.categoryId ?? "general").trim() || "general";
   const category = await PlanCategory.findOne({ id: categoryId }).lean();
   const categoryTitle = category?.title ?? (cleanTitle(body.categoryTitle ?? "Plans") || "Plans");
@@ -111,6 +133,9 @@ export async function createPlan(req, res) {
     name,
     monthlyPrice,
     downloadSpeedMbps,
+    price90Days,
+    price180Days,
+    price365Days,
     features,
     categoryId,
     categoryTitle,
@@ -143,6 +168,18 @@ export async function updatePlan(req, res) {
 
   if (body.downloadSpeedMbps !== undefined) {
     plan.downloadSpeedMbps = body.downloadSpeedMbps;
+  }
+
+  if (body.price90Days !== undefined) {
+    plan.price90Days = numericPrice(body.price90Days, plan.price90Days);
+  }
+
+  if (body.price180Days !== undefined) {
+    plan.price180Days = numericPrice(body.price180Days, plan.price180Days);
+  }
+
+  if (body.price365Days !== undefined) {
+    plan.price365Days = numericPrice(body.price365Days, plan.price365Days);
   }
 
   if (body.features !== undefined) {

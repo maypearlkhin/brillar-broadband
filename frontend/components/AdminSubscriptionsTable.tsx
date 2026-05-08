@@ -30,6 +30,10 @@ export type AdminSubscriptionRow = {
   monthlyPrice: number;
   downloadSpeedMbps: number;
   status: string;
+  billingTerm: string;
+  amount: number;
+  startDate?: string | null;
+  endDate?: string | null;
   createdAt: string;
 };
 
@@ -43,6 +47,14 @@ function getStatusColor(status: string) {
   }
 
   return "warning";
+}
+
+function formatDate(value?: string | null) {
+  if (!value) {
+    return "N/A";
+  }
+
+  return new Date(value).toLocaleDateString();
 }
 
 export default function AdminSubscriptionsTable({
@@ -132,9 +144,15 @@ export default function AdminSubscriptionsTable({
                     }}
                   >
                     <Typography>{subscription.planName}</Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      {subscription.downloadSpeedMbps} Mbps, S${subscription.monthlyPrice}/month
-                    </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          {subscription.downloadSpeedMbps} Mbps, S${subscription.monthlyPrice}/month
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          {subscription.billingTerm}Days, S${subscription.amount}
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          {formatDate(subscription.startDate)} to {formatDate(subscription.endDate)}
+                        </Typography>
                   </TableCell>
                   <TableCell
                     sx={{

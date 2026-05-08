@@ -10,6 +10,9 @@ type CheckoutPageProps = {
   params: {
     planId: string;
   };
+  searchParams: {
+    term?: string;
+  };
 };
 
 type PlanPayload = {
@@ -18,11 +21,14 @@ type PlanPayload = {
     name: string;
     monthlyPrice: number;
     downloadSpeedMbps: number;
+    price90Days?: number;
+    price180Days?: number;
+    price365Days?: number;
     features: string[];
   };
 };
 
-export default async function CheckoutPage({ params }: CheckoutPageProps) {
+export default async function CheckoutPage({ params, searchParams }: CheckoutPageProps) {
   let payload: PlanPayload;
 
   try {
@@ -38,7 +44,7 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
 
   return (
     <>
-      <Container maxWidth="lg" sx={{ pt: { xs: 2, sm: 3 } }}>
+      <Container maxWidth="lg" sx={{ pt: { xs: 1, sm: 1.5 }, "& p": { mb: 0.5 } }}>
         <SessionGreeting />
       </Container>
       <CheckoutForm
@@ -47,8 +53,12 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
           name: plan.name,
           monthlyPrice: plan.monthlyPrice,
           downloadSpeedMbps: plan.downloadSpeedMbps,
+          price90Days: plan.price90Days,
+          price180Days: plan.price180Days,
+          price365Days: plan.price365Days,
           features: plan.features,
         }}
+        selectedTerm={searchParams.term}
       />
     </>
   );

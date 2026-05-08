@@ -46,7 +46,8 @@ export function getTokenFromRequest(request: NextRequest) {
 }
 
 export function getCurrentUserFromCookies() {
-  const token = cookies().get(TOKEN_COOKIE)?.value;
+  const rawToken = cookies().get(TOKEN_COOKIE)?.value;
+  const token = rawToken ? decodeURIComponent(rawToken) : undefined;
 
   if (!token) {
     return null;

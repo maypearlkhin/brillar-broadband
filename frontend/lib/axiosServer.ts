@@ -10,7 +10,8 @@ const baseURL = process.env.NEXT_PUBLIC_URL ?? "http://localhost:4000";
  * from the Next host without any cross-site cookie issues.
  */
 export function axiosServer(): AxiosInstance {
-  const token = cookies().get(TOKEN_COOKIE)?.value;
+  const rawToken = cookies().get(TOKEN_COOKIE)?.value;
+  const token = rawToken ? decodeURIComponent(rawToken) : undefined;
 
   return axios.create({
     baseURL,

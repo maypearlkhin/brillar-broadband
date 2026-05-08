@@ -22,6 +22,21 @@ const planSchema = new mongoose.Schema(
       required: true,
       min: 1
     },
+    price90Days: {
+      type: Number,
+      default: 0,
+      min: 0
+    },
+    price180Days: {
+      type: Number,
+      default: 0,
+      min: 0
+    },
+    price365Days: {
+      type: Number,
+      default: 0,
+      min: 0
+    },
     features: {
       type: [String],
       default: []

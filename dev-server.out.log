@@ -24,107 +24,689 @@
 [api] Auth: Bearer token in Authorization header
 [web] npm error code ENOWORKSPACES
 [web] npm error This command does not support workspaces.
-[web] npm error A complete log of this run can be found in: C:\Users\DELL\AppData\Local\npm-cache\_logs\2026-05-07T14_00_11_775Z-debug-0.log
-[web]  ✓ Ready in 2.7s
+[web] npm error A complete log of this run can be found in: C:\Users\DELL\AppData\Local\npm-cache\_logs\2026-05-08T06_52_50_920Z-debug-0.log
+[web]  ✓ Ready in 3.7s
 [web]  ○ Compiling /middleware ...
-[web]  ⨯ ./lib/authStorage.ts:1:1
-[web] Module not found: Can't resolve 'js-cookie'
-[web] [0m[31m[1m>[22m[39m[90m 1 |[39m [36mimport[39m [33mCookies[39m [36mfrom[39m [32m"js-cookie"[39m[33m;[39m[0m
-[web] [0m [90m   |[39m [31m[1m^[22m[39m[0m
-[web] [0m [90m 2 |[39m [36mimport[39m { [33mTOKEN_COOKIE[39m } [36mfrom[39m [32m"./authConstants"[39m[33m;[39m[0m
-[web] [0m [90m 3 |[39m[0m
-[web] [0m [90m 4 |[39m [90m/**[39m[0m
-[web] 
-[web] https://nextjs.org/docs/messages/module-not-found
-[web] 
-[web] Import trace for requested module:
-[web] ./components/LogoutButton.tsx
-[web]  ⨯ ./lib/authStorage.ts:1:1
-[web] Module not found: Can't resolve 'js-cookie'
-[web] [0m[31m[1m>[22m[39m[90m 1 |[39m [36mimport[39m [33mCookies[39m [36mfrom[39m [32m"js-cookie"[39m[33m;[39m[0m
-[web] [0m [90m   |[39m [31m[1m^[22m[39m[0m
-[web] [0m [90m 2 |[39m [36mimport[39m { [33mTOKEN_COOKIE[39m } [36mfrom[39m [32m"./authConstants"[39m[33m;[39m[0m
-[web] [0m [90m 3 |[39m[0m
-[web] [0m [90m 4 |[39m [90m/**[39m[0m
-[web] 
-[web] https://nextjs.org/docs/messages/module-not-found
-[web] 
-[web] Import trace for requested module:
-[web] ./components/LogoutButton.tsx
-[web]  GET /admin/plans 500 in 12438ms
-[web]  ⨯ ./lib/authStorage.ts:1:1
-[web] Module not found: Can't resolve 'js-cookie'
-[web] [0m[31m[1m>[22m[39m[90m 1 |[39m [36mimport[39m [33mCookies[39m [36mfrom[39m [32m"js-cookie"[39m[33m;[39m[0m
-[web] [0m [90m   |[39m [31m[1m^[22m[39m[0m
-[web] [0m [90m 2 |[39m [36mimport[39m { [33mTOKEN_COOKIE[39m } [36mfrom[39m [32m"./authConstants"[39m[33m;[39m[0m
-[web] [0m [90m 3 |[39m[0m
-[web] [0m [90m 4 |[39m [90m/**[39m[0m
-[web] 
-[web] https://nextjs.org/docs/messages/module-not-found
-[web] 
-[web] Import trace for requested module:
-[web] ./components/LogoutButton.tsx
-[web]  GET / 500 in 6779ms
-[web]  ✓ Compiled /_not-found in 883ms (1044 modules)
-[web]  ○ Compiling /admin/plans ...
-[web]  ✓ Compiled / in 880ms (1158 modules)
-[web]  ✓ Compiled (1203 modules)
-[web]  GET / 200 in 1430ms
-[web]  GET /admin/plans 200 in 2077ms
-[web]  GET / 200 in 182ms
-[web]  GET / 200 in 154ms
-[web]  GET / 200 in 160ms
-[web]  GET / 200 in 222ms
-[web]  ○ Compiling /register ...
-[web]  ✓ Compiled /register in 2.2s (2181 modules)
-[web]  ○ Compiling /login ...
-[web]  ✓ Compiled /login in 690ms (2190 modules)
-[web]  ○ Compiling /plans ...
-[web]  ✓ Compiled /plans in 1362ms (2218 modules)
-[web]  GET /plans 200 in 2073ms
-[web]  ○ Compiling /dashboard ...
-[web]  ✓ Compiled /dashboard in 987ms (2276 modules)
-[web]  ○ Compiling /service-status ...
-[web]  ✓ Compiled /service-status in 1560ms (2319 modules)
-[web]  ○ Compiling /checkout/[planId] ...
-[web]  ✓ Compiled /checkout/[planId] in 1300ms (2321 modules)
+[web]  ✓ Compiled /middleware in 3.5s (2005 modules)
+[web]  GET /admin/integration 200 in 4085ms
 [web]  ○ Compiling / ...
-[web]  ✓ Compiled / in 514ms (1268 modules)
+[web]  ✓ Compiled / in 3.3s (1933 modules)
+[web]  GET / 200 in 4076ms
 [web]  ○ Compiling /admin/dashboard ...
-[web]  ✓ Compiled /admin/dashboard in 1262ms (2355 modules)
-[web]  GET /admin/dashboard 200 in 1807ms
+[web]  ✓ Compiled /admin/dashboard in 1990ms (1865 modules)
+[web]  GET /admin/dashboard 200 in 2938ms
 [web]  ○ Compiling /admin/plans ...
-[web]  ✓ Compiled /admin/plans in 605ms (1298 modules)
-[web]  ○ Compiling /admin/network ...
-[web]  ✓ Compiled /admin/network in 990ms (2392 modules)
-[web]  ○ Compiling /admin/announcements ...
-[web]  ✓ Compiled /admin/announcements in 723ms (2378 modules)
-[web]  ✓ Compiled in 2.3s (2340 modules)
-[web]  GET /admin/plans 200 in 235ms
-[web]  GET / 200 in 191ms
-[web]  GET /admin/dashboard 200 in 159ms
+[web]  ✓ Compiled /admin/plans in 1828ms (2000 modules)
+[api] [32m[nodemon] restarting due to changes...[39m
+[api] [32m[nodemon] starting `node src/index.js`[39m
+[api] Brillar API listening on http://127.0.0.1:4000
+[api] Auth: Bearer token in Authorization header
+[api] [32m[nodemon] restarting due to changes...[39m
+[api] [32m[nodemon] starting `node src/index.js`[39m
+[api] Brillar API listening on http://127.0.0.1:4000
+[api] Auth: Bearer token in Authorization header
+[api] [32m[nodemon] restarting due to changes...[39m
+[api] [32m[nodemon] starting `node src/index.js`[39m
+[api] Brillar API listening on http://127.0.0.1:4000
+[api] Auth: Bearer token in Authorization header
+[api] [32m[nodemon] restarting due to changes...[39m
+[api] [32m[nodemon] starting `node src/index.js`[39m
+[api] Brillar API listening on http://127.0.0.1:4000
+[api] Auth: Bearer token in Authorization header
+[web]  ✓ Compiled in 1552ms (2000 modules)
+[web]  GET /admin/plans 200 in 441ms
+[web]  ✓ Compiled / in 272ms (1199 modules)
+[web]  GET / 200 in 900ms
+[web]  GET /admin/plans 200 in 209ms
+[web]  ○ Compiling /login ...
+[web]  ✓ Compiled /login in 1408ms (2051 modules)
 [web]  ○ Compiling /dashboard ...
-[web]  ✓ Compiled /dashboard in 1144ms (1282 modules)
-[web]  GET /dashboard 200 in 1616ms
-[web]  GET /dashboard 200 in 132ms
+[web]  ✓ Compiled /dashboard in 2.4s (2036 modules)
+[web]  GET /dashboard 200 in 3258ms
 [web]  ○ Compiling /plans ...
-[web]  ✓ Compiled /plans in 555ms (1286 modules)
-[web]  GET /admin/dashboard 200 in 280ms
+[web]  ✓ Compiled /plans in 795ms (2052 modules)
+[web]  ○ Compiling /checkout/[planId] ...
+[web]  ✓ Compiled /checkout/[planId] in 1368ms (2071 modules)
+[web]  ✓ Compiled / in 440ms (1232 modules)
+[web]  GET / 200 in 602ms
+[web]  GET /checkout/plan_005 200 in 326ms
+[web]  GET /login?next=%2Fcheckout%2Fplan_005 200 in 106ms
+[web]  GET /checkout/plan_005 200 in 162ms
+[web]  ✓ Compiled in 1042ms (1206 modules)
+[web]  ✓ Compiled in 520ms (1206 modules)
+[web]  ✓ Compiled in 507ms (1206 modules)
+[web]  ✓ Compiled in 2.3s (2066 modules)
+[web]  ⨯ ./components/CheckoutForm.tsx
+[web] Error: 
+[web]   [31mx[0m cannot reassign to a variable declared with `const`
+[web]      ,-[[36;1;4mC:\Users\DELL\Documents\New project\frontend\components\CheckoutForm.tsx[0m:326:1]
+[web]  [2m326[0m |   amountLabel: string;
+[web]  [2m327[0m | };
+[web]  [2m328[0m | 
+[web]  [2m329[0m | function ReceiptSummary({ plan, fields, orderDateLabel, amount, amountLabel }: ReceiptSummaryProps) {
+[web]      : [31;1m                                                        ^^^|^^[0m
+[web]      :                                                            [31;1m`-- [31;1mcannot reassign[0m[0m
+[web]  [2m330[0m |   const nameLine = fields.cardName.trim() || "—";
+[web]  [2m331[0m |   const panLine = formatReceiptPan(fields.cardNumber);
+[web]  [2m332[0m |   const expiryLine =
+[web]  [2m333[0m |     fields.expiryDigits.length === 4 ? formatExpiryDisplay(fields.expiryDigits) : "—";
+[web]  [2m334[0m |   const amount =
+[web]      : [33;1m        ^^^|^^[0m
+[web]      :            [33;1m`-- [33;1mconst variable was declared here[0m[0m
+[web]  [2m335[0m |     typeof plan.monthlyPrice === "number" && Number.isFinite(plan.monthlyPrice)
+[web]  [2m336[0m |       ? plan.monthlyPrice.toFixed(2)
+[web]  [2m337[0m |       : String(plan.monthlyPrice);
+[web]      `----
+[web] 
+[web]   [31mx[0m the name `amount` is defined multiple times
+[web]      ,-[[36;1;4mC:\Users\DELL\Documents\New project\frontend\components\CheckoutForm.tsx[0m:326:1]
+[web]  [2m326[0m |   amountLabel: string;
+[web]  [2m327[0m | };
+[web]  [2m328[0m | 
+[web]  [2m329[0m | function ReceiptSummary({ plan, fields, orderDateLabel, amount, amountLabel }: ReceiptSummaryProps) {
+[web]      : [31;1m                                                        ^^^|^^[0m
+[web]      :                                                            [31;1m`-- [31;1mprevious definition of `amount` here[0m[0m
+[web]  [2m330[0m |   const nameLine = fields.cardName.trim() || "—";
+[web]  [2m331[0m |   const panLine = formatReceiptPan(fields.cardNumber);
+[web]  [2m332[0m |   const expiryLine =
+[web]  [2m333[0m |     fields.expiryDigits.length === 4 ? formatExpiryDisplay(fields.expiryDigits) : "—";
+[web]  [2m334[0m |   const amount =
+[web]      : [33;1m        ^^^|^^[0m
+[web]      :            [33;1m`-- [33;1m`amount` redefined here[0m[0m
+[web]  [2m335[0m |     typeof plan.monthlyPrice === "number" && Number.isFinite(plan.monthlyPrice)
+[web]  [2m336[0m |       ? plan.monthlyPrice.toFixed(2)
+[web]  [2m337[0m |       : String(plan.monthlyPrice);
+[web]      `----
+[web] 
+[web] Import trace for requested module:
+[web] ./components/CheckoutForm.tsx
+[web] ./app/checkout/[planId]/page.tsx
+[web]  ✓ Compiled in 839ms (2066 modules)
+[web]  ⚠ Fast Refresh had to perform a full reload when (app-pages-browser)/../node_modules/@mui/icons-material/CheckCircleOutline.js changed. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+[web]  ⨯ components\CheckoutForm.tsx (336:16) @ toFixed
+[web]  ⨯ TypeError: Cannot read properties of undefined (reading 'toFixed')
+[web]     at ReceiptSummary (./components/CheckoutForm.tsx:351:109)
+[web] digest: "3100634687"
+[web] [0m [90m 334 |[39m   [36mconst[39m amountText [33m=[39m[0m
+[web] [0m [90m 335 |[39m     [36mtypeof[39m plan[33m.[39mmonthlyPrice [33m===[39m [32m"number"[39m [33m&&[39m [33mNumber[39m[33m.[39misFinite(plan[33m.[39mmonthlyPrice)[0m
+[web] [0m[31m[1m>[22m[39m[90m 336 |[39m       [33m?[39m amount[33m.[39mtoFixed([35m2[39m)[0m
+[web] [0m [90m     |[39m                [31m[1m^[22m[39m[0m
+[web] [0m [90m 337 |[39m       [33m:[39m [33mString[39m(amount)[33m;[39m[0m
+[web] [0m [90m 338 |[39m[0m
+[web] [0m [90m 339 |[39m   [36mreturn[39m ([0m
+[web]  GET /checkout/plan_004 500 in 546ms
+[web]  ✓ Compiled in 1690ms (2066 modules)
+[web]  ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+[web]  ⨯ components\CheckoutForm.tsx (336:16) @ toFixed
+[web]  ⨯ TypeError: Cannot read properties of undefined (reading 'toFixed')
+[web]     at ReceiptSummary (./components/CheckoutForm.tsx:351:109)
+[web] digest: "3100634687"
+[web] [0m [90m 334 |[39m   [36mconst[39m amountText [33m=[39m[0m
+[web] [0m [90m 335 |[39m     [36mtypeof[39m plan[33m.[39mmonthlyPrice [33m===[39m [32m"number"[39m [33m&&[39m [33mNumber[39m[33m.[39misFinite(plan[33m.[39mmonthlyPrice)[0m
+[web] [0m[31m[1m>[22m[39m[90m 336 |[39m       [33m?[39m amount[33m.[39mtoFixed([35m2[39m)[0m
+[web] [0m [90m     |[39m                [31m[1m^[22m[39m[0m
+[web] [0m [90m 337 |[39m       [33m:[39m [33mString[39m(amount)[33m;[39m[0m
+[web] [0m [90m 338 |[39m[0m
+[web] [0m [90m 339 |[39m   [36mreturn[39m ([0m
+[web]  GET /checkout/plan_004 500 in 562ms
+[web]  ✓ Compiled in 893ms (2066 modules)
+[web]  ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+[web]  ⨯ components\CheckoutForm.tsx (336:16) @ toFixed
+[web]  ⨯ TypeError: Cannot read properties of undefined (reading 'toFixed')
+[web]     at ReceiptSummary (./components/CheckoutForm.tsx:351:109)
+[web] digest: "3100634687"
+[web] [0m [90m 334 |[39m   [36mconst[39m amountText [33m=[39m[0m
+[web] [0m [90m 335 |[39m     [36mtypeof[39m plan[33m.[39mmonthlyPrice [33m===[39m [32m"number"[39m [33m&&[39m [33mNumber[39m[33m.[39misFinite(plan[33m.[39mmonthlyPrice)[0m
+[web] [0m[31m[1m>[22m[39m[90m 336 |[39m       [33m?[39m amount[33m.[39mtoFixed([35m2[39m)[0m
+[web] [0m [90m     |[39m                [31m[1m^[22m[39m[0m
+[web] [0m [90m 337 |[39m       [33m:[39m [33mString[39m(amount)[33m;[39m[0m
+[web] [0m [90m 338 |[39m[0m
+[web] [0m [90m 339 |[39m   [36mreturn[39m ([0m
+[web]  GET /checkout/plan_004 500 in 395ms
+[web]  ✓ Compiled in 1030ms (2066 modules)
+[web]  ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+[web]  ⨯ components\CheckoutForm.tsx (336:16) @ toFixed
+[web]  ⨯ TypeError: Cannot read properties of undefined (reading 'toFixed')
+[web]     at ReceiptSummary (./components/CheckoutForm.tsx:351:109)
+[web] digest: "3100634687"
+[web] [0m [90m 334 |[39m   [36mconst[39m amountText [33m=[39m[0m
+[web] [0m [90m 335 |[39m     [36mtypeof[39m plan[33m.[39mmonthlyPrice [33m===[39m [32m"number"[39m [33m&&[39m [33mNumber[39m[33m.[39misFinite(plan[33m.[39mmonthlyPrice)[0m
+[web] [0m[31m[1m>[22m[39m[90m 336 |[39m       [33m?[39m amount[33m.[39mtoFixed([35m2[39m)[0m
+[web] [0m [90m     |[39m                [31m[1m^[22m[39m[0m
+[web] [0m [90m 337 |[39m       [33m:[39m [33mString[39m(amount)[33m;[39m[0m
+[web] [0m [90m 338 |[39m[0m
+[web] [0m [90m 339 |[39m   [36mreturn[39m ([0m
+[web]  GET /checkout/plan_004 500 in 329ms
+[web]  ✓ Compiled in 861ms (2066 modules)
+[web]  ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+[web]  ⨯ components\CheckoutForm.tsx (336:16) @ toFixed
+[web]  ⨯ TypeError: Cannot read properties of undefined (reading 'toFixed')
+[web]     at ReceiptSummary (./components/CheckoutForm.tsx:351:109)
+[web] digest: "3100634687"
+[web] [0m [90m 334 |[39m   [36mconst[39m amountText [33m=[39m[0m
+[web] [0m [90m 335 |[39m     [36mtypeof[39m plan[33m.[39mmonthlyPrice [33m===[39m [32m"number"[39m [33m&&[39m [33mNumber[39m[33m.[39misFinite(plan[33m.[39mmonthlyPrice)[0m
+[web] [0m[31m[1m>[22m[39m[90m 336 |[39m       [33m?[39m amount[33m.[39mtoFixed([35m2[39m)[0m
+[web] [0m [90m     |[39m                [31m[1m^[22m[39m[0m
+[web] [0m [90m 337 |[39m       [33m:[39m [33mString[39m(amount)[33m;[39m[0m
+[web] [0m [90m 338 |[39m[0m
+[web] [0m [90m 339 |[39m   [36mreturn[39m ([0m
+[web]  GET /checkout/plan_004 500 in 228ms
+[web]  ✓ Compiled in 925ms (2066 modules)
+[web]  ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+[web]  GET /checkout/plan_004 200 in 497ms
+[web]  ✓ Compiled in 867ms (2066 modules)
+[web]  GET /login?next=%2Fplans 200 in 194ms
+[web]  GET /login?term=90&next=%2Fcheckout%2Fplan_004 200 in 72ms
+[web]  ✓ Compiled in 1045ms (1206 modules)
+[web]  GET /login?term=90&next=%2Fcheckout%2Fplan_004 200 in 193ms
+[web]  GET /checkout/plan_004 200 in 219ms
+[web]  GET /checkout/150mbps_pro?term=365 200 in 130ms
+[web]  GET /checkout/plan_004?term=365 200 in 154ms
+[web]  ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+[web]  ✓ Compiled in 1712ms (2066 modules)
+[web]  ⨯ components\CheckoutForm.tsx (444:26) @ getBillingOptions
+[web]  ⨯ ReferenceError: getBillingOptions is not defined
+[web]     at CheckoutForm (./components/CheckoutForm.tsx:543:28)
+[web] digest: "133947548"
+[web] [0m [90m 442 |[39m   [36mconst[39m [successOpen[33m,[39m setSuccessOpen] [33m=[39m useState([36mfalse[39m)[33m;[39m[0m
+[web] [0m [90m 443 |[39m   [36mconst[39m [successInstallLabel[33m,[39m setSuccessInstallLabel] [33m=[39m useState([32m""[39m)[33m;[39m[0m
+[web] [0m[31m[1m>[22m[39m[90m 444 |[39m   [36mconst[39m billingOptions [33m=[39m getBillingOptions(plan)[33m;[39m[0m
+[web] [0m [90m     |[39m                          [31m[1m^[22m[39m[0m
+[web] [0m [90m 445 |[39m   [36mconst[39m checkoutAmount [33m=[39m getCheckoutAmount(plan[33m,[39m billingTerm)[33m;[39m[0m
+[web] [0m [90m 446 |[39m   [36mconst[39m checkoutLabel [33m=[39m getCheckoutLabel(billingTerm)[33m;[39m[0m
+[web] [0m [90m 447 |[39m   [36mconst[39m checkoutSuffix [33m=[39m getCheckoutSuffix(billingTerm)[33m;[39m[0m
+[web]  GET /checkout/plan_004?term=365 500 in 337ms
+[web]  ✓ Compiled in 921ms (2066 modules)
+[web]  ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+[web]  ⨯ components\CheckoutForm.tsx (456:26) @ getBillingOptions
+[web]  ⨯ ReferenceError: getBillingOptions is not defined
+[web]     at CheckoutForm (./components/CheckoutForm.tsx:559:28)
+[web] digest: "447921271"
+[web] [0m [90m 454 |[39m   [36mconst[39m [successOpen[33m,[39m setSuccessOpen] [33m=[39m useState([36mfalse[39m)[33m;[39m[0m
+[web] [0m [90m 455 |[39m   [36mconst[39m [successInstallLabel[33m,[39m setSuccessInstallLabel] [33m=[39m useState([32m""[39m)[33m;[39m[0m
+[web] [0m[31m[1m>[22m[39m[90m 456 |[39m   [36mconst[39m billingOptions [33m=[39m getBillingOptions(plan)[33m;[39m[0m
+[web] [0m [90m     |[39m                          [31m[1m^[22m[39m[0m
+[web] [0m [90m 457 |[39m   [36mconst[39m checkoutAmount [33m=[39m getCheckoutAmount(plan[33m,[39m billingTerm)[33m;[39m[0m
+[web] [0m [90m 458 |[39m   [36mconst[39m checkoutLabel [33m=[39m getCheckoutLabel(billingTerm)[33m;[39m[0m
+[web] [0m [90m 459 |[39m   [36mconst[39m checkoutSuffix [33m=[39m getCheckoutSuffix(billingTerm)[33m;[39m[0m
+[web]  GET /checkout/plan_004?term=365 500 in 286ms
+[web]  ✓ Compiled in 1016ms (2066 modules)
+[web]  ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+[web]  ⨯ components\CheckoutForm.tsx (678:20) @ billingOptions
+[web]  ⨯ ReferenceError: billingOptions is not defined
+[web]     at CheckoutForm (./components/CheckoutForm.tsx:1030:59)
+[web] digest: "1479660074"
+[web] [0m [90m 676 |[39m                   }}[0m
+[web] [0m [90m 677 |[39m                 [33m>[39m[0m
+[web] [0m[31m[1m>[22m[39m[90m 678 |[39m                   {billingOptions[33m.[39mmap((option) [33m=>[39m {[0m
+[web] [0m [90m     |[39m                    [31m[1m^[22m[39m[0m
+[web] [0m [90m 679 |[39m                     [36mconst[39m selected [33m=[39m billingTerm [33m===[39m option[33m.[39mterm[33m;[39m[0m
+[web] [0m [90m 680 |[39m[0m
+[web] [0m [90m 681 |[39m                     [36mreturn[39m ([0m
+[web]  GET /checkout/plan_004?term=365 500 in 255ms
+[web]  ✓ Compiled in 825ms (2066 modules)
+[web]  ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+[web]  ⨯ components\CheckoutForm.tsx (680:20) @ billingOptions
+[web]  ⨯ ReferenceError: billingOptions is not defined
+[web]     at CheckoutForm (./components/CheckoutForm.tsx:1032:59)
+[web] digest: "4125982184"
+[web] [0m [90m 678 |[39m                   }}[0m
+[web] [0m [90m 679 |[39m                 [33m>[39m[0m
+[web] [0m[31m[1m>[22m[39m[90m 680 |[39m                   {billingOptions[33m.[39mmap((option) [33m=>[39m {[0m
+[web] [0m [90m     |[39m                    [31m[1m^[22m[39m[0m
+[web] [0m [90m 681 |[39m                     [36mconst[39m selected [33m=[39m billingTerm [33m===[39m option[33m.[39mterm[33m;[39m[0m
+[web] [0m [90m 682 |[39m[0m
+[web] [0m [90m 683 |[39m                     [36mreturn[39m ([0m
+[web]  GET /checkout/plan_004?term=365 500 in 323ms
+[web]  ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+[web]  ✓ Compiled in 1840ms (2066 modules)
+[web]  GET /checkout/plan_004?term=365 200 in 271ms
+[web]  GET / 200 in 268ms
+[web]  GET /login?next=%2Fcheckout%2Fplan_004%3Fterm%3D365 200 in 88ms
+[web]  GET /checkout/plan_004?term=365 200 in 140ms
+[web]  ○ Compiling /admin/dashboard ...
+[web]  ✓ Compiled /admin/dashboard in 1598ms (1223 modules)
+[web]  GET /admin/dashboard 200 in 2174ms
+[web]  GET /dashboard 200 in 156ms
+[web]  ✓ Compiled in 1542ms (2079 modules)
+[web]  ✓ Compiled /plans in 413ms (1223 modules)
 [api] [32m[nodemon] restarting due to changes...[39m
 [api] [32m[nodemon] starting `node src/index.js`[39m
 [api] Brillar API listening on http://127.0.0.1:4000
 [api] Auth: Bearer token in Authorization header
-[web]  ✓ Compiled in 3.3s (2460 modules)
-[web]  ○ Compiling /admin/integration ...
-[web]  ✓ Compiled /admin/integration in 1259ms (2316 modules)
-[web]  GET /admin/integration 200 in 1641ms
-[web]  GET /admin/dashboard 200 in 172ms
+[api] [32m[nodemon] restarting due to changes...[39m
+[api] [32m[nodemon] starting `node src/index.js`[39m
+[api] Brillar API listening on http://127.0.0.1:4000
+[api] Auth: Bearer token in Authorization header
+[web]  ✓ Compiled in 1556ms (2053 modules)
+[web]  ✓ Compiled in 566ms (1193 modules)
+[web]  ✓ Compiled in 1160ms (1193 modules)
+[web]  ✓ Compiled in 1208ms (2053 modules)
+[web]  ✓ Compiled in 1326ms (2053 modules)
+[web]  ✓ Compiled in 808ms (2053 modules)
+[web]  GET /admin/dashboard 307 in 336ms
+[web]  GET /login?next=%2Fdashboard 200 in 126ms
+[web]  GET /dashboard 200 in 242ms
 [web]  ○ Compiling / ...
-[web]  ✓ Compiled / in 671ms (1246 modules)
-[web]  GET /dashboard 200 in 413ms
-[web]  GET /admin/dashboard 200 in 207ms
+[web]  ✓ Compiled / in 1505ms (1223 modules)
+[web]  GET /admin/dashboard 200 in 465ms
+[web]  GET /dashboard 200 in 200ms
+[api] [31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[web]  ○ Compiling /_not-found ...
+[web]  ✓ Compiled /_not-found in 1345ms (2056 modules)
+[web]  GET /dashboard 404 in 1696ms
+[web]  GET /_next/static/chunks/main-app.js?v=1778230984282 404 in 173ms
+[web]  GET /_next/static/chunks/app-pages-internals.js 404 in 169ms
+[web]  GET /_next/static/chunks/app/page.js 404 in 168ms
+[web]  GET /_next/static/chunks/app/layout.js 404 in 167ms
+[web]  GET /dashboard 404 in 77ms
+[web]  GET /_next/static/chunks/app-pages-internals.js 404 in 186ms
+[web]  GET /_next/static/chunks/main-app.js?v=1778230987475 404 in 190ms
+[web]  GET /_next/static/chunks/app/layout.js 404 in 184ms
+[web]  GET /_next/static/chunks/app/page.js 404 in 186ms
+[web]  GET /dashboard 404 in 67ms
+[web]  GET /_next/static/chunks/main-app.js?v=1778230988600 404 in 139ms
+[web]  GET /_next/static/chunks/app-pages-internals.js 404 in 136ms
+[web]  GET /_next/static/chunks/app/page.js 404 in 135ms
+[web]  GET /_next/static/chunks/app/layout.js 404 in 132ms
+[web]  GET /dashboard 404 in 70ms
+[web]  GET /_next/static/chunks/app-pages-internals.js 404 in 162ms
+[web]  GET /_next/static/chunks/main-app.js?v=1778230989530 404 in 169ms
+[web]  GET /_next/static/chunks/app/page.js 404 in 162ms
+[web]  GET /_next/static/chunks/app/layout.js 404 in 160ms
+[web]  GET /dashboard 404 in 66ms
+[web]  GET /_next/static/chunks/main-app.js?v=1778231001343 404 in 226ms
+[web]  GET /_next/static/chunks/app/page.js 404 in 219ms
+[web]  GET /_next/static/chunks/app-pages-internals.js 404 in 223ms
+[web]  GET /_next/static/chunks/app/layout.js 404 in 218ms
 [api] [32m[nodemon] restarting due to changes...[39m
 [api] [32m[nodemon] starting `node src/index.js`[39m
-[web]  ✓ Compiled in 1524ms (2299 modules)
 [api] Brillar API listening on http://127.0.0.1:4000
 [api] Auth: Bearer token in Authorization header
+[api] [32m[nodemon] restarting due to changes...[39m
+[api] [32m[nodemon] starting `node src/index.js`[39m
+[api] node:events:502
+[api]       throw er; // Unhandled 'error' event
+[api]       ^
+[api] 
+[api] Error: listen EADDRINUSE: address already in use :::4000
+[api]     at Server.setupListenHandle [as _listen2] (node:net:1912:16)
+[api]     at listenInCluster (node:net:1969:12)
+[api]     at Server.listen (node:net:2074:7)
+[api]     at Function.listen (C:\Users\DELL\Documents\New project\node_modules\express\lib\application.js:635:24)
+[api]     at start (file:///C:/Users/DELL/Documents/New%20project/backend/src/index.js:26:7)
+[api]     at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+[api] Emitted 'error' event on Server instance at:
+[api]     at emitErrorNT (node:net:1948:8)
+[api]     at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+[api]   code: 'EADDRINUSE',
+[api]   errno: -4091,
+[api]   syscall: 'listen',
+[api]   address: '::',
+[api]   port: 4000
+[api] }
+[api] 
+[api] Node.js v22.12.0
+[api] [31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[web]  ○ Compiling /_error ...
+[web]  ✓ Compiled /_error in 1792ms (2279 modules)
+[web]  GET /dashboard 404 in 2074ms
+[web]  GET /dashboard 200 in 352ms
+[web]  GET /_next/static/chunks/main-app.js?v=1778231469633 404 in 134ms
+[web]  GET /_next/static/chunks/app-pages-internals.js 404 in 131ms
+[web]  GET /_next/static/chunks/app/dashboard/layout.js 404 in 139ms
+[web]  GET /_next/static/chunks/app/layout.js 404 in 136ms
+[web]  GET /_next/static/chunks/app/page.js 404 in 132ms
+[web]  GET /_next/static/chunks/app/dashboard/page.js 404 in 124ms
+[web]  GET /dashboard 200 in 173ms
+[web]  GET /_next/static/chunks/main-app.js?v=1778231489217 404 in 241ms
+[web]  GET /_next/static/chunks/app-pages-internals.js 404 in 240ms
+[web]  GET /_next/static/chunks/app/layout.js 404 in 236ms
+[web]  GET /_next/static/chunks/app/dashboard/layout.js 404 in 236ms
+[web]  GET /_next/static/chunks/app/dashboard/page.js 404 in 231ms
+[web]  GET /_next/static/chunks/app/page.js 404 in 235ms
+[web]  GET /plans 200 in 348ms
+[web]  GET /_next/static/chunks/main-app.js?v=1778231495459 404 in 209ms
+[web]  GET /_next/static/chunks/app-pages-internals.js 404 in 205ms
+[web]  GET /_next/static/chunks/app/plans/layout.js 404 in 198ms
+[web]  GET /_next/static/chunks/app/layout.js 404 in 200ms
+[web]  GET /_next/static/chunks/app/page.js 404 in 196ms
+[web]  GET /_next/static/chunks/app/plans/page.js 404 in 188ms
+[web]  GET /dashboard 200 in 125ms
+[web]  GET /_next/static/chunks/app-pages-internals.js 404 in 174ms
+[web]  GET /_next/static/chunks/main-app.js?v=1778231496774 404 in 179ms
+[web]  GET /_next/static/chunks/app/dashboard/layout.js 404 in 175ms
+[web]  GET /_next/static/chunks/app/layout.js 404 in 174ms
+[web]  GET /_next/static/chunks/app/page.js 404 in 173ms
+[web]  GET /_next/static/chunks/app/dashboard/page.js 404 in 170ms
+[web]  GET /dashboard 200 in 173ms
+[web]  GET /_next/static/chunks/main-app.js?v=1778231508291 404 in 192ms
+[web]  GET /_next/static/chunks/app-pages-internals.js 404 in 189ms
+[web]  GET /_next/static/chunks/app/dashboard/layout.js 404 in 187ms
+[web]  GET /_next/static/chunks/app/layout.js 404 in 187ms
+[web]  GET /_next/static/chunks/app/dashboard/page.js 404 in 186ms
+[web]  GET /_next/static/chunks/app/page.js 404 in 186ms
+[web]  GET /plans 200 in 271ms
+[web]  GET /_next/static/chunks/main-app.js?v=1778231513720 404 in 202ms
+[web]  GET /_next/static/chunks/app-pages-internals.js 404 in 199ms
+[web]  GET /_next/static/chunks/app/plans/layout.js 404 in 197ms
+[web]  GET /_next/static/chunks/app/layout.js 404 in 194ms
+[web]  GET /_next/static/chunks/app/page.js 404 in 188ms
+[web]  GET /_next/static/chunks/app/plans/page.js 404 in 185ms
+[web]  ○ Compiling /service-status ...
+[web]  ✓ Compiled /service-status in 2.6s (2321 modules)
+[web]  GET /service-status 200 in 3136ms
+[web]  GET /_next/static/chunks/main-app.js?v=1778231517632 404 in 140ms
+[web]  GET /_next/static/chunks/app/layout.js 404 in 133ms
+[web]  GET /_next/static/chunks/app-pages-internals.js 404 in 138ms
+[web]  GET /service-status 200 in 132ms
+[web]  GET /_next/static/chunks/main-app.js?v=1778231522791 404 in 115ms
+[web]  GET /_next/static/chunks/app-pages-internals.js 404 in 113ms
+[web]  GET /_next/static/chunks/app/layout.js 404 in 111ms
+[web]  GET /dashboard 200 in 176ms
+[web]  GET /_next/static/chunks/main-app.js?v=1778231526933 404 in 278ms
+[web]  GET /_next/static/chunks/app-pages-internals.js 404 in 275ms
+[web]  GET /_next/static/chunks/app/dashboard/layout.js 404 in 272ms
+[web]  GET /_next/static/chunks/app/layout.js 404 in 273ms
+[web]  GET /_next/static/chunks/app/page.js 404 in 273ms
+[web]  GET /_next/static/chunks/app/dashboard/page.js 404 in 264ms
+[web]  GET /dashboard 200 in 160ms
+[web]  GET /_next/static/chunks/main-app.js?v=1778231528979 404 in 228ms
+[web]  GET /_next/static/chunks/app/layout.js 404 in 217ms
+[web]  GET /_next/static/chunks/app/page.js 404 in 214ms
+[web]  GET /_next/static/chunks/app-pages-internals.js 404 in 221ms
+[web]  GET /_next/static/chunks/app/dashboard/layout.js 404 in 220ms
+[web]  GET /_next/static/chunks/app/dashboard/page.js 404 in 214ms
+[web]  GET /service-status 200 in 125ms
+[web]  GET /_next/static/chunks/main-app.js?v=1778231530323 404 in 110ms
+[web]  GET /_next/static/chunks/app-pages-internals.js 404 in 107ms
+[web]  GET /_next/static/chunks/app/layout.js 404 in 106ms
+[web]  GET /dashboard 200 in 148ms
+[web]  GET /_next/static/chunks/app-pages-internals.js 404 in 262ms
+[web]  GET /_next/static/chunks/main-app.js?v=1778231553046 404 in 268ms
+[web]  GET /_next/static/chunks/app/page.js 404 in 259ms
+[web]  GET /_next/static/chunks/app/dashboard/layout.js 404 in 263ms
+[web]  GET /_next/static/chunks/app/layout.js 404 in 256ms
+[web]  GET /_next/static/chunks/app/dashboard/page.js 404 in 256ms
+[web]  ✓ Compiled in 2.4s (2296 modules)
+[web]  ✓ Compiled in 1030ms (2450 modules)
+[web]  ✓ Compiled in 629ms (1063 modules)
+[web]  ○ Compiling /logout ...
+[web]  ✓ Compiled /logout in 900ms (1261 modules)
+[web]  GET /logout 307 in 988ms
+[web]  ✓ Compiled /service-status in 310ms (1284 modules)
+[web]  GET /service-status?tab=notices 200 in 643ms
+[web]  GET /dashboard 200 in 246ms
+[web]  ○ Compiling /_not-found ...
+[web]  ✓ Compiled /_not-found in 1013ms (1286 modules)
+[web]  GET /_next/static/chunks/main-app.js?v=1778231850136 404 in 1651ms
+[web]  GET /_next/static/chunks/app-pages-internals.js 404 in 1645ms
+[web]  GET /_next/static/chunks/app/dashboard/layout.js 404 in 1644ms
+[web]  GET /_next/static/chunks/app/page.js 404 in 1642ms
+[web]  GET /_next/static/chunks/app/dashboard/page.js 404 in 1636ms
+[web]  GET /plans 200 in 391ms
+[web]  GET /_next/static/chunks/app-pages-internals.js 404 in 264ms
+[web]  GET /_next/static/chunks/main-app.js?v=1778231853604 404 in 271ms
+[web]  GET /_next/static/chunks/app/plans/layout.js 404 in 265ms
+[web]  GET /_next/static/chunks/app/page.js 404 in 263ms
+[web]  GET /_next/static/chunks/app/plans/page.js 404 in 251ms
+[web]  GET /service-status 200 in 122ms
+[web]  GET /_next/static/chunks/main-app.js?v=1778231856301 404 in 102ms
+[web]  GET /_next/static/chunks/app-pages-internals.js 404 in 101ms
+[web]  GET /service-status?tab=notices 200 in 140ms
+[web]  GET /_next/static/chunks/main-app.js?v=1778231857614 404 in 81ms
+[web]  GET /_next/static/chunks/app-pages-internals.js 404 in 80ms
+[web]  GET /service-status?tab=resolved 200 in 66ms
+[web]  GET /_next/static/chunks/main-app.js?v=1778231858597 404 in 84ms
+[web]  GET /_next/static/chunks/app-pages-internals.js 404 in 81ms
+[web]  GET /service-status?tab=active 200 in 108ms
+[web]  GET /_next/static/chunks/main-app.js?v=1778231859476 404 in 98ms
+[web]  GET /_next/static/chunks/app-pages-internals.js 404 in 96ms
+[web]  GET /plans 200 in 315ms
+[web]  GET /_next/static/chunks/app/plans/layout.js 404 in 166ms
+[web]  GET /_next/static/chunks/main-app.js?v=1778231860219 404 in 174ms
+[web]  GET /_next/static/chunks/app-pages-internals.js 404 in 171ms
+[web]  GET /_next/static/chunks/app/page.js 404 in 157ms
+[web]  GET /_next/static/chunks/app/plans/page.js 404 in 55ms
+[web]  GET /dashboard 200 in 121ms
+[web]  GET /_next/static/chunks/app-pages-internals.js 404 in 221ms
+[web]  GET /_next/static/chunks/app/dashboard/layout.js 404 in 217ms
+[web]  GET /_next/static/chunks/app/dashboard/page.js 404 in 211ms
+[web]  GET /_next/static/chunks/main-app.js?v=1778231862712 404 in 227ms
+[web]  GET /_next/static/chunks/app/page.js 404 in 218ms
+[web]  GET /plans 200 in 297ms
+[web]  GET /_next/static/chunks/main-app.js?v=1778231864137 404 in 249ms
+[web]  GET /_next/static/chunks/app-pages-internals.js 404 in 246ms
+[web]  GET /_next/static/chunks/app/page.js 404 in 232ms
+[web]  GET /_next/static/chunks/app/plans/layout.js 404 in 246ms
+[web]  GET /_next/static/chunks/app/plans/page.js 404 in 231ms
+[web]  GET /checkout/plan_004?term=90 200 in 247ms
+[web]  ⨯ Failed to generate static paths for /checkout/[planId]:
+[web] Error: Cannot find module './vendor-chunks/@emotion.js'
+[web] Require stack:
+[web] - C:\Users\DELL\Documents\New project\frontend\.next\server\webpack-runtime.js
+[web] - C:\Users\DELL\Documents\New project\frontend\.next\server\app\checkout\[planId]\page.js
+[web] - C:\Users\DELL\Documents\New project\node_modules\next\dist\server\require.js
+[web] - C:\Users\DELL\Documents\New project\node_modules\next\dist\server\load-components.js
+[web] - C:\Users\DELL\Documents\New project\node_modules\next\dist\build\utils.js
+[web] - C:\Users\DELL\Documents\New project\node_modules\next\dist\server\dev\static-paths-worker.js
+[web] - C:\Users\DELL\Documents\New project\node_modules\next\dist\compiled\jest-worker\processChild.js
+[web]     at Function.<anonymous> (node:internal/modules/cjs/loader:1249:15)
+[web]     at C:\Users\DELL\Documents\New project\node_modules\next\dist\server\require-hook.js:55:36
+[web]     at Function._load (node:internal/modules/cjs/loader:1075:27)
+[web]     at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+[web]     at wrapModuleLoad (node:internal/modules/cjs/loader:219:24)
+[web]     at Module.<anonymous> (node:internal/modules/cjs/loader:1340:12)
+[web]     at mod.require (C:\Users\DELL\Documents\New project\node_modules\next\dist\server\require-hook.js:65:28)
+[web]     at require (node:internal/modules/helpers:138:16)
+[web]     at __webpack_require__.f.require (C:\Users\DELL\Documents\New project\frontend\.next\server\webpack-runtime.js:203:28)
+[web]     at C:\Users\DELL\Documents\New project\frontend\.next\server\webpack-runtime.js:116:40 {
+[web]   type: 'Error',
+[web]   code: 'MODULE_NOT_FOUND',
+[web]   requireStack: [
+[web]     'C:\\Users\\DELL\\Documents\\New project\\frontend\\.next\\server\\webpack-runtime.js',
+[web]     'C:\\Users\\DELL\\Documents\\New project\\frontend\\.next\\server\\app\\checkout\\[planId]\\page.js',
+[web]     'C:\\Users\\DELL\\Documents\\New project\\node_modules\\next\\dist\\server\\require.js',
+[web]     'C:\\Users\\DELL\\Documents\\New project\\node_modules\\next\\dist\\server\\load-components.js',
+[web]     'C:\\Users\\DELL\\Documents\\New project\\node_modules\\next\\dist\\build\\utils.js',
+[web]     'C:\\Users\\DELL\\Documents\\New project\\node_modules\\next\\dist\\server\\dev\\static-paths-worker.js',
+[web]     'C:\\Users\\DELL\\Documents\\New project\\node_modules\\next\\dist\\compiled\\jest-worker\\processChild.js'
+[web]   ]
+[web] }
+[web]  GET /_next/static/chunks/main-app.js?v=1778231865594 404 in 143ms
+[web]  GET /_next/static/chunks/app-pages-internals.js 404 in 141ms
+[web]  GET /_next/static/chunks/app/checkout/%5BplanId%5D/page.js 404 in 139ms
+[web]  GET /_next/static/chunks/app/page.js 404 in 136ms
+[web]  GET /logout 307 in 31ms
+[web]  ○ Compiling / ...
+[web]  ✓ Compiled / in 1535ms (1291 modules)
+[web]  GET / 200 in 2148ms
+[web]  ✓ Compiled /_not-found in 486ms (1293 modules)
+[web]  GET /_next/static/chunks/main-app.js?v=1778231937471 404 in 783ms
+[web]  GET /_next/static/chunks/app-pages-internals.js 404 in 780ms
+[web]  GET /_next/static/chunks/app/page.js 404 in 779ms
+[web]  GET /login 200 in 195ms
+[web]  GET /_next/static/chunks/app-pages-internals.js 404 in 209ms
+[web]  GET /_next/static/chunks/main-app.js?v=1778231943456 404 in 216ms
+[web]  GET /_next/static/chunks/app/login/page.js 404 in 209ms
+[web]  GET /_next/static/chunks/app/page.js 404 in 207ms
+[web]  GET /login? 200 in 96ms
+[web]  GET /_next/static/chunks/app/login/page.js 404 in 203ms
+[web]  GET /_next/static/chunks/app-pages-internals.js 404 in 194ms
+[web]  GET /_next/static/chunks/main-app.js?v=1778231958688 404 in 200ms
+[web]  GET /_next/static/chunks/app/page.js 404 in 190ms
+[web]  ○ Compiling /register ...
+[web]  ✓ Compiled /register in 2s (2387 modules)
+[web]  GET /register 200 in 848ms
+[web]  GET /_next/static/chunks/main-app.js?v=1778231964169 404 in 154ms
+[web]  GET /_next/static/chunks/app-pages-internals.js 404 in 151ms
+[web]  GET /_next/static/chunks/app/page.js 404 in 149ms
+[web]  ✓ Compiled in 1901ms (2310 modules)
+[web]  ✓ Compiled in 1082ms (2310 modules)
+[web]  ✓ Compiled in 1206ms (2310 modules)
+[web]  ✓ Compiled in 797ms (2310 modules)
+[web]  ○ Compiling /register ...
+[web]  ✓ Compiled /register in 1415ms (1250 modules)
+[web]  GET /register 200 in 2233ms
+[web]  ○ Compiling /_not-found ...
+[web]  ✓ Compiled /_not-found in 700ms (1252 modules)
+[web]  GET /login 200 in 1652ms
+[web]  GET /_next/static/chunks/app/page.js 404 in 1980ms
+[web]  GET /_next/static/chunks/main-app.js?v=1778232372245 404 in 1989ms
+[web]  GET /_next/static/chunks/app-pages-internals.js 404 in 1986ms
+[web]  GET /register 200 in 132ms
+[web]  GET /_next/static/chunks/main-app.js?v=1778232374904 404 in 161ms
+[web]  GET /_next/static/chunks/app-pages-internals.js 404 in 159ms
+[web]  GET /_next/static/chunks/app/page.js 404 in 156ms
+[web]  ○ Compiling /service-status ...
+[web]  ✓ Compiled /service-status in 2.4s (1275 modules)
+[web]  GET /service-status 200 in 2820ms
+[web]  GET /_next/static/chunks/app-pages-internals.js 404 in 126ms
+[web]  GET /_next/static/chunks/main-app.js?v=1778232378245 404 in 132ms
+[web]  GET /service-status?tab=notices 200 in 82ms
+[web]  GET /_next/static/chunks/main-app.js?v=1778232379769 404 in 125ms
+[web]  GET /_next/static/chunks/app-pages-internals.js 404 in 122ms
+[web]  GET /service-status?tab=resolved 200 in 161ms
+[web]  GET /_next/static/chunks/main-app.js?v=1778232380337 404 in 138ms
+[web]  GET /_next/static/chunks/app-pages-internals.js 404 in 135ms
+[web]  ○ Compiling / ...
+[web]  ✓ Compiled / in 1126ms (1305 modules)
+[web]  GET / 200 in 1899ms
+[web]  GET /_next/static/chunks/main-app.js?v=1778232383433 404 in 186ms
+[web]  GET /_next/static/chunks/app-pages-internals.js 404 in 181ms
+[web]  GET /_next/static/chunks/app/page.js 404 in 179ms
+[web]  GET /login 200 in 165ms
+[web]  GET /_next/static/chunks/app-pages-internals.js 404 in 208ms
+[web]  GET /_next/static/chunks/main-app.js?v=1778232385326 404 in 215ms
+[web]  GET /_next/static/chunks/app/login/page.js 404 in 208ms
+[web]  GET /_next/static/chunks/app/page.js 404 in 205ms
+[web]  GET /login? 200 in 78ms
+[web]  GET /_next/static/chunks/app/login/page.js 404 in 230ms
+[web]  GET /_next/static/chunks/app-pages-internals.js 404 in 234ms
+[web]  GET /_next/static/chunks/main-app.js?v=1778232393837 404 in 238ms
+[web]  GET /_next/static/chunks/app/page.js 404 in 227ms
+[web]  GET /login? 200 in 73ms
+[web]  GET /_next/static/chunks/main-app.js?v=1778232408584 404 in 213ms
+[web]  GET /_next/static/chunks/app-pages-internals.js 404 in 212ms
+[web]  GET /_next/static/chunks/app/login/page.js 404 in 211ms
+[web]  GET /_next/static/chunks/app/page.js 404 in 207ms
+[web]  GET /login? 200 in 146ms
+[web]  GET /_next/static/chunks/app-pages-internals.js 404 in 210ms
+[web]  GET /_next/static/chunks/main-app.js?v=1778232615987 404 in 216ms
+[web]  GET /_next/static/chunks/app/login/page.js 404 in 208ms
+[web]  GET /_next/static/chunks/app/page.js 404 in 201ms
+[web]  GET / 200 in 383ms
+[web]  GET /_next/static/chunks/main-app.js?v=1778232619708 404 in 104ms
+[web]  GET /_next/static/chunks/app-pages-internals.js 404 in 100ms
+[web]  GET /_next/static/chunks/app/page.js 404 in 51ms
+[web]  GET /login 200 in 83ms
+[web]  GET /_next/static/chunks/main-app.js?v=1778232621800 404 in 201ms
+[web]  GET /_next/static/chunks/app/login/page.js 404 in 197ms
+[web]  GET /_next/static/chunks/app-pages-internals.js 404 in 200ms
+[web]  GET /_next/static/chunks/app/page.js 404 in 195ms
+[web]  GET /login? 200 in 65ms
+[web]  GET /_next/static/chunks/app-pages-internals.js 404 in 196ms
+[web]  GET /_next/static/chunks/main-app.js?v=1778232633550 404 in 200ms
+[web]  GET /_next/static/chunks/app/login/page.js 404 in 193ms
+[web]  GET /_next/static/chunks/app/page.js 404 in 189ms
+[web]  GET /login 200 in 74ms
+[web]  GET /_next/static/chunks/app/login/page.js 404 in 186ms
+[web]  GET /_next/static/chunks/main-app.js?v=1778232641040 404 in 191ms
+[web]  GET /_next/static/chunks/app-pages-internals.js 404 in 182ms
+[web]  GET /_next/static/chunks/app/page.js 404 in 176ms
+[web]  ○ Compiling /logout ...
+[web]  ✓ Compiled /logout in 883ms (1293 modules)
+[web]  GET /logout 307 in 1077ms
+[web]  GET / 200 in 1159ms
+[web]  GET /_next/static/chunks/app/page.js 404 in 150ms
+[web]  GET /_next/static/chunks/app-pages-internals.js 404 in 157ms
+[web]  GET /_next/static/chunks/main-app.js?v=1778232654875 404 in 163ms
+[web]  GET /login 200 in 158ms
+[web]  GET /_next/static/chunks/main-app.js?v=1778232676854 404 in 272ms
+[web]  GET /_next/static/chunks/app-pages-internals.js 404 in 268ms
+[web]  GET /_next/static/chunks/app/login/page.js 404 in 266ms
+[web]  GET /_next/static/chunks/app/page.js 404 in 263ms
+[web]  GET /login? 200 in 105ms
+[web]  GET /_next/static/chunks/app/login/page.js 404 in 227ms
+[web]  GET /_next/static/chunks/app-pages-internals.js 404 in 212ms
+[web]  GET /_next/static/chunks/main-app.js?v=1778232692749 404 in 215ms
+[web]  GET /_next/static/chunks/app/page.js 404 in 226ms
+[web]  GET /admin/dashboard 307 in 130ms
+[web]  GET /admin/dashboard 307 in 92ms
+[web] [?25h
+[web] npm run dev -w frontend exited with code 0
+[api] [32m[nodemon] restarting due to changes...[39m
+[api] [32m[nodemon] starting `node src/index.js`[39m
+[api] node:events:502
+[api]       throw er; // Unhandled 'error' event
+[api]       ^
+[api] 
+[api] Error: listen EADDRINUSE: address already in use :::4000
+[api]     at Server.setupListenHandle [as _listen2] (node:net:1912:16)
+[api]     at listenInCluster (node:net:1969:12)
+[api]     at Server.listen (node:net:2074:7)
+[api]     at Function.listen (C:\Users\DELL\Documents\New project\node_modules\express\lib\application.js:635:24)
+[api]     at start (file:///C:/Users/DELL/Documents/New%20project/backend/src/index.js:26:7)
+[api]     at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+[api] Emitted 'error' event on Server instance at:
+[api]     at emitErrorNT (node:net:1948:8)
+[api]     at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+[api]   code: 'EADDRINUSE',
+[api]   errno: -4091,
+[api]   syscall: 'listen',
+[api]   address: '::',
+[api]   port: 4000
+[api] }
+[api] 
+[api] Node.js v22.12.0
+[api] [31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[api] [32m[nodemon] restarting due to changes...[39m
+[api] [32m[nodemon] starting `node src/index.js`[39m
+[api] node:events:502
+[api]       throw er; // Unhandled 'error' event
+[api]       ^
+[api] 
+[api] Error: listen EADDRINUSE: address already in use :::4000
+[api]     at Server.setupListenHandle [as _listen2] (node:net:1912:16)
+[api]     at listenInCluster (node:net:1969:12)
+[api]     at Server.listen (node:net:2074:7)
+[api]     at Function.listen (C:\Users\DELL\Documents\New project\node_modules\express\lib\application.js:635:24)
+[api]     at start (file:///C:/Users/DELL/Documents/New%20project/backend/src/index.js:26:7)
+[api]     at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+[api] Emitted 'error' event on Server instance at:
+[api]     at emitErrorNT (node:net:1948:8)
+[api]     at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+[api]   code: 'EADDRINUSE',
+[api]   errno: -4091,
+[api]   syscall: 'listen',
+[api]   address: '::',
+[api]   port: 4000
+[api] }
+[api] 
+[api] Node.js v22.12.0
+[api] [31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[api] [32m[nodemon] restarting due to changes...[39m
+[api] [32m[nodemon] starting `node src/index.js`[39m
+[api] node:events:502
+[api]       throw er; // Unhandled 'error' event
+[api]       ^
+[api] 
+[api] Error: listen EADDRINUSE: address already in use :::4000
+[api]     at Server.setupListenHandle [as _listen2] (node:net:1912:16)
+[api]     at listenInCluster (node:net:1969:12)
+[api]     at Server.listen (node:net:2074:7)
+[api]     at Function.listen (C:\Users\DELL\Documents\New project\node_modules\express\lib\application.js:635:24)
+[api]     at start (file:///C:/Users/DELL/Documents/New%20project/backend/src/index.js:26:7)
+[api]     at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+[api] Emitted 'error' event on Server instance at:
+[api]     at emitErrorNT (node:net:1948:8)
+[api]     at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+[api]   code: 'EADDRINUSE',
+[api]   errno: -4091,
+[api]   syscall: 'listen',
+[api]   address: '::',
+[api]   port: 4000
+[api] }
+[api] 
+[api] Node.js v22.12.0
+[api] [31m[nodemon] app crashed - waiting for file changes before starting...[39m

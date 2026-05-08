@@ -19,6 +19,10 @@ export const dynamic = "force-dynamic";
 type ApiSubscription = {
   _id: string;
   status: string;
+  billingTerm?: string;
+  amount?: number;
+  startDate?: string | null;
+  endDate?: string | null;
   createdAt: string;
   userId: {
     email: string;
@@ -64,6 +68,10 @@ export default async function AdminDashboardPage() {
     monthlyPrice: subscription.planId.monthlyPrice,
     downloadSpeedMbps: subscription.planId.downloadSpeedMbps,
     status: subscription.status,
+    billingTerm: subscription.billingTerm ?? "30",
+    amount: subscription.amount ?? subscription.planId.monthlyPrice,
+    startDate: subscription.startDate ?? null,
+    endDate: subscription.endDate ?? null,
     createdAt: subscription.createdAt
   }));
 

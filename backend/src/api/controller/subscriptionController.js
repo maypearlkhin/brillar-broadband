@@ -3,6 +3,17 @@ import NetworkIncident from "../../models/networkIncidentModel.js";
 import Plan from "../../models/planModel.js";
 import Subscription from "../../models/subscriptionModel.js";
 import User from "../../models/userModel.js";
+import mongoose from "mongoose";
+
+function normalizeBillingTerm(term) {
+  return term === "90" || term === "180" || term === "365" ? term : "30";
+}
+
+function addDays(from, days) {
+  const date = new Date(from);
+  date.setDate(date.getDate() + days);
+  return date;
+}
 
 export async function checkout(req, res) {
   try {
@@ -13,22 +24,42 @@ export async function checkout(req, res) {
       return res.status(401).json({ message: "Authentication required." });
     }
 
-    const { planId } = req.body;
+    const { planId, billingTerm, amount } = req.body;
 
     if (!planId) {
       return res.status(400).json({ message: "planId is required." });
     }
 
-    const plan = await Plan.findOne({ id: planId, isActive: true });
+    const normalizedPlanId = String(planId).trim();
+    const match = [{ id: normalizedPlanId }];
+
+    if (mongoose.Types.ObjectId.isValid(normalizedPlanId)) {
+      match.push({ _id: normalizedPlanId });
+    }
+
+    const plan = await Plan.findOne({
+      isActive: true,
+      $or: match
+    });
 
     if (!plan) {
       return res.status(404).json({ message: "Plan not found." });
     }
 
+    const normalizedTerm = normalizeBillingTerm(String(billingTerm ?? ""));
+    const paidAmount = Number(amount ?? 0);
+    const purchasedAt = new Date();
+    const startDate = addDays(purchasedAt, 3);
+    const endDate = addDays(startDate, Number(normalizedTerm));
+
     const subscription = await Subscription.create({
       userId: currentUser.userId,
       planId: plan._id,
-      status: "Installation Pending"
+      status: "Installation Pending",
+      billingTerm: normalizedTerm,
+      amount: Number.isFinite(paidAmount) ? paidAmount : 0,
+      startDate,
+      endDate
     });
 
     return res.status(201).json({
@@ -38,6 +69,10 @@ export async function checkout(req, res) {
         status: subscription.status,
         planId: plan.id,
         userId: currentUser.userId,
+        billingTerm: subscription.billingTerm,
+        amount: subscription.amount,
+        startDate: subscription.startDate,
+        endDate: subscription.endDate,
         createdAt:
           subscription.createdAt instanceof Date
             ? subscription.createdAt.toISOString()
@@ -62,6 +97,10 @@ function serializeSubscription(sub) {
     userId: sub.userId,
     planId: plan,
     status: sub.status,
+    billingTerm: sub.billingTerm ?? "30",
+    amount: sub.amount ?? 0,
+    startDate: sub.startDate ?? null,
+    endDate: sub.endDate ?? null,
     createdAt: sub.createdAt
   };
 }

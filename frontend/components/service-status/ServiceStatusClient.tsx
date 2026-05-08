@@ -20,7 +20,7 @@ import {
   Typography,
 } from "@mui/material";
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 
 export type IncidentPublic = {
   id: string;
@@ -58,11 +58,13 @@ function formatWhen(iso: string) {
 export default function ServiceStatusClient({
   incidents,
   announcements,
+  initialTab = "active",
 }: {
   incidents: IncidentPublic[];
   announcements: AnnouncementPublic[];
+  initialTab?: "active" | "notices" | "resolved";
 }) {
-  const [tab, setTab] = useState(0);
+  const tab = initialTab === "notices" ? 1 : initialTab === "resolved" ? 2 : 0;
 
   const active = useMemo(
     () =>
@@ -101,7 +103,6 @@ export default function ServiceStatusClient({
 
       <Tabs
         value={tab}
-        onChange={(_, v) => setTab(v)}
         sx={{
           mb: 3,
           borderBottom: 1,
@@ -110,16 +111,22 @@ export default function ServiceStatusClient({
         }}
       >
         <Tab
+          component={Link}
+          href="/service-status?tab=active"
           icon={<CloudOffIcon />}
           iconPosition="start"
           label={`Current impacts (${active.length})`}
         />
         <Tab
+          component={Link}
+          href="/service-status?tab=notices"
           icon={<AnnouncementIcon />}
           iconPosition="start"
           label={`Notices (${announcements.length})`}
         />
         <Tab
+          component={Link}
+          href="/service-status?tab=resolved"
           icon={<HistoryIcon />}
           iconPosition="start"
           label={`Resolved history (${resolved.length})`}

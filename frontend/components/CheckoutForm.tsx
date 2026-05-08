@@ -36,10 +36,71 @@ type CheckoutFields = {
 };
 
 type CheckoutErrors = Partial<Record<keyof CheckoutFields, string>>;
+type CheckoutTouched = Partial<Record<keyof CheckoutFields, boolean>>;
+type BillingTerm = "monthly" | "90" | "180" | "365";
 
 const MAX_CARD_DIGITS = 19;
 /** 19 digits + 4 spaces between groups (4+4+4+4+3). */
 const MAX_CARD_INPUT_CHARS = MAX_CARD_DIGITS + Math.floor((MAX_CARD_DIGITS - 1) / 4);
+
+function normalizeBillingTerm(term?: string): BillingTerm {
+  return term === "90" || term === "180" || term === "365" ? term : "monthly";
+}
+
+function getCheckoutAmount(plan: PlanCardData, term: BillingTerm) {
+  if (term === "90") {
+    return plan.price90Days ?? 0;
+  }
+
+  if (term === "180") {
+    return plan.price180Days ?? 0;
+  }
+
+  if (term === "365") {
+    return plan.price365Days ?? 0;
+  }
+
+  return plan.monthlyPrice;
+}
+
+function getCheckoutLabel(term: BillingTerm) {
+  return term === "monthly" ? "30Days plan" : `${term}Days plan`;
+}
+
+function getCheckoutSuffix(term: BillingTerm) {
+  return term === "monthly" ? "/30 days" : `/${term} days`;
+}
+
+function getTermDays(term: BillingTerm) {
+  return term === "monthly" ? 30 : Number(term);
+}
+
+function addDays(date: Date, days: number) {
+  const next = new Date(date);
+  next.setDate(next.getDate() + days);
+  return next;
+}
+
+function formatDateLabel(date: Date) {
+  return date.toLocaleDateString(undefined, {
+    weekday: "short",
+    year: "numeric",
+    month: "short",
+    day: "numeric"
+  });
+}
+
+function getServiceWindow(from: Date, term: BillingTerm) {
+  const startDate = addDays(from, 3);
+  const endDate = addDays(startDate, getTermDays(term));
+
+  return {
+    startDate,
+    endDate,
+    startLabel: formatDateLabel(startDate),
+    endLabel: formatDateLabel(endDate)
+  };
+}
 
 function getCardDigits(cardNumber: string) {
   return cardNumber.replace(/\s/g, "");
@@ -145,6 +206,10 @@ function validateCheckoutFields(fields: CheckoutFields) {
   return errors;
 }
 
+function validateCheckoutField(field: keyof CheckoutFields, fields: CheckoutFields) {
+  return validateCheckoutFields(fields)[field];
+}
+
 function delay(ms: number) {
   return new Promise<void>((resolve) => {
     setTimeout(resolve, ms);
@@ -152,14 +217,6 @@ function delay(ms: number) {
 }
 
 /** Random calendar day within the next 1–7 days (installation window). */
-function randomInstallDate(from: Date): Date {
-  const offsetDays = 1 + Math.floor(Math.random() * 7);
-  const d = new Date(from);
-  d.setDate(d.getDate() + offsetDays);
-  d.setHours(12, 0, 0, 0);
-  return d;
-}
-
 function AcceptedCardMarks() {
   const common = {
     height: 22,
@@ -285,17 +342,29 @@ type ReceiptSummaryProps = {
   plan: PlanCardData;
   fields: CheckoutFields;
   orderDateLabel: string;
+  amount: number;
+  amountLabel: string;
+  startDateLabel: string;
+  endDateLabel: string;
 };
 
-function ReceiptSummary({ plan, fields, orderDateLabel }: ReceiptSummaryProps) {
+function ReceiptSummary({
+  plan,
+  fields,
+  orderDateLabel,
+  amount,
+  amountLabel,
+  startDateLabel,
+  endDateLabel
+}: ReceiptSummaryProps) {
   const nameLine = fields.cardName.trim() || "—";
   const panLine = formatReceiptPan(fields.cardNumber);
   const expiryLine =
     fields.expiryDigits.length === 4 ? formatExpiryDisplay(fields.expiryDigits) : "—";
-  const amount =
-    typeof plan.monthlyPrice === "number" && Number.isFinite(plan.monthlyPrice)
-      ? plan.monthlyPrice.toFixed(2)
-      : String(plan.monthlyPrice);
+  const amountText =
+    typeof amount === "number" && Number.isFinite(amount)
+      ? amount.toFixed(2)
+      : String(amount);
 
   return (
     <Box
@@ -314,7 +383,10 @@ function ReceiptSummary({ plan, fields, orderDateLabel }: ReceiptSummaryProps) {
       <Stack spacing={1.25} sx={{ mt: 1.5 }}>
         <ReceiptRow label="Order date" value={orderDateLabel} />
         <ReceiptRow label="Plan" value={plan.name} />
-        <ReceiptRow label="Amount" value={`S$${amount} / month`} emphasize />
+        <ReceiptRow label="Billing" value={amountLabel} />
+        <ReceiptRow label="Amount" value={`S$${amountText}`} emphasize />
+        <ReceiptRow label="Start date" value={startDateLabel} />
+        <ReceiptRow label="End date" value={endDateLabel} />
         <Divider sx={{ borderStyle: "dashed" }} />
         <ReceiptRow label="Cardholder" value={nameLine} mono />
         <ReceiptRow label="Card" value={panLine} mono small />
@@ -363,8 +435,9 @@ function ReceiptRow({
   );
 }
 
-export default function CheckoutForm({ plan }: { plan: PlanCardData }) {
+export default function CheckoutForm({ plan, selectedTerm }: { plan: PlanCardData; selectedTerm?: string }) {
   const router = useRouter();
+  const billingTerm = normalizeBillingTerm(selectedTerm);
   const [error, setError] = useState("");
   const [fields, setFields] = useState<CheckoutFields>({
     cardName: "",
@@ -373,10 +446,18 @@ export default function CheckoutForm({ plan }: { plan: PlanCardData }) {
     cvc: "",
   });
   const [fieldErrors, setFieldErrors] = useState<CheckoutErrors>({});
+  const [touched, setTouched] = useState<CheckoutTouched>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [processingOpen, setProcessingOpen] = useState(false);
   const [successOpen, setSuccessOpen] = useState(false);
-  const [successInstallLabel, setSuccessInstallLabel] = useState("");
+  const [confirmedWindow, setConfirmedWindow] = useState<ReturnType<typeof getServiceWindow> | null>(null);
+  const checkoutAmount = getCheckoutAmount(plan, billingTerm);
+  const checkoutLabel = getCheckoutLabel(billingTerm);
+  const checkoutSuffix = getCheckoutSuffix(billingTerm);
+  const previewWindow = useMemo(() => getServiceWindow(new Date(), billingTerm), [billingTerm]);
+  const serviceWindow = confirmedWindow ?? previewWindow;
+  const startDateLabel = serviceWindow.startLabel;
+  const endDateLabel = serviceWindow.endLabel;
 
   const orderDateLabel = useMemo(
     () =>
@@ -390,14 +471,30 @@ export default function CheckoutForm({ plan }: { plan: PlanCardData }) {
   );
 
   function updateField<K extends keyof CheckoutFields>(field: K, value: CheckoutFields[K]) {
-    setFields((currentFields) => ({
-      ...currentFields,
-      [field]: value,
+    setFields((currentFields) => {
+      const nextFields = {
+        ...currentFields,
+        [field]: value,
+      };
+
+      setFieldErrors((currentErrors) => ({
+        ...currentErrors,
+        [field]: touched[field] ? validateCheckoutField(field, nextFields) : undefined,
+      }));
+
+      return nextFields;
+    });
+  }
+
+  function handleFieldBlur(field: keyof CheckoutFields) {
+    setTouched((currentTouched) => ({
+      ...currentTouched,
+      [field]: true,
     }));
 
     setFieldErrors((currentErrors) => ({
       ...currentErrors,
-      [field]: undefined,
+      [field]: validateCheckoutField(field, fields),
     }));
   }
 
@@ -425,6 +522,12 @@ export default function CheckoutForm({ plan }: { plan: PlanCardData }) {
     const validationErrors = validateCheckoutFields(fields);
 
     if (Object.keys(validationErrors).length > 0) {
+      setTouched({
+        cardName: true,
+        cardNumber: true,
+        expiryDigits: true,
+        cvc: true,
+      });
       setFieldErrors(validationErrors);
       setError("Please fix the highlighted payment fields before purchasing.");
       return;
@@ -436,20 +539,17 @@ export default function CheckoutForm({ plan }: { plan: PlanCardData }) {
     await delay(2200 + Math.floor(Math.random() * 900));
 
     try {
-      await postData("/api/checkout", { planId: plan.id });
-
-      const completedAt = new Date();
-      const installBy = randomInstallDate(completedAt);
-      const installLabel = installBy.toLocaleDateString(undefined, {
-        weekday: "long",
-        month: "long",
-        day: "numeric",
+      await postData("/api/checkout", {
+        planId: plan.id,
+        billingTerm,
+        amount: checkoutAmount
       });
 
+      const completedAt = new Date();
+      const nextServiceWindow = getServiceWindow(completedAt, billingTerm);
+      setConfirmedWindow(nextServiceWindow);
       setProcessingOpen(false);
       setIsSubmitting(false);
-
-      setSuccessInstallLabel(installLabel);
       setSuccessOpen(true);
     } catch (err) {
       setProcessingOpen(false);
@@ -472,7 +572,8 @@ export default function CheckoutForm({ plan }: { plan: PlanCardData }) {
     <Box
       sx={{
         minHeight: "calc(100vh - 64px)",
-        py: { xs: 3, md: 5 },
+        pt: { xs: 0.5, md: 1 },
+        pb: { xs: 3, md: 5 },
         bgcolor: "#fdf2f8",
       }}
     >
@@ -516,23 +617,6 @@ export default function CheckoutForm({ plan }: { plan: PlanCardData }) {
             <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.65 }}>
               Our installation team will contact you to schedule a visit — usually within one week.
             </Typography>
-            <Box
-              sx={{
-                mt: 0.5,
-                p: 1.5,
-                borderRadius: 1,
-                bgcolor: "rgba(236, 72, 153, 0.08)",
-                border: "1px solid",
-                borderColor: "rgba(236, 72, 153, 0.22)",
-              }}
-            >
-              <Typography variant="caption" color="text.secondary" sx={{ display: "block", fontWeight: 600 }}>
-                Provisional slot
-              </Typography>
-              <Typography variant="subtitle1" sx={{ fontWeight: 700, mt: 0.25 }}>
-                {successInstallLabel}
-              </Typography>
-            </Box>
           </Stack>
         </DialogContent>
         <DialogActions sx={{ px: 3, pb: 3, pt: 0 }}>
@@ -543,7 +627,7 @@ export default function CheckoutForm({ plan }: { plan: PlanCardData }) {
       </Dialog>
 
       <Container maxWidth="lg">
-        <Stack spacing={1} sx={{ mb: 3, textAlign: "center" }}>
+        <Stack spacing={1} sx={{ mb: 2.5, textAlign: "center" }}>
           <Typography variant="overline" sx={{ fontWeight: 700, letterSpacing: 0.12, color: "primary.main" }}>
             Secure checkout
           </Typography>
@@ -568,16 +652,16 @@ export default function CheckoutForm({ plan }: { plan: PlanCardData }) {
               }}
             >
               <CardContent sx={{ p: 3 }}>
-                <Chip label="Monthly plan" size="small" color="primary" variant="outlined" sx={{ mb: 2 }} />
+                <Chip label={checkoutLabel} size="small" color="primary" variant="outlined" sx={{ mb: 2 }} />
                 <Typography variant="h5" component="h2" sx={{ fontWeight: 700 }}>
                   {plan.name}
                 </Typography>
                 <Stack direction="row" alignItems="baseline" spacing={0.5} sx={{ mt: 2, mb: 2 }}>
                   <Typography variant="h3" component="span" sx={{ fontWeight: 800, color: "primary.main" }}>
-                    S${plan.monthlyPrice}
+                    S${checkoutAmount}
                   </Typography>
                   <Typography component="span" color="text.secondary" variant="h6">
-                    /month
+                    {checkoutSuffix}
                   </Typography>
                 </Stack>
                 <Divider sx={{ my: 2 }} />
@@ -586,7 +670,15 @@ export default function CheckoutForm({ plan }: { plan: PlanCardData }) {
                   confirmed.
                 </Typography>
 
-                <ReceiptSummary plan={plan} fields={fields} orderDateLabel={orderDateLabel} />
+                <ReceiptSummary
+                  plan={plan}
+                  fields={fields}
+                  orderDateLabel={orderDateLabel}
+                  amount={checkoutAmount}
+                  amountLabel={checkoutLabel}
+                  startDateLabel={startDateLabel}
+                  endDateLabel={endDateLabel}
+                />
               </CardContent>
             </Card>
           </Grid>
@@ -647,6 +739,7 @@ export default function CheckoutForm({ plan }: { plan: PlanCardData }) {
                       label="Name on card"
                       value={fields.cardName}
                       onChange={(event) => handleCardNameChange(event.target.value)}
+                      onBlur={() => handleFieldBlur("cardName")}
                       error={Boolean(fieldErrors.cardName)}
                       helperText={fieldErrors.cardName || "Exactly as printed on your card."}
                       InputLabelProps={{ shrink: true }}
@@ -660,6 +753,7 @@ export default function CheckoutForm({ plan }: { plan: PlanCardData }) {
                       placeholder="4242 4242 4242 4242"
                       value={fields.cardNumber}
                       onChange={(event) => handleCardNumberChange(event.target.value)}
+                      onBlur={() => handleFieldBlur("cardNumber")}
                       error={Boolean(fieldErrors.cardNumber)}
                       helperText={
                         fieldErrors.cardNumber ||
@@ -683,6 +777,7 @@ export default function CheckoutForm({ plan }: { plan: PlanCardData }) {
                           placeholder="29/30"
                           value={formatExpiryDisplay(fields.expiryDigits)}
                           onChange={(event) => handleExpiryChange(event.target.value)}
+                          onBlur={() => handleFieldBlur("expiryDigits")}
                           error={Boolean(fieldErrors.expiryDigits)}
                           helperText={
                             fieldErrors.expiryDigits ||
@@ -703,6 +798,7 @@ export default function CheckoutForm({ plan }: { plan: PlanCardData }) {
                           onChange={(event) =>
                             updateField("cvc", event.target.value.replace(/\D/g, "").slice(0, 4))
                           }
+                          onBlur={() => handleFieldBlur("cvc")}
                           error={Boolean(fieldErrors.cvc)}
                           helperText={fieldErrors.cvc || "3 or 4 digits on the back (front for Amex)."}
                           InputLabelProps={{ shrink: true }}
@@ -750,3 +846,4 @@ export default function CheckoutForm({ plan }: { plan: PlanCardData }) {
     </Box>
   );
 }
+

@@ -19,6 +19,9 @@ export type PlanCardData = {
   name: string;
   monthlyPrice: number;
   downloadSpeedMbps: number;
+  price90Days?: number;
+  price180Days?: number;
+  price365Days?: number;
   features: string[];
   categoryId?: string;
   categoryTitle?: string;
@@ -31,6 +34,23 @@ type PlanGridProps = {
   actionHref?: (plan: PlanCardData) => string;
   actionLabel?: string;
 };
+
+function withTerm(href: string, term: string) {
+  const [path, query = ""] = href.split("?");
+  const params = new URLSearchParams(query);
+  const next = params.get("next");
+
+  if (path === "/login" && next) {
+    const [nextPath, nextQuery = ""] = next.split("?");
+    const nextParams = new URLSearchParams(nextQuery);
+    nextParams.set("term", term);
+    params.set("next", `${nextPath}?${nextParams.toString()}`);
+    return `${path}?${params.toString()}`;
+  }
+
+  params.set("term", term);
+  return `${path}?${params.toString()}`;
+}
 
 export default function PlanGrid({
   plans,
@@ -78,6 +98,46 @@ export default function PlanGrid({
                       {" "}
                       /mo
                     </Typography>
+                  </Box>
+                  <Box
+                    sx={{
+                      display: "grid",
+                      gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
+                      gap: 1
+                    }}
+                  >
+                    {[
+                      ["90", "90Days", plan.price90Days ?? 0],
+                      ["180", "180Days", plan.price180Days ?? 0],
+                      ["365", "365Days", plan.price365Days ?? 0]
+                    ].map(([term, label, value]) => (
+                      <Box component={Link} href={withTerm(href, String(term))} key={String(label)} sx={{ textDecoration: "none" }}>
+                        <Box
+                          sx={{
+                            border: "1px solid",
+                            borderColor: "divider",
+                            borderRadius: 1,
+                            px: 1,
+                            py: 0.75,
+                            textAlign: "center",
+                            bgcolor: "rgba(236, 72, 153, 0.04)",
+                            color: "text.primary",
+                            transition: "border-color 0.2s ease, background-color 0.2s ease",
+                            "&:hover": {
+                              borderColor: "primary.main",
+                              bgcolor: "rgba(236, 72, 153, 0.08)"
+                            }
+                          }}
+                        >
+                          <Typography variant="caption" color="text.secondary" display="block">
+                            {label}
+                          </Typography>
+                          <Typography variant="body2" sx={{ fontWeight: 700 }}>
+                            S${value}
+                          </Typography>
+                        </Box>
+                      </Box>
+                    ))}
                   </Box>
                   <Divider />
                   <Stack spacing={1}>

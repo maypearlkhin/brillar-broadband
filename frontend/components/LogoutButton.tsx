@@ -2,8 +2,7 @@
 
 import LogoutIcon from "@mui/icons-material/Logout";
 import { Button } from "@mui/material";
-import { useRouter } from "next/navigation";
-import { postData } from "@/lib/api";
+import Link from "next/link";
 import { clearAuthToken } from "@/lib/authStorage";
 
 type LogoutButtonProps = {
@@ -12,23 +11,16 @@ type LogoutButtonProps = {
 };
 
 export default function LogoutButton({ variant = "toolbar" }: LogoutButtonProps) {
-  const router = useRouter();
-
-  async function handleLogout() {
-    try {
-      await postData("/api/auth/logout");
-    } catch {
-      /* even if the server call fails, drop the local session */
-    }
+  function handleLogout() {
     clearAuthToken();
-    router.push("/");
-    router.refresh();
   }
 
   const isNavbar = variant === "navbar";
 
   return (
     <Button
+      component={Link}
+      href="/logout"
       onClick={handleLogout}
       startIcon={<LogoutIcon />}
       variant={isNavbar ? "text" : "outlined"}
