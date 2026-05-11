@@ -120,10 +120,10 @@
         }
       }
     },
-    "/api/checkout": {
+    "/api/agent/buy-plan": {
       "post": {
         "summary": "Buy a New Plan",
-        "description": "Purchases a new subscription plan for the authenticated user using the provided plan ID. Extracts userId securely from the JWT token.",
+        "description": "Purchases a new subscription plan for the authenticated user using the provided plan ID. Extracts userId securely from the JWT token. Do NOT pass userId in the body.",
         "tags": [
           "Protected Endpoints"
         ],
@@ -150,20 +150,37 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": ["planId"],
+                "required": ["planId", "cardNumber", "expiryDate", "cvc", "nameOnCard"],
                 "properties": {
                   "planId": {
                     "type": "string",
-                    "description": "The unique identifier of the plan to purchase."
+                    "description": "The unique identifier of the plan to purchase (e.g. 'fibre_pro_500')."
                   },
                   "billingTerm": {
                     "type": "string",
-                    "description": "The billing term in days. Valid values: 30, 90, 180, 365.",
+                    "enum": ["30", "90", "180", "365"],
+                    "description": "Subscription duration in days. Defaults to '30' if omitted.",
                     "default": "30"
                   },
                   "amount": {
                     "type": "number",
-                    "description": "The price amount paid for the subscription."
+                    "description": "The price amount paid for the subscription (for record-keeping only)."
+                  },
+                  "cardNumber": {
+                    "type": "string",
+                    "description": "The customer's credit card number (dummy/false data accepted for simulation)."
+                  },
+                  "expiryDate": {
+                    "type": "string",
+                    "description": "The credit card expiration date (e.g., MM/YY)."
+                  },
+                  "cvc": {
+                    "type": "string",
+                    "description": "The 3 or 4 digit card verification code."
+                  },
+                  "nameOnCard": {
+                    "type": "string",
+                    "description": "The full name exactly as it appears on the credit card."
                   }
                 }
               }
@@ -172,7 +189,7 @@
         },
         "responses": {
           "201": {
-            "description": "Purchase complete",
+            "description": "Purchase complete. Subscription status is 'Installation Pending'.",
             "content": {
               "application/json": {
                 "schema": {
@@ -194,9 +211,7 @@
             "description": "Bad Request - Missing planId",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
               }
             }
           },
@@ -204,29 +219,25 @@
             "description": "Unauthorized - Invalid or missing token",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
               }
             }
           },
           "404": {
-            "description": "Not Found - Plan not found",
+            "description": "Not Found - Plan not found or no longer active",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
               }
             }
           }
         }
       }
     },
-    "/api/cancel-plan": {
+    "/api/agent/cancel-plan": {
       "post": {
-        "summary": "Cancel Current Plan",
-        "description": "Cancels the active subscription plan for the authenticated user. Marks the subscription status as Cancelled.",
+        "summary": "Cancel Active Plan",
+        "description": "Cancels the authenticated user's active subscription. If subscriptionId is omitted, the most recent non-cancelled subscription is cancelled. Sets status to 'Cancelled' and endDate to today.",
         "tags": [
           "Protected Endpoints"
         ],
@@ -256,7 +267,7 @@
                 "properties": {
                   "subscriptionId": {
                     "type": "string",
-                    "description": "Optional. The ID of the specific subscription to cancel. If omitted, the most recent active subscription will be cancelled."
+                    "description": "Optional. MongoDB _id of the specific subscription to cancel. If omitted, the most recent active subscription is cancelled."
                   }
                 }
               }
@@ -265,7 +276,7 @@
         },
         "responses": {
           "200": {
-            "description": "Cancellation complete",
+            "description": "Subscription cancelled successfully.",
             "content": {
               "application/json": {
                 "schema": {
@@ -287,19 +298,15 @@
             "description": "Unauthorized - Invalid or missing token",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
               }
             }
           },
           "404": {
-            "description": "Not Found - No active subscription found",
+            "description": "Not Found - No active subscription found to cancel",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
               }
             }
           }

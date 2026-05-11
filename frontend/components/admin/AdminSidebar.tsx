@@ -1,9 +1,11 @@
 "use client";
 
 import AssignmentTurnedInIcon from "@mui/icons-material/AssignmentTurnedIn";
+import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import CampaignIcon from "@mui/icons-material/Campaign";
 import DashboardCustomizeIcon from "@mui/icons-material/DashboardCustomize";
 import ExtensionIcon from "@mui/icons-material/Extension";
+import PeopleIcon from "@mui/icons-material/People";
 import RouterIcon from "@mui/icons-material/Router";
 import SupportAgentIcon from "@mui/icons-material/SupportAgent";
 import { Box, Button, Stack, Typography } from "@mui/material";
@@ -17,6 +19,8 @@ const LINKS = [
   { href: "/admin/announcements", label: "Announcements", icon: CampaignIcon },
   { href: "/admin/integration", label: "Integration", icon: ExtensionIcon },
   { href: "/admin/tickets", label: "Support Tickets", icon: SupportAgentIcon },
+  { href: "/admin/appointments", label: "Appointments", icon: CalendarMonthIcon },
+  { href: "/admin/users", label: "User Management", icon: PeopleIcon },
 ];
 
 function linkSelected(pathname: string, href: string) {

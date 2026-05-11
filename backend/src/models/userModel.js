@@ -29,12 +29,12 @@ const userSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      enum: ["customer", "admin"],
+      enum: ["customer", "admin", "isp_team"],
       default: "customer"
     },
     serviceZone: {
       type: embeddedZoneSchema,
-      required: true
+      required: false
     }
   },
   {

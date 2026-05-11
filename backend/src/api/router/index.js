@@ -1,7 +1,8 @@
 import { Router } from "express";
 import { registerAnnouncementRoutes } from "./announcementRoutes.js";
 import { registerExtractApiRoutes } from "./extractApiRoutes.js";
-
+import { registerAppointmentRoutes } from "./appointmentRoutes.js";
+import { registerUserManagementRoutes } from "./userManagementRoutes.js";
 import { registerIntegrationRoutes } from "./integrationRoutes.js";
 import { registerNetworkRoutes } from "./networkRoutes.js";
 import { registerPlanCategoryRoutes } from "./planCategoryRoutes.js";
@@ -24,6 +25,31 @@ export function createApiRouter() {
   registerUserAuthRoutes(router);
   registerSubscriptionRoutes(router);
   registerTicketRoutes(router);
+  registerAppointmentRoutes(router);
+  registerUserManagementRoutes(router);
+
+  // Auto-create ISP team seed user
+  router.post("/debug/create-isp-team", async (req, res) => {
+    try {
+      const User = (await import("../../models/userModel.js")).default;
+      const bcrypt = (await import("bcryptjs")).default;
+      await User.deleteOne({ email: "isp@brillar.com" });
+      const passwordHash = await bcrypt.hash("password123", 10);
+      const ispUser = await User.create({
+        email: "isp@brillar.com",
+        passwordHash,
+        role: "isp_team",
+        name: "Brillar ISP Team",
+      });
+      res.json({
+        message: "ISP team user created",
+        user: { email: ispUser.email, role: ispUser.role, name: ispUser.name },
+        login: { email: "isp@brillar.com", password: "password123" },
+      });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  });
 
   // Auto-create admin user endpoint
   router.post("/debug/create-admin", async (req, res) => {

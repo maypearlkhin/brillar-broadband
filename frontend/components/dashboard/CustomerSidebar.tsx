@@ -1,6 +1,7 @@
 "use client";
 
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
 import RouterIcon from "@mui/icons-material/Router";
 import SupportAgentIcon from "@mui/icons-material/SupportAgent";
@@ -13,6 +14,7 @@ const LINKS = [
   { href: "/plans", label: "Plans & upgrade", icon: ReceiptLongIcon },
   { href: "/service-status", label: "Service status", icon: RouterIcon },
   { href: "/dashboard/tickets", label: "Support Tickets", icon: SupportAgentIcon },
+  { href: "/dashboard/appointments", label: "Appointments", icon: CalendarTodayIcon },
 ];
 
 function linkSelected(pathname: string, href: string) {

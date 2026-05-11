@@ -25,6 +25,10 @@ function getSafeRedirect(
     return "/admin/dashboard";
   }
 
+  if (role === "isp_team") {
+    return "/isp/appointments";
+  }
+
   if (
     nextPath &&
     nextPath.startsWith("/") &&

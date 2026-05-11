@@ -1,0 +1,283 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Brillar Agent Scheduling API",
+    "description": "API documentation for home installation appointment scheduling. Customers can check available slots for the next 7 days, book an appointment, and view their appointment history with full status tracking (Pending → Approved → Completed / Cancelled).",
+    "version": "1.0.0",
+    "contact": {
+      "name": "Brillar API Support",
+      "email": "api-support@brillarbroadband.com"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://api-brillarbroadband.atenxion.ai",
+      "description": "Production server"
+    }
+  ],
+  "paths": {
+    "/api/agent/appointment-slots": {
+      "get": {
+        "summary": "Get Available Appointment Slots",
+        "description": "Returns the available home installation slots for the next 7 days. Each day has two time windows: morning (9am–1pm) and afternoon (1pm–5pm). Each window shows how many spots are left out of a maximum of 5. Use this before creating an appointment so the customer can make an informed choice.",
+        "tags": ["Public Endpoints"],
+        "responses": {
+          "200": {
+            "description": "Available slots returned successfully",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SlotsResponse" },
+                "example": {
+                  "success": true,
+                  "data": [
+                    {
+                      "date": "2026-05-13",
+                      "windows": [
+                        { "timeSlot": "morning", "booked": 3, "available": 2, "isFull": false },
+                        { "timeSlot": "afternoon", "booked": 5, "available": 0, "isFull": true }
+                      ]
+                    },
+                    {
+                      "date": "2026-05-14",
+                      "windows": [
+                        { "timeSlot": "morning", "booked": 0, "available": 5, "isFull": false },
+                        { "timeSlot": "afternoon", "booked": 1, "available": 4, "isFull": false }
+                      ]
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/agent/schedule-appointment": {
+      "post": {
+        "summary": "Create Home Installation Appointment",
+        "description": "Books a home installation appointment for the authenticated customer. The customerId is derived from the Bearer token — do NOT pass it in the body. The chosen date must be within the next 7 days and the selected time window must not be full. The appointment starts with status 'Pending' and must be approved by the ISP team or admin. Typically done after purchasing a plan.",
+        "tags": ["Protected Endpoints – Scheduling"],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "description": "Bearer JWT token of the authenticated customer. Format: `Bearer <token>`",
+            "schema": { "type": "string", "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." }
+          }
+        ],
+        "security": [{ "BearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CreateAppointmentRequest" },
+              "example": {
+                "scheduledDate": "2026-05-15",
+                "timeSlot": "morning",
+                "notes": "Please call before arrival."
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Appointment created. Status is 'Pending' until approved by the ISP team.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/CreateAppointmentResponse" }
+              }
+            }
+          },
+          "400": { "description": "Missing scheduledDate or invalid timeSlot, or date is outside the allowed 7-day window" },
+          "401": { "description": "Missing or invalid token" },
+          "403": { "description": "Only customers can book appointments" },
+          "409": { "description": "This time slot is fully booked — choose a different date or window" }
+        }
+      }
+    },
+    "/api/agent/my-appointments": {
+      "get": {
+        "summary": "List My Appointments",
+        "description": "Returns all home installation appointments for the authenticated user, sorted by scheduled date (ascending). Customers only see their own appointments. Each appointment includes status and all lifecycle timestamps so you can tell the customer exactly what stage their installation is at.",
+        "tags": ["Protected Endpoints – Scheduling"],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "description": "Bearer JWT token of the authenticated customer. Format: `Bearer <token>`",
+            "schema": { "type": "string", "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." }
+          }
+        ],
+        "security": [{ "BearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Appointments returned successfully",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AppointmentListResponse" },
+                "example": {
+                  "success": true,
+                  "data": [
+                    {
+                      "_id": "664a1b2c3d4e5f6a7b8c9d0e",
+                      "scheduledDate": "2026-05-15",
+                      "timeSlot": "morning",
+                      "notes": "Please call before arrival.",
+                      "status": "Approved",
+                      "createdAt": "2026-05-11T08:00:00.000Z",
+                      "approvedAt": "2026-05-12T09:30:00.000Z",
+                      "completedAt": null,
+                      "cancelledAt": null,
+                      "customerId": {
+                        "name": "John Doe",
+                        "email": "john@example.com",
+                        "serviceZone": {
+                          "country": "Singapore",
+                          "district": "Jurong East",
+                          "postalCode": "609606"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": { "description": "Missing or invalid token" }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "schemas": {
+      "SlotWindow": {
+        "type": "object",
+        "properties": {
+          "timeSlot": {
+            "type": "string",
+            "enum": ["morning", "afternoon"],
+            "description": "Morning = 9am–1pm. Afternoon = 1pm–5pm."
+          },
+          "booked": { "type": "integer", "description": "Number of existing bookings in this window." },
+          "available": { "type": "integer", "description": "Remaining spots (max 5 per window)." },
+          "isFull": { "type": "boolean", "description": "True if no more spots are available. Do not allow booking a full slot." }
+        }
+      },
+      "DaySlot": {
+        "type": "object",
+        "properties": {
+          "date": { "type": "string", "format": "date", "example": "2026-05-15" },
+          "windows": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/SlotWindow" }
+          }
+        }
+      },
+      "SlotsResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean", "example": true },
+          "data": {
+            "type": "array",
+            "description": "7 days of slot availability.",
+            "items": { "$ref": "#/components/schemas/DaySlot" }
+          }
+        }
+      },
+      "CreateAppointmentRequest": {
+        "type": "object",
+        "required": ["scheduledDate", "timeSlot"],
+        "properties": {
+          "scheduledDate": {
+            "type": "string",
+            "format": "date",
+            "description": "Date of the appointment in YYYY-MM-DD format. Must be within the next 7 days.",
+            "example": "2026-05-15"
+          },
+          "timeSlot": {
+            "type": "string",
+            "enum": ["morning", "afternoon"],
+            "description": "Time window. 'morning' = 9am–1pm, 'afternoon' = 1pm–5pm.",
+            "example": "morning"
+          },
+          "notes": {
+            "type": "string",
+            "description": "Optional special instructions for the technician (max 500 characters).",
+            "example": "Please call before arrival."
+          }
+        }
+      },
+      "Appointment": {
+        "type": "object",
+        "properties": {
+          "_id": { "type": "string" },
+          "scheduledDate": { "type": "string", "format": "date", "example": "2026-05-15" },
+          "timeSlot": { "type": "string", "enum": ["morning", "afternoon"] },
+          "notes": { "type": "string" },
+          "status": {
+            "type": "string",
+            "enum": ["Pending", "Approved", "Completed", "Cancelled"],
+            "description": "Lifecycle: Pending (just booked) → Approved (ISP team confirmed) → Completed (technician visited) or Cancelled."
+          },
+          "createdAt": { "type": "string", "format": "date-time", "description": "When the appointment was booked." },
+          "approvedAt": { "type": "string", "format": "date-time", "nullable": true, "description": "Set when ISP team approves the appointment. Null until then." },
+          "completedAt": { "type": "string", "format": "date-time", "nullable": true, "description": "Set when the technician marks the visit as completed. Null until then." },
+          "cancelledAt": { "type": "string", "format": "date-time", "nullable": true, "description": "Set if the appointment is cancelled. Null otherwise." },
+          "customerId": {
+            "type": "object",
+            "description": "Basic customer info for context.",
+            "properties": {
+              "name": { "type": "string" },
+              "email": { "type": "string" },
+              "serviceZone": {
+                "type": "object",
+                "properties": {
+                  "country": { "type": "string" },
+                  "district": { "type": "string" },
+                  "postalCode": { "type": "string" }
+                }
+              }
+            }
+          }
+        }
+      },
+      "CreateAppointmentResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean", "example": true },
+          "message": { "type": "string", "example": "Appointment scheduled successfully." },
+          "appointment": { "$ref": "#/components/schemas/Appointment" }
+        }
+      },
+      "AppointmentListResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean", "example": true },
+          "data": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Appointment" }
+          }
+        }
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Public Endpoints",
+      "description": "No authentication required"
+    },
+    {
+      "name": "Protected Endpoints – Scheduling",
+      "description": "Require a valid Bearer JWT token. customerId is always derived from the token — do not pass it in the request body. Only users with role 'customer' can create appointments."
+    }
+  ]
+}
