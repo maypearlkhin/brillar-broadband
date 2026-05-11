@@ -7,12 +7,14 @@ function serializeIntegration(integration) {
     token: integration.token ?? "",
     isActive: integration.isActive,
     createdAt: integration.createdAt,
-    updatedAt: integration.updatedAt
+    updatedAt: integration.updatedAt,
   };
 }
 
 function isValidWidgetScript(script) {
-  return /^<script\b[^>]*\bsrc=["'][^"']+["'][^>]*>\s*<\/script>$/i.test(script);
+  return /^<script\b[^>]*\bsrc=["'][^"']+["'][^>]*>\s*<\/script>$/i.test(
+    script,
+  );
 }
 
 function isValidAccessToken(token) {
@@ -24,10 +26,12 @@ function isValidAccessToken(token) {
 }
 
 export async function getIntegration(_req, res) {
-  const integration = await Integration.findOne({ isActive: true }).sort({ createdAt: -1 }).lean();
-
+  const integration = await Integration.findOne({ isActive: true })
+    .sort({ createdAt: -1 })
+    .lean();
+  console.log("integration", integration);
   return res.json({
-    integration: integration ? serializeIntegration(integration) : null
+    integration: integration ? serializeIntegration(integration) : null,
   });
 }
 
@@ -41,30 +45,35 @@ export async function createIntegration(req, res) {
 
   if (!isValidWidgetScript(script)) {
     return res.status(400).json({
-      message: "Widget script must be a full script tag with a src attribute."
+      message: "Widget script must be a full script tag with a src attribute.",
     });
   }
 
   if (!isValidAccessToken(token)) {
     return res.status(400).json({
-      message: "Access token can contain only letters, numbers, dots, underscores, colons, and hyphens."
+      message:
+        "Access token can contain only letters, numbers, dots, underscores, colons, and hyphens.",
     });
   }
 
   const existing = await Integration.findOne({ isActive: true }).lean();
 
   if (existing) {
-    return res.status(409).json({ message: "Remove the current integration before adding another one." });
+    return res
+      .status(409)
+      .json({
+        message: "Remove the current integration before adding another one.",
+      });
   }
 
   const integration = await Integration.create({
     script,
     token,
-    isActive: true
+    isActive: true,
   });
 
   return res.status(201).json({
-    integration: serializeIntegration(integration)
+    integration: serializeIntegration(integration),
   });
 }
 
@@ -72,7 +81,7 @@ export async function removeIntegration(req, res) {
   const integration = await Integration.findByIdAndUpdate(
     req.params.id,
     { $set: { isActive: false } },
-    { new: true }
+    { new: true },
   );
 
   if (!integration) {

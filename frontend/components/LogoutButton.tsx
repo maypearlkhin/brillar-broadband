@@ -2,7 +2,6 @@
 
 import LogoutIcon from "@mui/icons-material/Logout";
 import { Button } from "@mui/material";
-import Link from "next/link";
 import { clearAuthToken } from "@/lib/authStorage";
 
 type LogoutButtonProps = {
@@ -10,7 +9,9 @@ type LogoutButtonProps = {
   variant?: "navbar" | "toolbar";
 };
 
-export default function LogoutButton({ variant = "toolbar" }: LogoutButtonProps) {
+export default function LogoutButton({
+  variant = "toolbar",
+}: LogoutButtonProps) {
   function handleLogout() {
     clearAuthToken();
   }
@@ -19,7 +20,7 @@ export default function LogoutButton({ variant = "toolbar" }: LogoutButtonProps)
 
   return (
     <Button
-      component={Link}
+      component="a"
       href="/logout"
       onClick={handleLogout}
       startIcon={<LogoutIcon />}
