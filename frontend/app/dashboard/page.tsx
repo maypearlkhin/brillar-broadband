@@ -23,6 +23,7 @@ import { getCurrentUserFromCookies } from "@/lib/auth";
 import { axiosServer } from "@/lib/axiosServer";
 import { formatServiceZone } from "@/lib/serviceZones";
 import ServiceAlertsBar from "@/components/ServiceAlertsBar";
+import CancelPlanButton from "@/components/dashboard/CancelPlanButton";
 
 export const dynamic = "force-dynamic";
 
@@ -49,7 +50,7 @@ function getStatusColor(status: string) {
     return "success";
   }
 
-  if (status === "Rejected") {
+  if (status === "Rejected" || status === "Cancelled") {
     return "error";
   }
 
@@ -162,13 +163,18 @@ export default async function DashboardPage() {
                       Primary fibre service on your account.
                     </Typography>
                   </Box>
-                  <Chip
-                    color={
-                      latestSubscription ? getStatusColor(latestSubscription.status) : "default"
-                    }
-                    label={latestSubscription?.status || "No active order"}
-                    sx={{ fontWeight: 600 }}
-                  />
+                  <Stack direction="row" spacing={1} alignItems="center">
+                    {latestSubscription && latestSubscription.status !== "Cancelled" && latestSubscription.status !== "Rejected" && (
+                      <CancelPlanButton subscriptionId={latestSubscription._id} />
+                    )}
+                    <Chip
+                      color={
+                        latestSubscription ? getStatusColor(latestSubscription.status) : "default"
+                      }
+                      label={latestSubscription?.status || "No active order"}
+                      sx={{ fontWeight: 600 }}
+                    />
+                  </Stack>
                 </Stack>
 
                 {latestSubscription && latestPlan ? (

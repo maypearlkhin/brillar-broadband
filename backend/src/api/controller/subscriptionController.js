@@ -193,3 +193,44 @@ export async function patchSubscriptionAdmin(req, res) {
     }
   });
 }
+
+export async function cancelPlan(req, res) {
+  try {
+    const token = getTokenFromRequest(req);
+    const currentUser = token ? verifyJwt(token) : null;
+
+    if (!currentUser) {
+      return res.status(401).json({ message: "Authentication required." });
+    }
+
+    const { subscriptionId } = req.body;
+    const query = { userId: currentUser.userId };
+
+    if (subscriptionId) {
+      query._id = subscriptionId;
+    } else {
+      query.status = { $nin: ["Cancelled", "Rejected"] };
+      query.planStatus = { $ne: "cancelled" };
+    }
+
+    const subscription = await Subscription.findOne(query).sort({ createdAt: -1 });
+
+    if (!subscription) {
+      return res.status(404).json({ message: "No active subscription found to cancel." });
+    }
+
+    subscription.status = "Cancelled";
+    subscription.planStatus = "cancelled";
+    subscription.endDate = new Date(); // Effectively ending today
+    
+    await subscription.save();
+
+    return res.json({
+      message: "Subscription successfully cancelled.",
+      subscription: serializeSubscription(subscription)
+    });
+  } catch (error) {
+    console.error("Cancel plan error", error);
+    return res.status(500).json({ message: "Unable to cancel plan." });
+  }
+}

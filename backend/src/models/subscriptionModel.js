@@ -13,12 +13,12 @@ const subscriptionSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ["Installation Pending", "Installation Approved", "Rejected"],
+    enum: ["Installation Pending", "Installation Approved", "Rejected", "Cancelled"],
     default: "Installation Pending"
   },
   planStatus: {
     type: String,
-    enum: ["active", "blocked", "suspended", "pending"],
+    enum: ["active", "blocked", "suspended", "pending", "cancelled"],
     default: "active"
   },
   billingTerm: {
