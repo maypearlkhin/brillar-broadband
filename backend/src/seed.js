@@ -4,12 +4,16 @@ import PlanCategory from "./models/planCategoryModel.js";
 import ServiceZone from "./models/serviceZoneModel.js";
 import User from "./models/userModel.js";
 
+
 /** Two residential catalogue lines × 3 plans each (order = categorySortOrder, then price). */
 export const DEFAULT_PLANS = [
   {
     id: "plan_004",
     name: "100Mbps Essential",
     monthlyPrice: 32,
+    price90Days: 96,
+    price180Days: 192,
+    price365Days: 384,
     downloadSpeedMbps: 100,
     features: ["Unlimited data", "Wi-Fi 5 router included", "Email & browsing bundle"],
     categoryId: "res_everyday",
@@ -22,6 +26,9 @@ export const DEFAULT_PLANS = [
     id: "plan_005",
     name: "250Mbps Everyday",
     monthlyPrice: 39,
+    price90Days: 117,
+    price180Days: 234,
+    price365Days: 468,
     downloadSpeedMbps: 250,
     features: ["HD streaming ready", "Wi-Fi 6 router", "Standard installation"],
     categoryId: "res_everyday",
@@ -34,6 +41,9 @@ export const DEFAULT_PLANS = [
     id: "plan_006",
     name: "350Mbps Family starter",
     monthlyPrice: 46,
+    price90Days: 138,
+    price180Days: 276,
+    price365Days: 552,
     downloadSpeedMbps: 350,
     features: ["Multiple devices", "Parental controls", "Weekday install slots"],
     categoryId: "res_everyday",
@@ -46,6 +56,9 @@ export const DEFAULT_PLANS = [
     id: "plan_001",
     name: "500Mbps Basic",
     monthlyPrice: 49,
+    price90Days: 147,
+    price180Days: 294,
+    price365Days: 588,
     downloadSpeedMbps: 500,
     features: ["Unlimited data", "Wi-Fi 6 router", "Standard installation"],
     categoryId: "res_performance",
@@ -58,6 +71,9 @@ export const DEFAULT_PLANS = [
     id: "plan_002",
     name: "1Gbps Gamer Pro",
     monthlyPrice: 89.99,
+    price90Days: 269.97,
+    price180Days: 539.94,
+    price365Days: 1079.88,
     downloadSpeedMbps: 1000,
     features: ["Free Mesh Router", "Static IP", "Low-latency routing"],
     categoryId: "res_performance",
@@ -70,6 +86,9 @@ export const DEFAULT_PLANS = [
     id: "plan_003",
     name: "2Gbps Family Max",
     monthlyPrice: 109,
+    price90Days: 327,
+    price180Days: 654,
+    price365Days: 1308,
     downloadSpeedMbps: 2000,
     features: ["Multi-room coverage", "Parental controls", "Premium installation"],
     categoryId: "res_performance",
@@ -154,6 +173,8 @@ export async function seedDatabase() {
         ServiceZone.updateOne({ postalCode: zone.postalCode }, { $set: zone }, { upsert: true })
       )
     );
+
+
   })();
 
   return seedPromise;

@@ -1,0 +1,259 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Brillar Agent Personal API",
+    "description": "API documentation for the Agent extraction endpoints. Includes protected routes for fetching user's current plan and order history.",
+    "version": "1.0.0",
+    "contact": {
+      "name": "Brillar API Support",
+      "email": "api-support@brillarbroadband.com"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://api-brillarbroadband.atenxion.ai",
+      "description": "Production server"
+    }
+  ],
+  "paths": {
+    "/api/agent/get-my-plan": {
+      "get": {
+        "summary": "Get Current Plan",
+        "description": "Retrieves the current subscription plan for the authenticated user.",
+        "tags": [
+          "Protected Endpoints"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Current plan fetched successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubscriptionResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid or missing token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Authentication required."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/agent/my-order-history": {
+      "get": {
+        "summary": "Get My Order History",
+        "description": "Retrieves all past and present subscriptions (order history) for the authenticated user.",
+        "tags": [
+          "Protected Endpoints"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Order history fetched successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderHistoryResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid or missing token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Authentication required."
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "JWT token for authentication. Required for protected endpoints."
+      }
+    },
+    "schemas": {
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      },
+      "Plan": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "monthlyPrice": {
+            "type": "number"
+          },
+          "downloadSpeedMbps": {
+            "type": "number"
+          },
+          "price90Days": {
+            "type": "number"
+          },
+          "price180Days": {
+            "type": "number"
+          },
+          "price365Days": {
+            "type": "number"
+          },
+          "features": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "categoryId": {
+            "type": "string"
+          },
+          "categoryTitle": {
+            "type": "string"
+          },
+          "categorySortOrder": {
+            "type": "number"
+          },
+          "planSortOrder": {
+            "type": "number"
+          },
+          "isActive": {
+            "type": "boolean"
+          }
+        }
+      },
+      "Subscription": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "userId": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "description": "Order/Installation status"
+          },
+          "planStatus": {
+            "type": "string",
+            "description": "Network access status for the purchased plan",
+            "enum": ["active", "blocked", "suspended", "pending"]
+          },
+          "billingTerm": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "number",
+            "description": "The amount paid at the time of purchase"
+          },
+          "purchasedPrice": {
+            "type": "number",
+            "description": "Alias for amount. The price locked in when the user purchased the plan."
+          },
+          "currentTermPrice": {
+            "type": "number",
+            "description": "The current retail price for this exact billing term. If this differs from purchasedPrice, the plan price has changed."
+          },
+          "hasPriceChanged": {
+            "type": "boolean",
+            "description": "True if the current retail price no longer matches what the user originally paid."
+          },
+          "startDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "endDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "plan": {
+            "$ref": "#/components/schemas/Plan"
+          }
+        }
+      },
+      "SubscriptionResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "data": {
+            "$ref": "#/components/schemas/Subscription"
+          }
+        }
+      },
+      "OrderHistoryResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Subscription"
+            }
+          }
+        }
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Protected Endpoints",
+      "description": "APIs requiring Bearer token authentication"
+    }
+  ]
+}

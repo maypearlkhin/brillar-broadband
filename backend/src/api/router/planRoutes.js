@@ -7,5 +7,5 @@ export function registerPlanRoutes(router) {
   router.get("/admin/plans", planController.listPlansAdmin);
   router.post("/plans", planController.createPlan);
   router.put("/plans/:planId", planController.updatePlan);
-  router.delete("/plans/:planId", planController.deactivatePlan);
+  router.delete("/plans/:planId", planController.deletePlan);
 }

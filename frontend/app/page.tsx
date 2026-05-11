@@ -250,6 +250,22 @@ export default async function HomePage() {
         </Container>
       </Box>
 
+      {/* Enterprise / Awards banner */}
+      <Box sx={{ py: 2.5, bgcolor: "rgba(219, 39, 119, 0.05)", borderBottom: "1px solid", borderColor: "rgba(219, 39, 119, 0.15)" }}>
+        <Container maxWidth="lg">
+           <Stack direction={{ xs: "column", md: "row" }} alignItems="center" justifyContent="center" spacing={{ xs: 2, md: 5 }}>
+             <Typography variant="overline" sx={{ fontWeight: 700, letterSpacing: 1.2, color: "primary.main" }}>
+               Recognized by Industry Leaders
+             </Typography>
+             <Stack direction="row" spacing={{ xs: 3, md: 6 }} alignItems="center" flexWrap="wrap" justifyContent="center">
+                <Typography variant="subtitle1" sx={{ fontWeight: 800, color: "text.primary" }}>TechAsia Top ISP 2025</Typography>
+                <Typography variant="subtitle1" sx={{ fontWeight: 800, color: "text.primary" }}>Fastest Fibre SG</Typography>
+                <Typography variant="subtitle1" sx={{ fontWeight: 800, color: "text.primary" }}>Enterprise Choice Award</Typography>
+             </Stack>
+           </Stack>
+        </Container>
+      </Box>
+
       {/* Trust strip */}
       <Box sx={{ bgcolor: "background.paper", borderBottom: "1px solid", borderColor: "divider", py: 3 }}>
         <Container maxWidth="lg">
@@ -392,8 +408,7 @@ export default async function HomePage() {
             Residential plans
           </Typography>
           <Typography color="text.secondary" sx={{ maxWidth: 640, lineHeight: 1.7 }}>
-            Two catalogue lines — three tiers in each. All prices in SGD per month. Sign in to complete checkout;
-            compare speed, price, and feature bullets the way network teams review tiering.
+            Choose the perfect speed for your household. All prices are in SGD per month. Compare speeds, pricing, and features side-by-side to find the right fit for your home.
           </Typography>
         </Stack>
         <PlanCatalogSections
@@ -404,20 +419,22 @@ export default async function HomePage() {
       </Container>
 
       {/* Coverage + help */}
-      <Box sx={{ bgcolor: "background.paper", borderTop: "1px solid", borderColor: "divider", py: { xs: 5, md: 6 } }}>
+      <Box sx={{ bgcolor: "background.paper", borderTop: "1px solid", borderColor: "divider", py: { xs: 8, md: 10 } }}>
         <Container maxWidth="lg">
-          <Grid container spacing={4}>
+          <Grid container spacing={6} alignItems="center">
             <Grid item xs={12} md={6}>
-              <Stack spacing={1.5}>
-                <Typography variant="h5" sx={{ fontWeight: 700 }}>
-                  Coverage &amp; zones
+              <Stack spacing={2}>
+                <Typography variant="overline" color="primary" sx={{ fontWeight: 700, letterSpacing: 0.12 }}>
+                  Global Connectivity
                 </Typography>
-                <Typography color="text.secondary" sx={{ lineHeight: 1.75 }}>
-                  Service availability depends on country and postal code. At registration you&apos;ll select Singapore
-                  or Malaysia and enter your code — that drives what plans we can offer in this demo.
+                <Typography variant="h3" sx={{ fontWeight: 800, letterSpacing: "-0.02em" }}>
+                  Seamless Coverage Across Regions
                 </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  After login, your dashboard shows subscription status and any active network announcements from ops.
+                <Typography variant="body1" color="text.secondary" sx={{ lineHeight: 1.8, fontSize: "1.05rem" }}>
+                  Our award-winning fiber backbone powers homes and businesses across Singapore and Malaysia. We deliver direct peering to major global exchanges, guaranteeing ultra-low latency for gaming, financial trading, and seamless streaming.
+                </Typography>
+                <Typography variant="body2" color="text.secondary" sx={{ pt: 1 }}>
+                  Enter your address during registration to instantly verify multi-gigabit fiber availability for your exact location.
                 </Typography>
               </Stack>
             </Grid>
@@ -439,8 +456,7 @@ export default async function HomePage() {
                       Need an account first?
                     </Typography>
                     <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5, lineHeight: 1.7 }}>
-                      Create a subscriber login to save your zone, pick a plan, and reach checkout. Admins use a
-                      separate console for catalogue and incidents — try signing up as a customer first.
+                      Create a subscriber login to save your service zone, select your preferred plan, and securely complete your checkout. Manage your entire connection from one place.
                     </Typography>
                   </Box>
                 </Stack>
@@ -470,14 +486,13 @@ export default async function HomePage() {
           >
             <Box sx={{ maxWidth: 560 }}>
               <Typography variant="overline" sx={{ opacity: 0.85, fontWeight: 700, letterSpacing: 0.14 }}>
-                Ready when you are
+                Ready for an upgrade?
               </Typography>
               <Typography variant="h4" sx={{ fontWeight: 700, mt: 1, mb: 1.5, color: "#fff" }}>
-                Bring this flow to your next broadband pilot
+                Switch to Brillar Broadband today
               </Typography>
               <Typography sx={{ opacity: 0.92, lineHeight: 1.75, color: "rgba(255,255,255,0.92)" }}>
-                Use Brillar as a reference UI for residential signup: marketing home, secure login, plan grid, and
-                customer dashboard — all tied to a real API surface.
+                Experience ultra-low latency, crystal-clear video calls, and seamless streaming with our next-generation fibre network. Check your coverage and schedule your installation in minutes.
               </Typography>
             </Box>
             <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5} sx={{ flexShrink: 0 }}>
@@ -518,29 +533,71 @@ export default async function HomePage() {
         }}
       >
         <Container maxWidth="lg">
-          <Grid container spacing={3}>
-            <Grid item xs={12} sm={6}>
-              <Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 1 }}>
+          <Grid container spacing={4}>
+            <Grid item xs={12} sm={4} md={3}>
+              <Typography variant="subtitle2" sx={{ fontWeight: 800, mb: 1.5, color: "text.primary" }}>
                 Brillar Broadband
               </Typography>
-              <Typography variant="body2" color="text.secondary" sx={{ maxWidth: 360, lineHeight: 1.7 }}>
-                Demo residential ISP experience — plans, portal, and operations tooling for stakeholder walkthroughs.
+              <Typography variant="body2" color="text.secondary" sx={{ mb: 2, lineHeight: 1.7 }}>
+                Providing lightning-fast fibre broadband to homes and businesses across Singapore and Malaysia with award-winning customer support.
+              </Typography>
+              <Typography variant="body2" color="text.primary" sx={{ fontWeight: 600 }}>
+                support@brillarbroadband.com
+              </Typography>
+              <Typography variant="body2" color="text.primary" sx={{ fontWeight: 600 }}>
+                enterprise@brillarbroadband.com
               </Typography>
             </Grid>
-            <Grid item xs={12} sm={6}>
-              <Stack spacing={1} alignItems={{ xs: "flex-start", sm: "flex-end" }} textAlign={{ xs: "left", sm: "right" }}>
-                <MuiLink component={Link} href="/login" underline="hover" color="primary" fontWeight={600}>
-                  Subscriber login
-                </MuiLink>
-                <MuiLink component={Link} href="/register" underline="hover" color="text.secondary">
-                  Create account
-                </MuiLink>
-                <Typography variant="body2" color="text.secondary" sx={{ pt: 1 }}>
-                  © {new Date().getFullYear()} Brillar Broadband. Selected zones only.
-                </Typography>
+            <Grid item xs={12} sm={4} md={3}>
+              <Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 1.5, color: "text.primary" }}>
+                Quick Links
+              </Typography>
+              <Stack spacing={1}>
+                <MuiLink component={Link} href="/#plans" underline="hover" color="text.secondary" variant="body2">Residential Plans</MuiLink>
+                <MuiLink component={Link} href="/enterprise" underline="hover" color="text.secondary" variant="body2">Enterprise Solutions</MuiLink>
+                <MuiLink component={Link} href="/about" underline="hover" color="text.secondary" variant="body2">About Us</MuiLink>
+                <MuiLink component={Link} href="/faq" underline="hover" color="text.secondary" variant="body2">Help Center & FAQ</MuiLink>
+                <MuiLink component={Link} href="/service-status" underline="hover" color="text.secondary" variant="body2">Network Status</MuiLink>
+                <MuiLink component={Link} href="/login" underline="hover" color="text.secondary" variant="body2">Subscriber Login</MuiLink>
+              </Stack>
+            </Grid>
+            <Grid item xs={12} sm={4} md={3}>
+              <Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 1.5, color: "text.primary" }}>
+                Coverage Areas
+              </Typography>
+              <Stack spacing={1}>
+                <Typography variant="body2" color="text.secondary">Singapore (Central & Suburbs)</Typography>
+                <Typography variant="body2" color="text.secondary">Kuala Lumpur & Selangor</Typography>
+                <Typography variant="body2" color="text.secondary">Penang & Johor Bahru</Typography>
+                <Typography variant="body2" color="text.secondary">Enterprise Global Links</Typography>
+              </Stack>
+            </Grid>
+            <Grid item xs={12} sm={12} md={3}>
+              <Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 1.5, color: "text.primary" }}>
+                Our Offices
+              </Typography>
+              <Stack spacing={2}>
+                <Box>
+                  <Typography variant="body2" color="text.primary" sx={{ fontWeight: 600 }}>Singapore HQ</Typography>
+                  <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.6 }}>1 Raffles Place, #44-01<br/>One Raffles Place Tower 1<br/>Singapore 048616</Typography>
+                </Box>
+                <Box>
+                  <Typography variant="body2" color="text.primary" sx={{ fontWeight: 600 }}>Malaysia Office</Typography>
+                  <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.6 }}>Level 20, Menara Maxis<br/>KLCC, 50088 Kuala Lumpur</Typography>
+                </Box>
               </Stack>
             </Grid>
           </Grid>
+          <Box sx={{ mt: 6, pt: 3, borderTop: "1px solid", borderColor: "divider", display: "flex", flexWrap: "wrap", justifyContent: "space-between", alignItems: "center" }}>
+            <Typography variant="body2" color="text.secondary">
+              © {new Date().getFullYear()} Brillar Broadband Pte. Ltd. All rights reserved.
+            </Typography>
+            <Stack direction="row" spacing={3} sx={{ mt: { xs: 2, sm: 0 } }}>
+               <MuiLink href="#" underline="hover" color="text.secondary" variant="caption">Privacy Policy</MuiLink>
+               <MuiLink href="#" underline="hover" color="text.secondary" variant="caption">Terms of Service</MuiLink>
+               <MuiLink href="#" underline="hover" color="text.secondary" variant="caption">Acceptable Use Policy</MuiLink>
+            </Stack>
+          </Box>
         </Container>
       </Box>
     </Box>

@@ -5,6 +5,7 @@ function serializeIntegration(integration) {
     id: integration._id,
     script: integration.script,
     token: integration.token ?? "",
+    endpointDomain: integration.endpointDomain ?? "https://backend.atenxion.ai/api",
     isActive: integration.isActive,
     createdAt: integration.createdAt,
     updatedAt: integration.updatedAt,
@@ -38,6 +39,7 @@ export async function getIntegration(_req, res) {
 export async function createIntegration(req, res) {
   const script = String(req.body.script ?? "").trim();
   const token = String(req.body.token ?? "").trim();
+  const endpointDomain = String(req.body.endpointDomain ?? "https://backend.atenxion.ai/api").trim();
 
   if (!script) {
     return res.status(400).json({ message: "Widget script is required." });
@@ -69,6 +71,7 @@ export async function createIntegration(req, res) {
   const integration = await Integration.create({
     script,
     token,
+    endpointDomain,
     isActive: true,
   });
 

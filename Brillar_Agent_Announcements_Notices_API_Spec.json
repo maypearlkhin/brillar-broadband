@@ -1,0 +1,158 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Brillar Agent Announcements & Notices API",
+    "description": "API documentation for the Agent extraction endpoints. Includes public routes for fetching announcements, incident impacts, and notices.",
+    "version": "1.0.0",
+    "contact": {
+      "name": "Brillar API Support",
+      "email": "api-support@brillarbroadband.com"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://api-brillarbroadband.atenxion.ai",
+      "description": "Production server"
+    }
+  ],
+  "paths": {
+    "/api/agent/announcements-impacts": {
+      "get": {
+        "summary": "Get All Announcements (Impacts)",
+        "description": "Retrieves all network incidents, separated into active and resolved impacts.",
+        "tags": [
+          "Public Endpoints"
+        ],
+        "responses": {
+          "200": {
+            "description": "Impacts fetched successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImpactsResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/agent/notices": {
+      "get": {
+        "summary": "Get Notices",
+        "description": "Retrieves all active general announcements/notices.",
+        "tags": [
+          "Public Endpoints"
+        ],
+        "responses": {
+          "200": {
+            "description": "Notices fetched successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NoticesResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Impact": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier of the incident"
+          },
+          "country": {
+            "type": "string"
+          },
+          "district": {
+            "type": "string"
+          },
+          "postalCode": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "resolvedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        }
+      },
+      "ImpactsResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "activeImpacts": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Impact"
+                }
+              },
+              "resolvedImpacts": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Impact"
+                }
+              }
+            }
+          }
+        }
+      },
+      "Notice": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "NoticesResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Notice"
+            }
+          }
+        }
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Public Endpoints",
+      "description": "Public APIs that do not require authentication"
+    }
+  ]
+}

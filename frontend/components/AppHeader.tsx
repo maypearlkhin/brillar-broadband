@@ -11,6 +11,7 @@ import {
 import Link from "next/link";
 import { getCurrentUserFromCookies } from "@/lib/auth";
 import NavActions from "@/components/NavActions";
+import DesktopNav from "@/components/DesktopNav";
 
 export default function AppHeader() {
   const user = getCurrentUserFromCookies();
@@ -66,28 +67,7 @@ export default function AppHeader() {
             </Typography>
           </Box>
         </Stack>
-
-        <Stack
-          direction="row"
-          spacing={1}
-          alignItems="center"
-          sx={{ display: { xs: "none", sm: "flex" } }}
-        >
-          {!user && (
-            <>
-              <Button component={Link} href="/service-status" sx={{ color: "common.white" }} size="small">
-                Service status
-              </Button>
-              <Button component={Link} href="/#plans" sx={{ color: "common.white" }} size="small">
-                Plans
-              </Button>
-              <Button component={Link} href="/register" sx={{ color: "common.white" }} size="small">
-                Register
-              </Button>
-            </>
-          )}
-        </Stack>
-
+        <DesktopNav user={user} />
         <NavActions />
       </Toolbar>
     </AppBar>

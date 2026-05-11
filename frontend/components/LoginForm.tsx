@@ -8,16 +8,19 @@ import {
   Paper,
   Stack,
   TextField,
-  Typography
+  Typography,
 } from "@mui/material";
 import LoginIcon from "@mui/icons-material/Login";
 import Link from "next/link";
 import { FormEvent, useState } from "react";
 import { isAxiosError } from "axios";
-import { postData } from "@/lib/api";
+import { getData, postData } from "@/lib/api";
 import { setAuthToken } from "@/lib/authStorage";
 
-function getSafeRedirect(nextPath: string | undefined, role: string | undefined) {
+function getSafeRedirect(
+  nextPath: string | undefined,
+  role: string | undefined,
+) {
   if (role === "admin") {
     return "/admin/dashboard";
   }
@@ -40,6 +43,29 @@ export default function LoginForm({ nextPath }: { nextPath?: string }) {
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const sendLoginEvent = async (
+    userId: string,
+    authorizationToken: string | undefined,
+    endpointDomain: string,
+  ) => {
+    try {
+      const endpoint = `${endpointDomain}/post-login/user-login`;
+      await fetch(endpoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          authorization: authorizationToken || "",
+        },
+        body: JSON.stringify({
+          userId,
+          message: `User logged in successfully with userId: ${userId}`,
+        }),
+      });
+    } catch (e) {
+      console.log("Failed calling api to Atenxion Backend for user login", e);
+    }
+  };
+
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError("");
@@ -54,6 +80,26 @@ export default function LoginForm({ nextPath }: { nextPath?: string }) {
       }
 
       setAuthToken(data.token);
+
+      try {
+        const intRes = await getData("/api/admin/integration");
+        const integration = intRes?.data?.integration;
+        if (
+          integration?.token &&
+          integration?.endpointDomain &&
+          data.user?.id &&
+          data.user?.role === "customer"
+        ) {
+          await sendLoginEvent(
+            data.user.id,
+            integration.token,
+            integration.endpointDomain,
+          );
+        }
+      } catch (err) {
+        // ignore error
+      }
+
       window.location.assign(getSafeRedirect(nextPath, data.user?.role));
     } catch (err) {
       if (isAxiosError(err)) {
@@ -67,15 +113,23 @@ export default function LoginForm({ nextPath }: { nextPath?: string }) {
   }
 
   return (
-    <Box sx={{ bgcolor: "background.default", minHeight: "calc(100vh - 64px)", py: 6 }}>
+    <Box
+      sx={{
+        bgcolor: "background.default",
+        minHeight: "calc(100vh - 64px)",
+        py: 6,
+      }}
+    >
       <Container maxWidth="sm">
         <Paper variant="outlined" sx={{ p: { xs: 3, md: 4 } }}>
           <Stack spacing={3}>
             <Box>
               <Typography variant="h4">Welcome back</Typography>
               <Typography color="text.secondary" sx={{ mt: 1 }}>
-                Log in to manage your Brillar Broadband service. Your full name is collected when you{" "}
-                <Link href="/register">create an account</Link> — we greet you by first name in the header.
+                Log in to manage your Brillar Broadband service. Your full name
+                is collected when you{" "}
+                <Link href="/register">create an account</Link> — we greet you
+                by first name in the header.
               </Typography>
             </Box>
 
@@ -113,7 +167,13 @@ export default function LoginForm({ nextPath }: { nextPath?: string }) {
 
             <Typography variant="body2" color="text.secondary">
               New to Brillar?{" "}
-              <Link href={nextPath ? `/register?next=${encodeURIComponent(nextPath)}` : "/register"}>
+              <Link
+                href={
+                  nextPath
+                    ? `/register?next=${encodeURIComponent(nextPath)}`
+                    : "/register"
+                }
+              >
                 Create an account
               </Link>
             </Typography>

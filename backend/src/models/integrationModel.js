@@ -12,6 +12,11 @@ const integrationSchema = new mongoose.Schema(
       default: "",
       trim: true
     },
+    endpointDomain: {
+      type: String,
+      default: "https://backend.atenxion.ai/api",
+      trim: true
+    },
     isActive: {
       type: Boolean,
       default: true

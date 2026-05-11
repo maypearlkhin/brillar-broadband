@@ -1,5 +1,6 @@
 import Plan from "../../models/planModel.js";
 import PlanCategory from "../../models/planCategoryModel.js";
+import Subscription from "../../models/subscriptionModel.js";
 import mongoose from "mongoose";
 
 function slugifyPlanId(value) {
@@ -210,15 +211,29 @@ export async function updatePlan(req, res) {
   });
 }
 
-export async function deactivatePlan(req, res) {
-  const plan = await Plan.findOneAndUpdate({ id: req.params.planId }, { $set: { isActive: false } }, { new: true });
+export async function deletePlan(req, res) {
+  const planId = req.params.planId;
+  const plan = await Plan.findOne({ id: planId });
 
   if (!plan) {
     return res.status(404).json({ message: "Plan not found." });
   }
 
-  return res.json({
-    message: "Plan deactivated.",
-    plan: serializePlanDoc(plan)
-  });
+  const subCount = await Subscription.countDocuments({ planId: plan._id });
+
+  if (subCount > 0) {
+    plan.isActive = false;
+    await plan.save();
+    return res.json({
+      message: `Plan has ${subCount} active subscription(s). It was safely archived (deactivated) instead of permanently deleted to protect user data.`,
+      softDeleted: true,
+      plan: serializePlanDoc(plan)
+    });
+  } else {
+    await Plan.deleteOne({ _id: plan._id });
+    return res.json({
+      message: "Plan permanently deleted.",
+      hardDeleted: true
+    });
+  }
 }

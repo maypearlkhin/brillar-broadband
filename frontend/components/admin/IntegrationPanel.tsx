@@ -21,6 +21,7 @@ type Integration = {
   id: string;
   script: string;
   token: string;
+  endpointDomain: string;
   isActive: boolean;
 };
 
@@ -42,6 +43,7 @@ export default function IntegrationPanel() {
   const [integration, setIntegration] = useState<Integration | null>(null);
   const [script, setScript] = useState("");
   const [token, setToken] = useState("");
+  const [endpointDomain, setEndpointDomain] = useState("https://backend.atenxion.ai/api");
   const [error, setError] = useState("");
   const [loadError, setLoadError] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -57,6 +59,7 @@ export default function IntegrationPanel() {
       setIntegration(nextIntegration);
       setScript(nextIntegration?.script ?? "");
       setToken(nextIntegration?.token ?? "");
+      setEndpointDomain(nextIntegration?.endpointDomain ?? "https://backend.atenxion.ai/api");
     } catch {
       setLoadError("Unable to load integration.");
     }
@@ -89,7 +92,8 @@ export default function IntegrationPanel() {
     try {
       const { data } = await postData("/api/integration", {
         script: script.trim(),
-        token: token.trim()
+        token: token.trim(),
+        endpointDomain: endpointDomain.trim()
       });
       setIntegration(data.integration);
     } catch (err) {
@@ -116,6 +120,7 @@ export default function IntegrationPanel() {
       setIntegration(null);
       setScript("");
       setToken("");
+      setEndpointDomain("https://backend.atenxion.ai/api");
     } catch (err) {
       setError(
         isAxiosError(err)
@@ -185,6 +190,16 @@ export default function IntegrationPanel() {
               placeholder="Optional access token"
               helperText="Optional. API or access token used by the widget."
               error={Boolean(token.trim()) && !isValidAccessToken(token)}
+            />
+
+            <TextField
+              label="Endpoint Domain"
+              value={endpointDomain}
+              onChange={(event) => setEndpointDomain(event.target.value)}
+              fullWidth
+              disabled={hasIntegration}
+              placeholder="https://backend.atenxion.ai/api"
+              helperText="The backend API domain for sending events."
             />
 
             <Box>

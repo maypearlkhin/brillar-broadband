@@ -28,13 +28,26 @@ function serializePlan(plan) {
 
 function serializeSubscription(subscription) {
   const planDoc = subscription.planId;
+  const billingTerm = subscription.billingTerm ?? "30";
+  
+  let currentTermPrice = planDoc?.monthlyPrice ?? 0;
+  if (billingTerm === "90") currentTermPrice = planDoc?.price90Days || (planDoc?.monthlyPrice * 3) || 0;
+  else if (billingTerm === "180") currentTermPrice = planDoc?.price180Days || (planDoc?.monthlyPrice * 6) || 0;
+  else if (billingTerm === "365") currentTermPrice = planDoc?.price365Days || (planDoc?.monthlyPrice * 12) || 0;
+
+  const purchasedPrice = subscription.amount ?? 0;
+  const hasPriceChanged = purchasedPrice !== currentTermPrice;
 
   return {
     id: subscription._id,
     userId: subscription.userId?._id ?? subscription.userId,
     status: subscription.status,
-    billingTerm: subscription.billingTerm ?? "30",
-    amount: subscription.amount ?? 0,
+    planStatus: subscription.planStatus ?? "active",
+    billingTerm,
+    amount: purchasedPrice,
+    purchasedPrice,
+    currentTermPrice,
+    hasPriceChanged,
     startDate: subscription.startDate ?? null,
     endDate: subscription.endDate ?? null,
     createdAt: subscription.createdAt,

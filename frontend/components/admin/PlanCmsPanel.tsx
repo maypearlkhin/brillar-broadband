@@ -4,6 +4,7 @@ import AddIcon from "@mui/icons-material/Add";
 import BlockIcon from "@mui/icons-material/Block";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 import {
   Alert,
   Box,
@@ -100,6 +101,9 @@ export default function PlanCmsPanel() {
   const [categoryDialogOpen, setCategoryDialogOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState<PlanCategory | null>(null);
   const [categoryTitle, setCategoryTitle] = useState("");
+  
+  const [planToDelete, setPlanToDelete] = useState<PlanRow | null>(null);
+  const [deleteMessage, setDeleteMessage] = useState("");
 
   const sections = useMemo(
     () =>
@@ -277,14 +281,34 @@ export default function PlanCmsPanel() {
     }
   }
 
-  async function setPlanActive(plan: PlanRow, isActive: boolean) {
+  function promptDelete(plan: PlanRow) {
+    setPlanToDelete(plan);
+  }
+
+  async function executeDelete() {
+    if (!planToDelete) return;
+    const plan = planToDelete;
+    setPlanToDelete(null);
+
     try {
-      if (isActive) {
-        await putData(`/api/plans/${encodeURIComponent(plan.id)}`, { isActive: true });
-      } else {
-        await deleteData(`/api/plans/${encodeURIComponent(plan.id)}`);
+      const response = await deleteData(`/api/plans/${encodeURIComponent(plan.id)}`);
+
+      if (response.data?.softDeleted) {
+        setDeleteMessage(response.data.message);
       }
 
+      await loadData();
+      router.refresh();
+    } catch (err) {
+      setLoadError(
+        isAxiosError(err) ? err.response?.data?.message || "Unable to delete plan." : "Unable to delete plan."
+      );
+    }
+  }
+
+  async function setPlanActive(plan: PlanRow, isActive: boolean) {
+    try {
+      await putData(`/api/plans/${encodeURIComponent(plan.id)}`, { isActive });
       await loadData();
       router.refresh();
     } catch (err) {
@@ -429,12 +453,17 @@ export default function PlanCmsPanel() {
                       <Button size="small" startIcon={<EditIcon />} onClick={() => openPlanEdit(plan, category)}>
                         Edit
                       </Button>
-                      <IconButton
-                        aria-label={plan.isActive ? "Deactivate plan" : "Reactivate plan"}
-                        onClick={() => setPlanActive(plan, !plan.isActive)}
-                      >
-                        {plan.isActive ? <BlockIcon /> : <CheckCircleIcon />}
-                      </IconButton>
+                      <Stack direction="row" spacing={0}>
+                        <IconButton
+                          aria-label={plan.isActive ? "Deactivate plan" : "Reactivate plan"}
+                          onClick={() => setPlanActive(plan, !plan.isActive)}
+                        >
+                          {plan.isActive ? <BlockIcon /> : <CheckCircleIcon />}
+                        </IconButton>
+                        <IconButton aria-label="Delete plan" color="error" onClick={() => promptDelete(plan)}>
+                          <DeleteIcon />
+                        </IconButton>
+                      </Stack>
                     </CardActions>
                   </Card>
                 </Grid>
@@ -544,6 +573,35 @@ export default function PlanCmsPanel() {
           <Button onClick={closePlanDialog}>Cancel</Button>
           <Button variant="contained" onClick={savePlan}>
             Save
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog open={Boolean(planToDelete)} onClose={() => setPlanToDelete(null)} maxWidth="xs" fullWidth>
+        <DialogTitle>Confirm Delete</DialogTitle>
+        <DialogContent>
+          <Typography>
+            Are you sure you want to permanently delete the plan <strong>{planToDelete?.name}</strong>?
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setPlanToDelete(null)}>Cancel</Button>
+          <Button color="error" variant="contained" onClick={executeDelete}>
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog open={Boolean(deleteMessage)} onClose={() => setDeleteMessage("")} maxWidth="sm" fullWidth>
+        <DialogTitle>Plan Archived</DialogTitle>
+        <DialogContent>
+          <Alert severity="info" sx={{ mt: 1 }}>
+            {deleteMessage}
+          </Alert>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setDeleteMessage("")} variant="contained">
+            Close
           </Button>
         </DialogActions>
       </Dialog>

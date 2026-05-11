@@ -1,5 +1,6 @@
 import * as extractApiController from "../controller/extractApiController.js";
 
+
 export function registerExtractApiRoutes(router) {
   // Public endpoints (no middleware)
   router.get(
@@ -11,6 +12,7 @@ export function registerExtractApiRoutes(router) {
     extractApiController.getAllResolvedHistories,
   );
   router.get("/agent/notices", extractApiController.getNotices);
+
   router.get("/agent/all-plans", extractApiController.getAllPlans);
 
   // Token-protected endpoints

@@ -1,0 +1,113 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Brillar Agent Plans API",
+    "description": "API documentation for the Agent extraction endpoints. Includes public route for fetching all available broadband plans.",
+    "version": "1.0.0",
+    "contact": {
+      "name": "Brillar API Support",
+      "email": "api-support@brillarbroadband.com"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://api-brillarbroadband.atenxion.ai",
+      "description": "Production server"
+    }
+  ],
+  "paths": {
+    "/api/agent/all-plans": {
+      "get": {
+        "summary": "Get All Plans",
+        "description": "Retrieves all active broadband plans available.",
+        "tags": [
+          "Public Endpoints"
+        ],
+        "responses": {
+          "200": {
+            "description": "Plans fetched successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AllPlansResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Plan": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "monthlyPrice": {
+            "type": "number"
+          },
+          "downloadSpeedMbps": {
+            "type": "number"
+          },
+          "price90Days": {
+            "type": "number"
+          },
+          "price180Days": {
+            "type": "number"
+          },
+          "price365Days": {
+            "type": "number"
+          },
+          "features": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "categoryId": {
+            "type": "string"
+          },
+          "categoryTitle": {
+            "type": "string"
+          },
+          "categorySortOrder": {
+            "type": "number"
+          },
+          "planSortOrder": {
+            "type": "number"
+          },
+          "isActive": {
+            "type": "boolean"
+          }
+        }
+      },
+      "AllPlansResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Plan"
+            }
+          }
+        }
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Public Endpoints",
+      "description": "Public APIs that do not require authentication"
+    }
+  ]
+}

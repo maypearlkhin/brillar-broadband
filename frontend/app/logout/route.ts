@@ -10,14 +10,16 @@ function clearTokenCookie(response: NextResponse) {
 }
 
 export async function GET(request: Request) {
-  const url = new URL("/", request.url);
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || request.url;
+  const url = new URL("/", appUrl);
   const response = NextResponse.redirect(url);
   clearTokenCookie(response);
   return response;
 }
 
 export async function POST(request: Request) {
-  const url = new URL("/", request.url);
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || request.url;
+  const url = new URL("/", appUrl);
   const response = NextResponse.redirect(url);
   clearTokenCookie(response);
   return response;
