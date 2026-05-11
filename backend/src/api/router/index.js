@@ -25,6 +25,45 @@ export function createApiRouter() {
   registerSubscriptionRoutes(router);
   registerTicketRoutes(router);
 
+  // Auto-create admin user endpoint
+  router.post("/debug/create-admin", async (req, res) => {
+    try {
+      const User = (await import("../../models/userModel.js")).default;
+      const bcrypt = (await import("bcryptjs")).default;
+      
+      // Delete existing admin user if exists
+      await User.deleteOne({ email: "admin@brillar.com" });
+      
+      // Create new admin user with known password
+      const passwordHash = await bcrypt.hash("password123", 10);
+      const adminUser = await User.create({
+        email: "admin@brillar.com",
+        passwordHash,
+        role: "admin",
+        name: "Brillar Admin",
+        serviceZone: {
+          country: "Singapore",
+          district: "Jurong East",
+          postalCode: "609606"
+        }
+      });
+      
+      res.json({ 
+        message: "Admin user created successfully",
+        user: {
+          email: adminUser.email,
+          role: adminUser.role,
+          name: adminUser.name
+        },
+        login: {
+          email: "admin@brillar.com",
+          password: "password123"
+        }
+      });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  });
 
   return router;
 }

@@ -19,9 +19,9 @@ export default function NavActions() {
           size="small"
           startIcon={<LoginIcon />}
           sx={{
-            bgcolor: "rgba(255,255,255,0.95)",
-            color: "#9d174d",
-            "&:hover": { bgcolor: "common.white" },
+            bgcolor: "#FEC556",
+            color: "#000000",
+            "&:hover": { bgcolor: "#FDB840" },
           }}
         >
           Sign in

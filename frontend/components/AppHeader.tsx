@@ -24,7 +24,7 @@ export default function AppHeader() {
       position="sticky"
       elevation={0}
       sx={{
-        bgcolor: "#d946a8",
+        bgcolor: "primary.main",
         color: "common.white",
         borderBottom: "1px solid rgba(255,255,255,0.14)"
       }}

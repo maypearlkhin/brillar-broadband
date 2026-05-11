@@ -6,7 +6,7 @@ import { clearAuthToken, getAuthToken } from "@/lib/authStorage";
 import { getData } from "@/lib/api";
 
 type LogoutButtonProps = {
-  /** `navbar`: white text on pink app bar. `toolbar`: outlined in page body. */
+  /** `navbar`: white text on dark blue app bar. `toolbar`: outlined in page body. */
   variant?: "navbar" | "toolbar";
 };
 
@@ -66,7 +66,7 @@ export default function LogoutButton({
         isNavbar
           ? { color: "common.white" }
           : {
-              borderColor: "rgba(236, 72, 153, 0.45)",
+              borderColor: "rgba(13, 27, 50, 0.45)",
               "&:hover": { borderColor: "primary.main" },
             }
       }

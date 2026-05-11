@@ -28,7 +28,7 @@ export default function EnterprisePage() {
   return (
     <Box sx={{ bgcolor: "background.default", minHeight: "100vh" }}>
       {/* Hero */}
-      <Box sx={{ bgcolor: "rgba(219, 39, 119, 0.05)", borderBottom: "1px solid", borderColor: "rgba(219, 39, 119, 0.15)", color: "text.primary", py: { xs: 8, md: 12 } }}>
+      <Box sx={{ bgcolor: "rgba(254, 197, 86, 0.15)", borderBottom: "1px solid", borderColor: "rgba(254, 197, 86, 0.4)", color: "text.primary", py: { xs: 8, md: 12 } }}>
         <Container maxWidth="lg">
           <Grid container spacing={6} alignItems="center">
             <Grid item xs={12} md={7}>
@@ -70,7 +70,7 @@ export default function EnterprisePage() {
           {enterpriseFeatures.map((feat) => (
             <Grid item xs={12} md={4} key={feat.title}>
               <Paper elevation={0} sx={{ p: 4, height: "100%", border: "1px solid", borderColor: "divider", borderRadius: 3, transition: "transform 0.2s", "&:hover": { transform: "translateY(-4px)", boxShadow: "0 10px 30px rgba(0,0,0,0.05)" } }}>
-                <Box sx={{ width: 56, height: 56, borderRadius: 2, bgcolor: "rgba(236, 72, 153, 0.1)", display: "flex", alignItems: "center", justifyContent: "center", color: "primary.main", mb: 3 }}>
+                <Box sx={{ width: 56, height: 56, borderRadius: 2, bgcolor: "rgba(254, 197, 86, 0.15)", display: "flex", alignItems: "center", justifyContent: "center", color: "primary.main", mb: 3 }}>
                   <feat.icon fontSize="large" />
                 </Box>
                 <Typography variant="h6" sx={{ fontWeight: 700, mb: 1.5 }}>
@@ -105,7 +105,7 @@ export default function EnterprisePage() {
             <Grid item xs={12} md={7}>
               <Grid container spacing={3}>
                 <Grid item xs={6}>
-                  <Paper elevation={0} sx={{ p: 3, border: "1px dashed", borderColor: "primary.light", bgcolor: "rgba(236, 72, 153, 0.05)", borderRadius: 2 }}>
+                  <Paper elevation={0} sx={{ p: 3, border: "1px dashed", borderColor: "primary.light", bgcolor: "rgba(254, 197, 86, 0.15)", borderRadius: 2 }}>
                     <Typography variant="h3" color="primary.main" sx={{ fontWeight: 800, mb: 1 }}>
                       2Tbps+
                     </Typography>
@@ -115,7 +115,7 @@ export default function EnterprisePage() {
                   </Paper>
                 </Grid>
                 <Grid item xs={6}>
-                  <Paper elevation={0} sx={{ p: 3, border: "1px dashed", borderColor: "primary.light", bgcolor: "rgba(236, 72, 153, 0.05)", borderRadius: 2 }}>
+                  <Paper elevation={0} sx={{ p: 3, border: "1px dashed", borderColor: "primary.light", bgcolor: "rgba(254, 197, 86, 0.15)", borderRadius: 2 }}>
                     <Typography variant="h3" color="primary.main" sx={{ fontWeight: 800, mb: 1 }}>
                       &lt;2ms
                     </Typography>

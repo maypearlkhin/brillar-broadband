@@ -95,7 +95,7 @@ export default async function HomePage() {
           borderBottom: "1px solid rgba(15, 23, 42, 0.08)",
           bgcolor: "#f8fafc",
           backgroundImage:
-            "linear-gradient(180deg, rgba(253, 242, 248, 0.65) 0%, rgba(248, 250, 252, 0.95) 48%, #f8fafc 100%)"
+            "linear-gradient(180deg, rgba(254, 197, 86, 0.15) 0%, rgba(248, 250, 252, 0.95) 48%, #f8fafc 100%)"
         }}
       >
         <Container maxWidth="lg" sx={{ py: { xs: 5, md: 8 } }}>
@@ -193,8 +193,8 @@ export default async function HomePage() {
                         sx={{
                           p: 1.5,
                           borderRadius: 1,
-                          bgcolor: "rgba(236, 72, 153, 0.07)",
-                          border: "1px solid rgba(219, 39, 119, 0.18)"
+                          bgcolor: "rgba(13, 27, 50, 0.07)",
+                          border: "1px solid rgba(13, 27, 50, 0.18)"
                         }}
                       >
                         <Typography variant="caption" color="text.secondary">
@@ -213,8 +213,8 @@ export default async function HomePage() {
                         sx={{
                           p: 1.5,
                           borderRadius: 1,
-                          bgcolor: "rgba(14, 165, 233, 0.06)",
-                          border: "1px solid rgba(2, 132, 199, 0.2)"
+                          bgcolor: "rgba(254, 197, 86, 0.15)",
+                          border: "1px solid rgba(254, 197, 86, 0.4)"
                         }}
                       >
                         <Typography variant="caption" color="text.secondary">
@@ -251,7 +251,7 @@ export default async function HomePage() {
       </Box>
 
       {/* Enterprise / Awards banner */}
-      <Box sx={{ py: 2.5, bgcolor: "rgba(219, 39, 119, 0.05)", borderBottom: "1px solid", borderColor: "rgba(219, 39, 119, 0.15)" }}>
+      <Box sx={{ py: 2.5, bgcolor: "rgba(13, 27, 50, 0.05)", borderBottom: "1px solid", borderColor: "rgba(13, 27, 50, 0.15)" }}>
         <Container maxWidth="lg">
            <Stack direction={{ xs: "column", md: "row" }} alignItems="center" justifyContent="center" spacing={{ xs: 2, md: 5 }}>
              <Typography variant="overline" sx={{ fontWeight: 700, letterSpacing: 1.2, color: "primary.main" }}>
@@ -312,7 +312,7 @@ export default async function HomePage() {
                   bgcolor: "background.paper",
                   transition: "transform 0.2s ease, box-shadow 0.2s ease",
                   "&:hover": {
-                    boxShadow: "0 10px 28px rgba(219, 39, 119, 0.14)",
+                    boxShadow: "0 10px 28px rgba(13, 27, 50, 0.14)",
                     transform: "translateY(-2px)"
                   }
                 }}
@@ -327,7 +327,7 @@ export default async function HomePage() {
                       alignItems: "center",
                       justifyContent: "center",
                       mb: 1.5,
-                      bgcolor: "rgba(236, 72, 153, 0.18)",
+                      bgcolor: "rgba(13, 27, 50, 0.18)",
                       color: "primary.dark"
                     }}
                   >
@@ -350,7 +350,7 @@ export default async function HomePage() {
       <Box
         sx={{
           py: { xs: 6, md: 8 },
-          bgcolor: "grey.100",
+          bgcolor: "rgba(254, 197, 86, 0.15)",
           borderTop: "1px solid",
           borderBottom: "1px solid",
           borderColor: "divider"
@@ -446,7 +446,7 @@ export default async function HomePage() {
                   borderRadius: 2,
                   border: "1px dashed",
                   borderColor: "primary.light",
-                  bgcolor: "rgba(236, 72, 153, 0.1)"
+                  bgcolor: "rgba(13, 27, 50, 0.1)"
                 }}
               >
                 <Stack direction="row" spacing={1.5} alignItems="flex-start" sx={{ mb: 2 }}>
@@ -460,7 +460,18 @@ export default async function HomePage() {
                     </Typography>
                   </Box>
                 </Stack>
-                <Button component={Link} href="/register" variant="contained" color="primary" size="medium" fullWidth>
+                <Button 
+                  component={Link} 
+                  href="/register" 
+                  variant="contained" 
+                  size="medium" 
+                  fullWidth
+                  sx={{
+                    bgcolor: "#FEC556",
+                    color: "#000000",
+                    "&:hover": { bgcolor: "#FDB840" }
+                  }}
+                >
                   Get started
                 </Button>
               </Paper>
@@ -473,7 +484,7 @@ export default async function HomePage() {
       <Box
         sx={{
           py: { xs: 6, md: 7 },
-          background: "#d946a8",
+          bgcolor: "primary.main",
           color: "primary.contrastText"
         }}
       >
@@ -488,10 +499,10 @@ export default async function HomePage() {
               <Typography variant="overline" sx={{ opacity: 0.85, fontWeight: 700, letterSpacing: 0.14 }}>
                 Ready for an upgrade?
               </Typography>
-              <Typography variant="h4" sx={{ fontWeight: 700, mt: 1, mb: 1.5, color: "#fff" }}>
+              <Typography variant="h4" sx={{ fontWeight: 700, mt: 1, mb: 1.5, color: "primary.contrastText" }}>
                 Switch to Brillar Broadband today
               </Typography>
-              <Typography sx={{ opacity: 0.92, lineHeight: 1.75, color: "rgba(255,255,255,0.92)" }}>
+              <Typography sx={{ opacity: 0.92, lineHeight: 1.75, color: "primary.contrastText" }}>
                 Experience ultra-low latency, crystal-clear video calls, and seamless streaming with our next-generation fibre network. Check your coverage and schedule your installation in minutes.
               </Typography>
             </Box>
@@ -502,9 +513,9 @@ export default async function HomePage() {
                 variant="contained"
                 size="large"
                   sx={{
-                  bgcolor: "#fff",
-                  color: "#be185d",
-                  "&:hover": { bgcolor: "rgba(255,255,255,0.94)" }
+                  bgcolor: "#FEC556",
+                  color: "#000000",
+                  "&:hover": { bgcolor: "#FDB840" }
                 }}
               >
                 Create account
@@ -514,7 +525,7 @@ export default async function HomePage() {
                 href="/login"
                 variant="outlined"
                 size="large"
-                sx={{ borderColor: "rgba(255,255,255,0.65)", color: "#fff", "&:hover": { borderColor: "#fff" } }}
+                sx={{ borderColor: "#FEC556", color: "#FEC556", "&:hover": { borderColor: "#FDB840", color: "#FDB840" } }}
               >
                 Sign in
               </Button>

@@ -31,6 +31,7 @@ export default function RegisterForm({ nextPath }: { nextPath?: string }) {
   const [zones, setZones] = useState<ServiceZone[]>([]);
   /** Stable key for MUI Select — avoids index/string coercion bugs with MenuItem values. */
   const [selectedPostal, setSelectedPostal] = useState("");
+  const [selectedCountry, setSelectedCountry] = useState("");
   const [zonesError, setZonesError] = useState("");
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -112,7 +113,18 @@ export default function RegisterForm({ nextPath }: { nextPath?: string }) {
     }
   }
 
-  const zonesReady = zones.length > 0 && Boolean(selectedPostal);
+  // Helper function to get zones by country
+  const getZonesByCountry = (country: string) => {
+    return zones.filter(zone => zone.country === country);
+  };
+
+  // Get unique countries from zones
+  const countries = Array.from(new Set(zones.map(zone => zone.country)));
+
+  // Get zones for selected country
+  const filteredZones = selectedCountry ? getZonesByCountry(selectedCountry) : [];
+
+  const zonesReady = zones.length > 0 && Boolean(selectedCountry) && Boolean(selectedPostal);
 
   return (
     <Box sx={{ bgcolor: "background.default", minHeight: "calc(100vh - 64px)", py: 6 }}>
@@ -160,6 +172,29 @@ export default function RegisterForm({ nextPath }: { nextPath?: string }) {
                 fullWidth
               />
               <FormControl fullWidth required disabled={zones.length === 0}>
+                <InputLabel id="country-label">Country</InputLabel>
+                <Select
+                  labelId="country-label"
+                  id="country-select"
+                  label="Country"
+                  value={selectedCountry}
+                  onChange={(event) => {
+                    setSelectedCountry(event.target.value);
+                    setSelectedPostal(""); // Reset zone when country changes
+                  }}
+                  MenuProps={{
+                    disablePortal: false,
+                    PaperProps: { sx: { maxHeight: 320 } }
+                  }}
+                >
+                  {countries.map((country) => (
+                    <MenuItem value={country} key={country}>
+                      {country}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              <FormControl fullWidth required disabled={!selectedCountry || filteredZones.length === 0}>
                 <InputLabel id="service-zone-label">Service Zone</InputLabel>
                 <Select
                   labelId="service-zone-label"
@@ -172,7 +207,7 @@ export default function RegisterForm({ nextPath }: { nextPath?: string }) {
                     PaperProps: { sx: { maxHeight: 320 } }
                   }}
                 >
-                  {zones.map((zone) => (
+                  {filteredZones.map((zone) => (
                     <MenuItem value={zone.postalCode} key={zone.postalCode}>
                       {formatServiceZone(zone)}
                     </MenuItem>

@@ -77,7 +77,7 @@ export default function PlanGrid({
                 borderTopColor: "primary.main",
                 transition: "box-shadow 0.2s ease, transform 0.2s ease",
                 "&:hover": {
-                  boxShadow: "0 8px 24px rgba(219, 39, 119, 0.16)",
+                  boxShadow: "0 8px 24px rgba(254, 197, 86, 0.16)",
                   transform: "translateY(-2px)"
                 }
               }}
@@ -120,12 +120,12 @@ export default function PlanGrid({
                             px: 1,
                             py: 0.75,
                             textAlign: "center",
-                            bgcolor: "rgba(236, 72, 153, 0.04)",
+                            bgcolor: "rgba(254, 197, 86, 0.04)",
                             color: "text.primary",
                             transition: "border-color 0.2s ease, background-color 0.2s ease",
                             "&:hover": {
                               borderColor: "primary.main",
-                              bgcolor: "rgba(236, 72, 153, 0.08)"
+                              bgcolor: "rgba(254, 197, 86, 0.08)"
                             }
                           }}
                         >

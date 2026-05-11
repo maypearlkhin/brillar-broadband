@@ -48,7 +48,7 @@ export default async function ServiceAlertsBar() {
         border: "1px solid",
         borderColor: "divider",
         borderRadius: 1,
-        backgroundColor: "rgba(253, 242, 248, 0.97)",
+        backgroundColor: "rgba(254, 197, 86, 0.15)",
         px: 2,
         py: 1.5,
         mb: 3,

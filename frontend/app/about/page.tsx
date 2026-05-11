@@ -45,7 +45,7 @@ export default function AboutPage() {
       <Container maxWidth="lg" sx={{ py: { xs: 8, md: 12 } }}>
         <Grid container spacing={6} alignItems="center">
           <Grid item xs={12} md={6}>
-            <Box sx={{ p: 4, bgcolor: "rgba(236, 72, 153, 0.05)", borderRadius: 4, border: "1px dashed", borderColor: "primary.light" }}>
+            <Box sx={{ p: 4, bgcolor: "rgba(254, 197, 86, 0.15)", borderRadius: 4, border: "1px dashed", borderColor: "primary.light" }}>
               <Typography variant="h4" sx={{ fontWeight: 700, mb: 2 }}>
                 Our Mission
               </Typography>

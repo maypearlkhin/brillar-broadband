@@ -28,7 +28,7 @@ export default function FaqPage() {
                 width: 56,
                 height: 56,
                 borderRadius: "50%",
-                bgcolor: "rgba(236, 72, 153, 0.1)",
+                bgcolor: "rgba(254, 197, 86, 0.15)",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",

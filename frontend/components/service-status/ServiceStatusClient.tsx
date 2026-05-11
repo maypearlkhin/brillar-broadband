@@ -189,7 +189,7 @@ export default function ServiceStatusClient({
               <Card
                 key={n.id}
                 variant="outlined"
-                sx={{ borderRadius: 2, bgcolor: "rgba(236, 72, 153, 0.06)" }}
+                sx={{ borderRadius: 2, bgcolor: "rgba(254, 197, 86, 0.15)" }}
               >
                 <CardContent>
                   <Typography
