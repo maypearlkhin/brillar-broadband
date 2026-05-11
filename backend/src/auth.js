@@ -1,29 +1,6 @@
 import jwt from "jsonwebtoken";
 import { TOKEN_COOKIE } from "./constants.js";
 
-function parseCookieHeader(header) {
-  const cookies = {};
-
-  if (!header) {
-    return cookies;
-  }
-
-  for (const part of header.split(";")) {
-    const trimmed = part.trim();
-    const eq = trimmed.indexOf("=");
-
-    if (eq === -1) {
-      continue;
-    }
-
-    const key = trimmed.slice(0, eq).trim();
-    const value = trimmed.slice(eq + 1).trim();
-    cookies[key] = decodeURIComponent(value);
-  }
-
-  return cookies;
-}
-
 function getJwtSecret() {
   const secret = process.env.JWT_SECRET;
 
@@ -36,7 +13,7 @@ function getJwtSecret() {
 
 export function signJwt(payload) {
   return jwt.sign(payload, getJwtSecret(), {
-    expiresIn: "7d"
+    expiresIn: "7d",
   });
 }
 
@@ -49,15 +26,16 @@ export function verifyJwt(token) {
 }
 
 export function getTokenFromRequest(request) {
-  const bearer = request.headers.authorization;
+  const authHeader = request.headers.authorization;
+  console.log("Auth", authHeader);
+  console.log(request.headers);
+  if (!authHeader) return null;
 
-  if (bearer?.startsWith("Bearer ")) {
-    return bearer.slice("Bearer ".length);
+  if (authHeader.startsWith("Bearer ")) {
+    return authHeader.slice("Bearer ".length).trim();
   }
 
-  const cookies = parseCookieHeader(request.headers.cookie);
-
-  return cookies[TOKEN_COOKIE];
+  return authHeader.trim();
 }
 
 export { TOKEN_COOKIE };
