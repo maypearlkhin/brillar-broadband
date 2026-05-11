@@ -3,6 +3,7 @@
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
 import RouterIcon from "@mui/icons-material/Router";
+import SupportAgentIcon from "@mui/icons-material/SupportAgent";
 import { Box, Button, Stack, Typography } from "@mui/material";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -11,6 +12,7 @@ const LINKS = [
   { href: "/dashboard", label: "Overview", icon: AccountCircleIcon },
   { href: "/plans", label: "Plans & upgrade", icon: ReceiptLongIcon },
   { href: "/service-status", label: "Service status", icon: RouterIcon },
+  { href: "/dashboard/tickets", label: "Support Tickets", icon: SupportAgentIcon },
 ];
 
 function linkSelected(pathname: string, href: string) {

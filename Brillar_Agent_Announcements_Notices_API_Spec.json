@@ -15,6 +15,7 @@
       "description": "Production server"
     }
   ],
+  
   "paths": {
     "/api/agent/announcements-impacts": {
       "get": {

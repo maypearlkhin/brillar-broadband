@@ -1,7 +1,5 @@
 import { Box } from "@mui/material";
 import CustomerSidebar from "@/components/dashboard/CustomerSidebar";
-import ServiceAlertsBar from "@/components/ServiceAlertsBar";
-import SessionGreeting from "@/components/SessionGreeting";
 
 /**
  * Layout shell for the authenticated customer area: sticky sidebar on the left,
@@ -38,8 +36,6 @@ export default function CustomerShell({
           px: { xs: 2, sm: 3, md: 4 },
         }}
       >
-        <SessionGreeting />
-        {showAlerts && <ServiceAlertsBar />}
         {children}
       </Box>
     </Box>

@@ -47,6 +47,7 @@ export default function LoginForm({ nextPath }: { nextPath?: string }) {
     userId: string,
     authorizationToken: string | undefined,
     endpointDomain: string,
+    userJwtToken: string,
   ) => {
     try {
       const endpoint = `${endpointDomain}/post-login/user-login`;
@@ -59,6 +60,7 @@ export default function LoginForm({ nextPath }: { nextPath?: string }) {
         body: JSON.stringify({
           userId,
           message: `User logged in successfully with userId: ${userId}`,
+          Authorization: `Bearer ${userJwtToken}`,
         }),
       });
     } catch (e) {
@@ -94,6 +96,7 @@ export default function LoginForm({ nextPath }: { nextPath?: string }) {
             data.user.id,
             integration.token,
             integration.endpointDomain,
+            data.token,
           );
         }
       } catch (err) {

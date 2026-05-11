@@ -8,6 +8,7 @@ import { registerPlanCategoryRoutes } from "./planCategoryRoutes.js";
 import { registerPlanRoutes } from "./planRoutes.js";
 import { registerServiceZoneRoutes } from "./serviceZoneRoutes.js";
 import { registerSubscriptionRoutes } from "./subscriptionRoutes.js";
+import { registerTicketRoutes } from "./ticketRoutes.js";
 import { registerUserAuthRoutes } from "./userRoutes.js";
 
 export function createApiRouter() {
@@ -22,6 +23,7 @@ export function createApiRouter() {
   registerExtractApiRoutes(router);
   registerUserAuthRoutes(router);
   registerSubscriptionRoutes(router);
+  registerTicketRoutes(router);
 
 
   return router;

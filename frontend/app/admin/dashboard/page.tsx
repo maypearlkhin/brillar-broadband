@@ -13,6 +13,7 @@ import AdminSubscriptionsTable, {
   type AdminSubscriptionRow
 } from "@/components/AdminSubscriptionsTable";
 import { axiosServer } from "@/lib/axiosServer";
+import ServiceAlertsBar from "@/components/ServiceAlertsBar";
 
 export const dynamic = "force-dynamic";
 
@@ -94,6 +95,7 @@ export default async function AdminDashboardPage() {
   return (
     <Container maxWidth="lg" disableGutters>
       <Stack spacing={4}>
+        <ServiceAlertsBar />
         <Box>
           <Typography variant="h4" fontWeight={700}>
             Subscriptions

@@ -22,6 +22,7 @@ import { isAxiosError } from "axios";
 import { getCurrentUserFromCookies } from "@/lib/auth";
 import { axiosServer } from "@/lib/axiosServer";
 import { formatServiceZone } from "@/lib/serviceZones";
+import ServiceAlertsBar from "@/components/ServiceAlertsBar";
 
 export const dynamic = "force-dynamic";
 
@@ -113,6 +114,7 @@ export default async function DashboardPage() {
 
   return (
     <Stack spacing={4}>
+      <ServiceAlertsBar />
       <Box>
         <Typography variant="overline" color="primary" sx={{ fontWeight: 700, letterSpacing: 0.12 }}>
           Account overview

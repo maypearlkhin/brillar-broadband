@@ -5,6 +5,7 @@ import CampaignIcon from "@mui/icons-material/Campaign";
 import DashboardCustomizeIcon from "@mui/icons-material/DashboardCustomize";
 import ExtensionIcon from "@mui/icons-material/Extension";
 import RouterIcon from "@mui/icons-material/Router";
+import SupportAgentIcon from "@mui/icons-material/SupportAgent";
 import { Box, Button, Stack, Typography } from "@mui/material";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -15,6 +16,7 @@ const LINKS = [
   { href: "/admin/network", label: "Service status", icon: RouterIcon },
   { href: "/admin/announcements", label: "Announcements", icon: CampaignIcon },
   { href: "/admin/integration", label: "Integration", icon: ExtensionIcon },
+  { href: "/admin/tickets", label: "Support Tickets", icon: SupportAgentIcon },
 ];
 
 function linkSelected(pathname: string, href: string) {

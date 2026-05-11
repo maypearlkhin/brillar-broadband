@@ -1,7 +1,5 @@
 import { Box } from "@mui/material";
 import AdminSidebar from "@/components/admin/AdminSidebar";
-import ServiceAlertsBar from "@/components/ServiceAlertsBar";
-import SessionGreeting from "@/components/SessionGreeting";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -24,8 +22,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           px: { xs: 2, sm: 3, md: 4 },
         }}
       >
-        <SessionGreeting />
-        <ServiceAlertsBar />
         {children}
       </Box>
     </Box>
