@@ -22,7 +22,7 @@ function serializePlan(plan) {
     categoryTitle: plan.categoryTitle,
     categorySortOrder: plan.categorySortOrder,
     planSortOrder: plan.planSortOrder,
-    isActive: plan.isActive
+    isActive: plan.isActive,
   };
 }
 
@@ -38,7 +38,7 @@ function serializeSubscription(subscription) {
     startDate: subscription.startDate ?? null,
     endDate: subscription.endDate ?? null,
     createdAt: subscription.createdAt,
-    plan: serializePlan(planDoc)
+    plan: serializePlan(planDoc),
   };
 }
 
@@ -48,19 +48,40 @@ function getCurrentUser(req) {
 }
 
 export async function getAllAnnouncementImpacts(_req, res) {
-  const impacts = await NetworkIncident.find({ resolvedAt: null }).sort({ createdAt: -1 }).lean();
+  const impacts = await NetworkIncident.find({ resolvedAt: null })
+    .sort({ createdAt: -1 })
+    .lean();
+  const resolvedImpacts = await NetworkIncident.find({
+    resolvedAt: { $ne: null },
+  })
+    .sort({ createdAt: -1 })
+    .lean();
+  const activeImpacts = impacts.map((impact) => ({
+    id: impact._id,
+    country: impact.country,
+    district: impact.district,
+    postalCode: impact.postalCode,
+    message: impact.message,
+    createdAt: impact.createdAt,
+    resolvedAt: impact.resolvedAt ?? null,
+  }));
+
+  const resolvedImpactsList = resolvedImpacts.map((impact) => ({
+    id: impact._id,
+    country: impact.country,
+    district: impact.district,
+    postalCode: impact.postalCode,
+    message: impact.message,
+    createdAt: impact.createdAt,
+    resolvedAt: impact.resolvedAt ?? null,
+  }));
 
   return res.json({
     success: true,
-    data: impacts.map((impact) => ({
-      id: impact._id,
-      country: impact.country,
-      district: impact.district,
-      postalCode: impact.postalCode,
-      message: impact.message,
-      createdAt: impact.createdAt,
-      resolvedAt: impact.resolvedAt ?? null
-    }))
+    data: {
+      activeImpacts,
+      resolvedImpacts: resolvedImpactsList,
+    },
   });
 }
 
@@ -78,21 +99,23 @@ export async function getAllResolvedHistories(_req, res) {
       postalCode: incident.postalCode,
       message: incident.message,
       createdAt: incident.createdAt,
-      resolvedAt: incident.resolvedAt
-    }))
+      resolvedAt: incident.resolvedAt,
+    })),
   });
 }
 
 export async function getNotices(_req, res) {
-  const announcements = await Announcement.find({ isActive: true }).sort({ createdAt: -1 }).lean();
+  const announcements = await Announcement.find({ isActive: true })
+    .sort({ createdAt: -1 })
+    .lean();
 
   return res.json({
     success: true,
     data: announcements.map((announcement) => ({
       id: announcement._id,
       message: announcement.message,
-      createdAt: announcement.createdAt
-    }))
+      createdAt: announcement.createdAt,
+    })),
   });
 }
 
@@ -103,25 +126,24 @@ export async function getAllPlans(_req, res) {
 
   return res.json({
     success: true,
-    data: plans.map(serializePlan)
+    data: plans.map(serializePlan),
   });
 }
 
-export async function postGetMyPlan(req, res) {
+export async function getPlanById(req, res) {
   const currentUser = getCurrentUser(req);
-
   if (!currentUser) {
-    return res.status(401).json({ success: false, message: "Authentication required." });
+    return res
+      .status(401)
+      .json({ success: false, message: "Authentication required." });
   }
 
-  const { userId } = req.body;
+  const userId = currentUser?.userId;
 
   if (!userId) {
-    return res.status(400).json({ success: false, message: "userId is required in request body." });
-  }
-
-  if (String(userId) !== String(currentUser.userId)) {
-    return res.status(403).json({ success: false, message: "Forbidden for this userId." });
+    return res
+      .status(400)
+      .json({ success: false, message: "userId is required in request body." });
   }
 
   const subscription = await Subscription.findOne({ userId })
@@ -131,7 +153,7 @@ export async function postGetMyPlan(req, res) {
 
   return res.json({
     success: true,
-    data: subscription ? serializeSubscription(subscription) : null
+    data: subscription ? serializeSubscription(subscription) : null,
   });
 }
 
@@ -139,7 +161,9 @@ export async function getMyOrderHistory(req, res) {
   const currentUser = getCurrentUser(req);
 
   if (!currentUser) {
-    return res.status(401).json({ success: false, message: "Authentication required." });
+    return res
+      .status(401)
+      .json({ success: false, message: "Authentication required." });
   }
 
   const subscriptions = await Subscription.find({ userId: currentUser.userId })
@@ -149,7 +173,6 @@ export async function getMyOrderHistory(req, res) {
 
   return res.json({
     success: true,
-    data: subscriptions.map(serializeSubscription)
+    data: subscriptions.map(serializeSubscription),
   });
 }
-
