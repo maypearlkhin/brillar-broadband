@@ -4,6 +4,7 @@ import ChatOutlinedIcon from "@mui/icons-material/ChatOutlined";
 import HubOutlinedIcon from "@mui/icons-material/HubOutlined";
 import LanOutlinedIcon from "@mui/icons-material/LanOutlined";
 import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
+import Inventory2OutlinedIcon from "@mui/icons-material/Inventory2Outlined";
 import RouterOutlinedIcon from "@mui/icons-material/RouterOutlined";
 import ShieldOutlinedIcon from "@mui/icons-material/ShieldOutlined";
 import SpeedOutlinedIcon from "@mui/icons-material/SpeedOutlined";
@@ -165,6 +166,20 @@ export default async function HomePage() {
               </Stack>
             </Grid>
             <Grid item xs={12} md={5}>
+              <Box sx={{ textAlign: "center", mb: 3 }}>
+                <Box
+                  component="img"
+                  src="/images/professional-network.svg"
+                  alt="Professional Network Infrastructure"
+                  sx={{
+                    width: "100%",
+                    maxWidth: 500,
+                    height: "auto",
+                    borderRadius: 2,
+                    boxShadow: "0 4px 20px rgba(13, 27, 50, 0.1)"
+                  }}
+                />
+              </Box>
               <Paper
                 elevation={0}
                 sx={{
@@ -300,68 +315,95 @@ export default async function HomePage() {
             When work affects your area, we publish clear service notices so you are never left guessing.
           </Typography>
         </Stack>
-        <Grid container spacing={2.5}>
-          {featureCards.map(({ title, body, icon: Icon }) => (
-            <Grid item xs={12} sm={6} md={3} key={title}>
-              <Card
-                variant="outlined"
-                sx={{
-                  height: "100%",
-                  borderRadius: 2,
-                  borderColor: "divider",
-                  bgcolor: "background.paper",
-                  transition: "transform 0.2s ease, box-shadow 0.2s ease",
-                  "&:hover": {
-                    boxShadow: "0 10px 28px rgba(13, 27, 50, 0.14)",
-                    transform: "translateY(-2px)"
-                  }
-                }}
-              >
-                <CardContent sx={{ p: 2.5 }}>
-                  <Box
-                    sx={{
-                      width: 44,
-                      height: 44,
-                      borderRadius: 1.5,
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      mb: 1.5,
-                      bgcolor: "rgba(13, 27, 50, 0.18)",
-                      color: "primary.dark"
-                    }}
-                  >
-                    <Icon />
-                  </Box>
-                  <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 1 }}>
-                    {title}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.65 }}>
-                    {body}
-                  </Typography>
-                </CardContent>
-              </Card>
-            </Grid>
-          ))}
-        </Grid>
+        <Box
+          sx={{
+            mb: 4,
+            p: { xs: 2, md: 3 },
+            borderRadius: 2,
+            position: "relative",
+            overflow: "hidden",
+            backgroundImage: "url('/images/plans-section-bg.png?v=2')",
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            backgroundRepeat: "no-repeat",
+            "&::before": {
+              content: '""',
+              position: "absolute",
+              inset: 0,
+              background:
+                "linear-gradient(180deg, rgba(7, 16, 35, 0.55) 0%, rgba(7, 16, 35, 0.35) 50%, rgba(7, 16, 35, 0.55) 100%)"
+            }
+          }}
+        >
+          <Grid container spacing={2.5} sx={{ position: "relative", zIndex: 1 }}>
+            {featureCards.map(({ title, body, icon: Icon }) => (
+              <Grid item xs={12} sm={6} md={3} key={title}>
+                <Card
+                  variant="outlined"
+                  sx={{
+                    height: "100%",
+                    borderRadius: 2,
+                    borderColor: "divider",
+                    bgcolor: "background.paper",
+                    transition: "transform 0.2s ease, box-shadow 0.2s ease",
+                    "&:hover": {
+                      boxShadow: "0 10px 28px rgba(13, 27, 50, 0.14)",
+                      transform: "translateY(-2px)"
+                    }
+                  }}
+                >
+                  <CardContent sx={{ p: 2.5 }}>
+                    <Box
+                      sx={{
+                        width: 44,
+                        height: 44,
+                        borderRadius: 1.5,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        mb: 1.5,
+                        bgcolor: "rgba(13, 27, 50, 0.18)",
+                        color: "primary.dark"
+                      }}
+                    >
+                      <Icon />
+                    </Box>
+                    <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 1 }}>
+                      {title}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.65 }}>
+                      {body}
+                    </Typography>
+                  </CardContent>
+                </Card>
+              </Grid>
+            ))}
+          </Grid>
+        </Box>
       </Container>
 
       {/* How it works */}
       <Box
         sx={{
           py: { xs: 6, md: 8 },
-          bgcolor: "rgba(254, 197, 86, 0.15)",
           borderTop: "1px solid",
           borderBottom: "1px solid",
-          borderColor: "divider"
+          borderColor: "divider",
+          position: "relative",
+          overflow: "hidden",
+          backgroundImage:
+            "linear-gradient(rgba(7, 16, 35, 0.62), rgba(7, 16, 35, 0.62)), url('/images/subscriber-journey-bg.png?v=1')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat"
         }}
       >
         <Container maxWidth="lg">
           <Stack spacing={1} sx={{ mb: 4 }}>
-            <Typography variant="overline" color="primary" sx={{ fontWeight: 700, letterSpacing: 0.12 }}>
+            <Typography variant="overline" sx={{ fontWeight: 700, letterSpacing: 0.12, color: "primary.main" }}>
               Subscriber journey
             </Typography>
-            <Typography variant="h4" component="h2" sx={{ fontWeight: 700 }}>
+            <Typography variant="h4" component="h2" sx={{ fontWeight: 700, color: "common.white" }}>
               From browse to broadband in three steps
             </Typography>
           </Stack>
@@ -400,17 +442,37 @@ export default async function HomePage() {
 
       {/* Plans */}
       <Container id="plans" maxWidth="lg" sx={{ py: { xs: 6, md: 8 } }}>
-        <Stack spacing={1} sx={{ mb: 4 }}>
-          <Typography variant="overline" color="primary" sx={{ fontWeight: 700, letterSpacing: 0.12 }}>
-            Catalogue
-          </Typography>
-          <Typography variant="h4" component="h2" sx={{ fontWeight: 700 }}>
-            Residential plans
-          </Typography>
-          <Typography color="text.secondary" sx={{ maxWidth: 640, lineHeight: 1.7 }}>
-            Choose the perfect speed for your household. All prices are in SGD per month. Compare speeds, pricing, and features side-by-side to find the right fit for your home.
-          </Typography>
-        </Stack>
+        <Box sx={{ mb: 4, display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 2 }}>
+          <Stack spacing={1}>
+            <Typography variant="overline" color="primary" sx={{ fontWeight: 700, letterSpacing: 0.12 }}>
+              Catalogue
+            </Typography>
+            <Typography variant="h4" component="h2" sx={{ fontWeight: 700 }}>
+              Residential plans
+            </Typography>
+            <Typography color="text.secondary" sx={{ maxWidth: 640, lineHeight: 1.7 }}>
+              Choose the perfect speed for your household. All prices are in SGD per month. Compare speeds, pricing, and features side-by-side to find the right fit for your home.
+            </Typography>
+          </Stack>
+          <Box
+            aria-hidden
+            sx={{
+              width: 52,
+              height: 52,
+              borderRadius: 2,
+              display: { xs: "none", sm: "flex" },
+              alignItems: "center",
+              justifyContent: "center",
+              bgcolor: "rgba(13, 27, 50, 0.08)",
+              color: "primary.main",
+              border: "1px solid",
+              borderColor: "rgba(13, 27, 50, 0.12)",
+              flexShrink: 0
+            }}
+          >
+            <Inventory2OutlinedIcon />
+          </Box>
+        </Box>
         <PlanCatalogSections
           plans={plans}
           actionHref={(plan) => `/login?next=${encodeURIComponent(`/checkout/${plan.id}`)}`}
@@ -439,6 +501,20 @@ export default async function HomePage() {
               </Stack>
             </Grid>
             <Grid item xs={12} md={6}>
+              <Box sx={{ textAlign: "center", mb: 3 }}>
+                <Box
+                  component="img"
+                  src="/images/global-connectivity-new.png?v=1"
+                  alt="Global Network Coverage"
+                  sx={{
+                    width: "100%",
+                    maxWidth: 600,
+                    height: "auto",
+                    borderRadius: 2,
+                    boxShadow: "0 4px 20px rgba(13, 27, 50, 0.1)"
+                  }}
+                />
+              </Box>
               <Paper
                 elevation={0}
                 sx={{

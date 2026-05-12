@@ -28,10 +28,21 @@ export default function EnterprisePage() {
   return (
     <Box sx={{ bgcolor: "background.default", minHeight: "100vh" }}>
       {/* Hero */}
-      <Box sx={{ bgcolor: "rgba(254, 197, 86, 0.15)", borderBottom: "1px solid", borderColor: "rgba(254, 197, 86, 0.4)", color: "text.primary", py: { xs: 8, md: 12 } }}>
+      <Box
+        sx={{
+          borderBottom: "1px solid",
+          borderColor: "rgba(254, 197, 86, 0.4)",
+          color: "common.white",
+          py: { xs: 8, md: 12 },
+          backgroundImage:
+            "linear-gradient(rgba(7, 16, 35, 0.5), rgba(7, 16, 35, 0.5)), url('/images/enterprise-hero-family.png?v=1')",
+          backgroundSize: "cover",
+          backgroundPosition: "center"
+        }}
+      >
         <Container maxWidth="lg">
           <Grid container spacing={6} alignItems="center">
-            <Grid item xs={12} md={7}>
+            <Grid item xs={12} md={8}>
               <Stack spacing={3}>
                 <Typography variant="overline" sx={{ color: "primary.main", fontWeight: 700, letterSpacing: 1.5 }}>
                   Brillar Enterprise
@@ -39,7 +50,7 @@ export default function EnterprisePage() {
                 <Typography variant="h2" sx={{ fontWeight: 800, letterSpacing: "-0.02em", lineHeight: 1.1 }}>
                   Next-generation connectivity for digital business.
                 </Typography>
-                <Typography variant="h6" sx={{ color: "text.secondary", fontWeight: 400, lineHeight: 1.6, maxWidth: 600 }}>
+                <Typography variant="h6" sx={{ color: "rgba(255, 255, 255, 0.9)", fontWeight: 400, lineHeight: 1.6, maxWidth: 600 }}>
                   Scale your operations with dedicated fiber, SD-WAN, and zero-trust security. Engineered for high-growth enterprises in Singapore and Malaysia.
                 </Typography>
                 <Stack direction={{ xs: "column", sm: "row" }} spacing={2} sx={{ pt: 2 }}>
@@ -86,7 +97,16 @@ export default function EnterprisePage() {
       </Container>
 
       {/* Global Footprint */}
-      <Box sx={{ py: { xs: 8, md: 10 }, bgcolor: "background.paper" }}>
+      <Box
+        sx={{
+          py: { xs: 8, md: 10 },
+          backgroundImage:
+            "linear-gradient(rgba(7, 16, 35, 0.62), rgba(7, 16, 35, 0.62)), url('/images/enterprise-global-bg.png?v=1')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat"
+        }}
+      >
         <Container maxWidth="lg">
           <Grid container spacing={6} alignItems="center">
             <Grid item xs={12} md={5}>
@@ -94,10 +114,10 @@ export default function EnterprisePage() {
                 <Typography variant="overline" color="primary" sx={{ fontWeight: 700, letterSpacing: 1.2 }}>
                   Global Network
                 </Typography>
-                <Typography variant="h3" sx={{ fontWeight: 800, letterSpacing: "-0.02em" }}>
+                <Typography variant="h3" sx={{ fontWeight: 800, letterSpacing: "-0.02em", color: "common.white" }}>
                   Connected to the world's largest exchanges.
                 </Typography>
-                <Typography variant="body1" color="text.secondary" sx={{ lineHeight: 1.8 }}>
+                <Typography variant="body1" sx={{ lineHeight: 1.8, color: "rgba(255, 255, 255, 0.9)" }}>
                   Our resilient fiber ring connects directly to Equinix SG1, Global Switch, and major international submarine cables. This ensures your data travels the shortest, most secure path to cloud providers like AWS, Google Cloud, and Azure.
                 </Typography>
               </Stack>
@@ -105,7 +125,7 @@ export default function EnterprisePage() {
             <Grid item xs={12} md={7}>
               <Grid container spacing={3}>
                 <Grid item xs={6}>
-                  <Paper elevation={0} sx={{ p: 3, border: "1px dashed", borderColor: "primary.light", bgcolor: "rgba(254, 197, 86, 0.15)", borderRadius: 2 }}>
+                  <Paper elevation={0} sx={{ p: 3, border: "1px dashed", borderColor: "primary.light", bgcolor: "rgba(255, 255, 255, 0.9)", borderRadius: 2 }}>
                     <Typography variant="h3" color="primary.main" sx={{ fontWeight: 800, mb: 1 }}>
                       2Tbps+
                     </Typography>
@@ -115,7 +135,7 @@ export default function EnterprisePage() {
                   </Paper>
                 </Grid>
                 <Grid item xs={6}>
-                  <Paper elevation={0} sx={{ p: 3, border: "1px dashed", borderColor: "primary.light", bgcolor: "rgba(254, 197, 86, 0.15)", borderRadius: 2 }}>
+                  <Paper elevation={0} sx={{ p: 3, border: "1px dashed", borderColor: "primary.light", bgcolor: "rgba(255, 255, 255, 0.9)", borderRadius: 2 }}>
                     <Typography variant="h3" color="primary.main" sx={{ fontWeight: 800, mb: 1 }}>
                       &lt;2ms
                     </Typography>

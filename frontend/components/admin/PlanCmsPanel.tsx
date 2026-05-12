@@ -426,7 +426,7 @@ export default function PlanCmsPanel() {
                                   borderRadius: 1,
                                   px: 1,
                                   py: 0.75,
-                                  bgcolor: "rgba(236, 72, 153, 0.04)"
+                                  bgcolor: "rgba(253, 184, 64, 0.04)"
                                 }}
                               >
                                 <Typography variant="caption" color="text.secondary" display="block">

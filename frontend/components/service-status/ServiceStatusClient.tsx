@@ -83,7 +83,14 @@ export default function ServiceStatusClient({
   );
 
   return (
-    <Box>
+    <Box
+      sx={{
+        bgcolor: "rgba(13, 27, 50, 0.08)",
+        minHeight: "100vh",
+        borderRadius: 2,
+        p: { xs: 2, md: 3 },
+      }}
+    >
       <Stack spacing={1} sx={{ mb: 3 }}>
         <Typography
           variant="overline"
@@ -189,7 +196,7 @@ export default function ServiceStatusClient({
               <Card
                 key={n.id}
                 variant="outlined"
-                sx={{ borderRadius: 2, bgcolor: "rgba(254, 197, 86, 0.15)" }}
+                sx={{ borderRadius: 2, bgcolor: "rgba(236, 72, 153, 0.06)" }}
               >
                 <CardContent>
                   <Typography

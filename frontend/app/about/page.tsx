@@ -27,15 +27,26 @@ export default function AboutPage() {
   return (
     <Box sx={{ bgcolor: "background.default", minHeight: "100vh" }}>
       {/* Hero */}
-      <Box sx={{ bgcolor: "background.paper", borderBottom: "1px solid", borderColor: "divider", py: { xs: 8, md: 12 } }}>
+      <Box
+        sx={{
+          borderBottom: "1px solid",
+          borderColor: "divider",
+          py: { xs: 8, md: 12 },
+          backgroundImage:
+            "linear-gradient(rgba(7, 16, 35, 0.56), rgba(7, 16, 35, 0.56)), url('/images/about-story-bg.png?v=1')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat"
+        }}
+      >
         <Container maxWidth="md" sx={{ textAlign: "center" }}>
           <Typography variant="overline" sx={{ color: "primary.main", fontWeight: 700, letterSpacing: 1.5 }}>
             Our Story
           </Typography>
-          <Typography variant="h2" sx={{ fontWeight: 800, letterSpacing: "-0.02em", mt: 2, mb: 3 }}>
+          <Typography variant="h2" sx={{ fontWeight: 800, letterSpacing: "-0.02em", mt: 2, mb: 3, color: "common.white" }}>
             Connecting Southeast Asia to the world.
           </Typography>
-          <Typography variant="h6" color="text.secondary" sx={{ fontWeight: 400, lineHeight: 1.7 }}>
+          <Typography variant="h6" sx={{ fontWeight: 400, lineHeight: 1.7, color: "rgba(255, 255, 255, 0.92)" }}>
             Founded with a vision to democratize high-speed internet access, Brillar Broadband has grown into one of the region's most trusted internet service providers. We operate a vast, modern fiber-optic network across Singapore and Malaysia.
           </Typography>
         </Container>
@@ -43,6 +54,20 @@ export default function AboutPage() {
 
       {/* Mission & Vision */}
       <Container maxWidth="lg" sx={{ py: { xs: 8, md: 12 } }}>
+        <Box sx={{ mb: 6, textAlign: "center" }}>
+          <Box
+            component="img"
+            src="/images/tech-support.svg"
+            alt="Technical Support"
+            sx={{
+              width: "100%",
+              maxWidth: 600,
+              height: "auto",
+              borderRadius: 2,
+              boxShadow: "0 4px 20px rgba(13, 27, 50, 0.1)"
+            }}
+          />
+        </Box>
         <Grid container spacing={6} alignItems="center">
           <Grid item xs={12} md={6}>
             <Box sx={{ p: 4, bgcolor: "rgba(254, 197, 86, 0.15)", borderRadius: 4, border: "1px dashed", borderColor: "primary.light" }}>
@@ -77,7 +102,7 @@ export default function AboutPage() {
       </Container>
 
       {/* Milestones */}
-      <Box sx={{ py: { xs: 8, md: 12 }, bgcolor: "background.paper", borderTop: "1px solid", borderColor: "divider" }}>
+      <Box sx={{ py: { xs: 8, md: 12 }, bgcolor: "grey.100", borderTop: "1px solid", borderColor: "divider" }}>
         <Container maxWidth="lg">
           <Stack spacing={2} sx={{ textAlign: "center", mb: 6 }}>
              <Typography variant="h3" sx={{ fontWeight: 800 }}>Our Journey</Typography>

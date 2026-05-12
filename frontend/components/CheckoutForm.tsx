@@ -372,9 +372,9 @@ function ReceiptSummary({
         mt: 2,
         p: 2,
         borderRadius: 1,
-        bgcolor: "rgba(236, 72, 153, 0.06)",
+        bgcolor: "rgba(253, 184, 64, 0.06)",
         border: "1px dashed",
-        borderColor: "rgba(236, 72, 153, 0.28)",
+        borderColor: "rgba(253, 184, 64, 0.28)",
       }}
     >
       <Typography variant="overline" sx={{ fontWeight: 800, letterSpacing: 0.14, color: "primary.dark" }}>
@@ -574,7 +574,7 @@ export default function CheckoutForm({ plan, selectedTerm }: { plan: PlanCardDat
         minHeight: "calc(100vh - 64px)",
         pt: { xs: 0.5, md: 1 },
         pb: { xs: 3, md: 5 },
-        bgcolor: "#fdf2f8",
+        bgcolor: "#fff8e1",
       }}
     >
       <Dialog open={processingOpen} disableEscapeKeyDown aria-labelledby="processing-title">
@@ -648,7 +648,7 @@ export default function CheckoutForm({ plan, selectedTerm }: { plan: PlanCardDat
                 borderRadius: 2,
                 border: "1px solid",
                 borderColor: "divider",
-                boxShadow: "0 8px 30px rgba(219, 39, 119, 0.08)",
+                boxShadow: "0 8px 30px rgba(253, 184, 64, 0.08)",
               }}
             >
               <CardContent sx={{ p: 3 }}>
@@ -690,7 +690,7 @@ export default function CheckoutForm({ plan, selectedTerm }: { plan: PlanCardDat
                 borderRadius: 2,
                 border: "1px solid",
                 borderColor: "divider",
-                boxShadow: "0 12px 36px rgba(219, 39, 119, 0.1)",
+                boxShadow: "0 12px 36px rgba(253, 184, 64, 0.1)",
                 overflow: "hidden",
                 bgcolor: "#fff",
               }}
@@ -719,9 +719,9 @@ export default function CheckoutForm({ plan, selectedTerm }: { plan: PlanCardDat
                     icon={<VerifiedUserOutlinedIcon />}
                     sx={{
                       alignItems: "flex-start",
-                      bgcolor: "rgba(236, 72, 153, 0.09)",
+                      bgcolor: "rgba(253, 184, 64, 0.09)",
                       color: "text.primary",
-                      border: "1px solid rgba(236, 72, 153, 0.22)",
+                      border: "1px solid rgba(253, 184, 64, 0.22)",
                       "& .MuiAlert-icon": { color: "primary.main" },
                     }}
                   >
