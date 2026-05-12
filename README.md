@@ -115,6 +115,40 @@ If you change ports in `ecosystem.config.cjs`, update **`BACKEND_URL`** for `bri
 
 ---
 
+## Agent OpenAPI specifications
+
+OpenAPI **3.0.3** JSON specs for conversational / extract integrations live in the repo root:
+
+| Document | Scope |
+|---------|--------|
+| `Brillar_Agent_Plans_API_Spec.json` | Public plan catalogue (`/api/agent/all-plans`). |
+| `Brillar_Agent_Personal_API_Spec.json` | Narrow current-plan & order views, **`POST /api/agent/buy-plan`**, **`POST /api/agent/cancel-plan`** (handlers match `/api/checkout` and `/api/cancel-plan`). |
+| `Brillar_Agent_Billing_API_Spec.json` | **`GET /api/agent/my-account-billing`**, **`GET /api/agent/billing-history`** (wrapped `/api/me/subscription` semantics). |
+| `Brillar_Agent_Scheduling_API_Spec.json` | Slots, appointments (installation + home service); `/api/agent/*` aligned with `/api/appointments/*`. |
+| `Brillar_Agent_Announcements_Notices_API_Spec.json` | **`GET /api/agent/announcements-impacts`**, **`GET /api/agent/resolved-histories`**, **`GET /api/agent/notices`**. |
+
+Route registration: `backend/src/api/router/extractApiRoutes.js`.
+
+**Using with an API / OpenAI tool:** Import **all five** specs (or merge them in your gateway). Each file is valid OpenAPI 3.0.3; paths are prefixed with `/api/agent/...` (and app parity routes like `/api/me/subscription` are described in the spec text where relevant). **Not agent-scoped:** `PATCH /api/appointments/{id}/status` (operations — see Scheduling spec intro).
+
+| Path (under `/api/`) | Method | OpenAPI spec |
+|----------------------|--------|----------------|
+| `/agent/announcements-impacts` | GET | Announcements & Notices |
+| `/agent/resolved-histories` | GET | Announcements & Notices |
+| `/agent/notices` | GET | Announcements & Notices |
+| `/agent/all-plans` | GET | Plans |
+| `/agent/appointment-slots` | GET | Scheduling |
+| `/agent/schedule-appointment` | POST | Scheduling |
+| `/agent/my-appointments` | GET | Scheduling |
+| `/agent/get-my-plan` | GET | Personal |
+| `/agent/my-order-history` | GET | Personal |
+| `/agent/buy-plan` | POST | Personal |
+| `/agent/cancel-plan` | POST | Personal |
+| `/agent/my-account-billing` | GET | Billing |
+| `/agent/billing-history` | GET | Billing |
+
+---
+
 ## Scripts (repo root)
 
 | Script | Description |

@@ -5,7 +5,14 @@ import { Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogC
 import { postData } from "@/lib/api";
 import { useRouter } from "next/navigation";
 
-export default function CancelPlanButton({ subscriptionId }: { subscriptionId: string }) {
+export default function CancelPlanButton({
+  subscriptionId,
+  onAfterCancel,
+}: {
+  subscriptionId: string;
+  /** Runs after cancel succeeds (e.g. refetch dashboard subscription state). */
+  onAfterCancel?: () => void | Promise<void>;
+}) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -18,6 +25,7 @@ export default function CancelPlanButton({ subscriptionId }: { subscriptionId: s
     try {
       await postData("/api/cancel-plan", { subscriptionId });
       setOpen(false);
+      await onAfterCancel?.();
       router.refresh();
     } catch (error) {
       console.error("Failed to cancel plan", error);
@@ -29,7 +37,19 @@ export default function CancelPlanButton({ subscriptionId }: { subscriptionId: s
 
   return (
     <>
-      <Button variant="outlined" color="error" onClick={handleOpen} size="small">
+      <Button
+        variant="outlined"
+        color="error"
+        onClick={handleOpen}
+        size="small"
+        sx={{
+          bgcolor: "background.paper",
+          fontWeight: 600,
+          "&:hover": {
+            bgcolor: "rgba(211, 47, 47, 0.06)",
+          },
+        }}
+      >
         Cancel Plan
       </Button>
       <Dialog open={open} onClose={handleClose}>

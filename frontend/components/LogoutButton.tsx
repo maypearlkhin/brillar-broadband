@@ -31,7 +31,11 @@ export default function LogoutButton({
     try {
       const intRes = await getData("/api/admin/integration");
       const integration = intRes?.data?.integration;
-      if (integration?.token && integration?.endpointDomain && role === "customer") {
+      if (
+        integration?.token &&
+        integration?.endpointDomain &&
+        role === "customer"
+      ) {
         const endpoint = `${integration.endpointDomain}/post-login/user-logout`;
         await fetch(endpoint, {
           method: "POST",
@@ -46,7 +50,10 @@ export default function LogoutButton({
         });
       }
     } catch (err) {
-      console.log("Failed calling api to Atenxion Backend for user logout", err);
+      console.log(
+        "Failed calling api to Atenxion Backend for user logout",
+        err,
+      );
     }
 
     clearAuthToken();

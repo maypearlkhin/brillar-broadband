@@ -1,69 +1,15 @@
-import {
-  Alert,
-  Box,
-  Card,
-  CardContent,
-  Chip,
-  Stack,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Typography
-} from "@mui/material";
-import EventAvailableIcon from "@mui/icons-material/EventAvailable";
-import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
-import RouterIcon from "@mui/icons-material/Router";
-import Link from "next/link";
+import { Alert, Box, Stack, Typography } from "@mui/material";
 import { redirect } from "next/navigation";
 import { isAxiosError } from "axios";
 import { getCurrentUserFromCookies } from "@/lib/auth";
 import { axiosServer } from "@/lib/axiosServer";
 import { formatServiceZone } from "@/lib/serviceZones";
 import ServiceAlertsBar from "@/components/ServiceAlertsBar";
-import CancelPlanButton from "@/components/dashboard/CancelPlanButton";
+import CustomerDashboardPanels, {
+  type SubscriptionPayload,
+} from "@/components/dashboard/CustomerDashboardPanels";
 
 export const dynamic = "force-dynamic";
-
-type PlanPayload = {
-  id: string;
-  name: string;
-  monthlyPrice: number;
-  downloadSpeedMbps: number;
-};
-
-type SubscriptionPayload = {
-  _id: string;
-  planId: PlanPayload | null;
-  status: string;
-  billingTerm?: string;
-  amount?: number;
-  startDate?: string | null;
-  endDate?: string | null;
-  createdAt: string;
-};
-
-function getStatusColor(status: string) {
-  if (status === "Installation Approved") {
-    return "success";
-  }
-
-  if (status === "Rejected" || status === "Cancelled") {
-    return "error";
-  }
-
-  return "warning";
-}
-
-function formatDate(value?: string | null) {
-  if (!value) {
-    return "N/A";
-  }
-
-  return new Date(value).toLocaleDateString();
-}
 
 export default async function DashboardPage() {
   const currentUser = getCurrentUserFromCookies();
@@ -79,6 +25,8 @@ export default async function DashboardPage() {
   type DashboardResponse = {
     user: {
       email: string;
+      name: string;
+      phone: string;
       serviceZone: { country: string; district: string; postalCode: string };
     } | null;
     subscriptions: SubscriptionPayload[];
@@ -110,22 +58,70 @@ export default async function DashboardPage() {
     redirect("/login?next=/dashboard");
   }
 
-  const latestSubscription = subscriptions[0];
-  const latestPlan = latestSubscription?.planId ?? undefined;
-
   return (
     <Stack spacing={4}>
       <ServiceAlertsBar />
       <Box>
         <Typography variant="overline" color="primary" sx={{ fontWeight: 700, letterSpacing: 0.12 }}>
-          Account overview
+          Subscriptions
         </Typography>
-        <Typography variant="h4" sx={{ fontWeight: 600, mt: 0.5 }}>
-          {user.email}
-        </Typography>
-        <Typography color="text.secondary" sx={{ mt: 1 }}>
-          Service location: {formatServiceZone(user.serviceZone)}
-        </Typography>
+        <Stack
+          spacing={0.75}
+          sx={{
+            mt: 1.5,
+            maxWidth: 520,
+            "& .acct-info-row": {
+              display: "flex",
+              flexWrap: "wrap",
+              alignItems: "baseline",
+              gap: { xs: 0.25, sm: 1 },
+              typography: "body2",
+            },
+            "& .acct-info-label": {
+              color: "text.secondary",
+              fontWeight: 500,
+              minWidth: { sm: 118 },
+            },
+            "& .acct-info-value": {
+              color: "text.primary",
+              fontWeight: 400,
+              wordBreak: "break-word",
+            },
+          }}
+        >
+          <Box className="acct-info-row">
+            <Box component="span" className="acct-info-label">
+              Name
+            </Box>
+            <Box component="span" className="acct-info-value">
+              {user.name?.trim() || "—"}
+            </Box>
+          </Box>
+          <Box className="acct-info-row">
+            <Box component="span" className="acct-info-label">
+              Phone
+            </Box>
+            <Box component="span" className="acct-info-value">
+              {user.phone?.trim() || "—"}
+            </Box>
+          </Box>
+          <Box className="acct-info-row">
+            <Box component="span" className="acct-info-label">
+              Email
+            </Box>
+            <Box component="span" className="acct-info-value">
+              {user.email}
+            </Box>
+          </Box>
+          <Box className="acct-info-row">
+            <Box component="span" className="acct-info-label">
+              Service location
+            </Box>
+            <Box component="span" className="acct-info-value">
+              {formatServiceZone(user.serviceZone)}
+            </Box>
+          </Box>
+        </Stack>
       </Box>
 
       {activeOutage && (
@@ -137,207 +133,7 @@ export default async function DashboardPage() {
         </Alert>
       )}
 
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: { xs: "column", md: "row" },
-          gap: 3,
-          alignItems: "stretch",
-        }}
-      >
-        <Box sx={{ flex: { md: 2 }, minWidth: 0 }}>
-          <Card variant="outlined" sx={{ borderRadius: 1 }}>
-            <CardContent>
-              <Stack spacing={3}>
-                <Stack
-                  direction={{ xs: "column", sm: "row" }}
-                  spacing={2}
-                  justifyContent="space-between"
-                  alignItems={{ sm: "flex-start" }}
-                >
-                  <Box>
-                    <Typography variant="h6" fontWeight={600}>
-                      Current subscription
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      Primary fibre service on your account.
-                    </Typography>
-                  </Box>
-                  <Stack direction="row" spacing={1} alignItems="center">
-                    {latestSubscription && latestSubscription.status !== "Cancelled" && latestSubscription.status !== "Rejected" && (
-                      <CancelPlanButton subscriptionId={latestSubscription._id} />
-                    )}
-                    <Chip
-                      color={
-                        latestSubscription ? getStatusColor(latestSubscription.status) : "default"
-                      }
-                      label={latestSubscription?.status || "No active order"}
-                      sx={{ fontWeight: 600 }}
-                    />
-                  </Stack>
-                </Stack>
-
-                {latestSubscription && latestPlan ? (
-                  <TableContainer>
-                    <Table size="small">
-                      <TableBody>
-                        <TableRow>
-                          <TableCell sx={{ color: "text.secondary", width: 160 }}>Plan</TableCell>
-                          <TableCell>{latestPlan.name}</TableCell>
-                        </TableRow>
-                        <TableRow>
-                          <TableCell sx={{ color: "text.secondary" }}>Speed</TableCell>
-                          <TableCell>{latestPlan.downloadSpeedMbps} Mbps</TableCell>
-                        </TableRow>
-                        <TableRow>
-                          <TableCell sx={{ color: "text.secondary" }}>Monthly</TableCell>
-                          <TableCell>S${latestPlan.monthlyPrice}</TableCell>
-                        </TableRow>
-                        <TableRow>
-                          <TableCell sx={{ color: "text.secondary" }}>Purchased term</TableCell>
-                          <TableCell>{latestSubscription.billingTerm ?? "30"}Days</TableCell>
-                        </TableRow>
-                        <TableRow>
-                          <TableCell sx={{ color: "text.secondary" }}>Paid amount</TableCell>
-                          <TableCell>S${latestSubscription.amount ?? latestPlan.monthlyPrice}</TableCell>
-                        </TableRow>
-                        <TableRow>
-                          <TableCell sx={{ color: "text.secondary" }}>Start date</TableCell>
-                          <TableCell>{formatDate(latestSubscription.startDate)}</TableCell>
-                        </TableRow>
-                        <TableRow>
-                          <TableCell sx={{ color: "text.secondary" }}>End date</TableCell>
-                          <TableCell>{formatDate(latestSubscription.endDate)}</TableCell>
-                        </TableRow>
-                        <TableRow>
-                          <TableCell sx={{ color: "text.secondary" }}>Provision status</TableCell>
-                          <TableCell>{latestSubscription.status}</TableCell>
-                        </TableRow>
-                      </TableBody>
-                    </Table>
-                  </TableContainer>
-                ) : (
-                  <Typography color="text.secondary">
-                    No active subscription.{" "}
-                    <Link href="/plans" style={{ fontWeight: 600 }}>
-                      Browse plans
-                    </Link>{" "}
-                    to place an order.
-                  </Typography>
-                )}
-              </Stack>
-            </CardContent>
-          </Card>
-
-          <Card variant="outlined" sx={{ borderRadius: 1, mt: 3 }}>
-            <CardContent>
-              <Stack spacing={2}>
-                <Typography variant="h6" fontWeight={600}>
-                  Order history
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  All requests tied to this login.
-                </Typography>
-
-                {subscriptions.length > 0 ? (
-                  <TableContainer>
-                    <Table size="small">
-                      <TableHead>
-                        <TableRow>
-                          <TableCell>Date</TableCell>
-                          <TableCell>Plan</TableCell>
-                          <TableCell>Speed</TableCell>
-                          <TableCell>Price</TableCell>
-                          <TableCell>Term</TableCell>
-                          <TableCell>Start date</TableCell>
-                          <TableCell>End date</TableCell>
-                          <TableCell>Status</TableCell>
-                        </TableRow>
-                      </TableHead>
-                      <TableBody>
-                        {subscriptions.map((subscription) => {
-                          const plan = subscription.planId;
-
-                          if (!plan) {
-                            return null;
-                          }
-
-                          return (
-                            <TableRow key={subscription._id}>
-                              <TableCell>
-                                {new Date(subscription.createdAt).toLocaleDateString()}
-                              </TableCell>
-                              <TableCell>{plan.name}</TableCell>
-                              <TableCell>{plan.downloadSpeedMbps} Mbps</TableCell>
-                              <TableCell>S${plan.monthlyPrice}</TableCell>
-                              <TableCell>{subscription.billingTerm ?? "30"}Days</TableCell>
-                              <TableCell>{formatDate(subscription.startDate)}</TableCell>
-                              <TableCell>{formatDate(subscription.endDate)}</TableCell>
-                              <TableCell>
-                                <Chip
-                                  size="small"
-                                  color={getStatusColor(subscription.status)}
-                                  label={subscription.status}
-                                />
-                              </TableCell>
-                            </TableRow>
-                          );
-                        })}
-                      </TableBody>
-                    </Table>
-                  </TableContainer>
-                ) : (
-                  <Typography color="text.secondary">No orders yet.</Typography>
-                )}
-              </Stack>
-            </CardContent>
-          </Card>
-        </Box>
-
-        <Box sx={{ flex: { md: 1 }, minWidth: 0 }}>
-          <Stack spacing={2}>
-            <Card variant="outlined" sx={{ borderRadius: 1 }}>
-              <CardContent>
-                <Stack direction="row" spacing={2} alignItems="flex-start">
-                  <RouterIcon color="primary" />
-                  <Box>
-                    <Typography fontWeight={600}>Installation</Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      Technician scheduling and visit windows will appear here.
-                    </Typography>
-                  </Box>
-                </Stack>
-              </CardContent>
-            </Card>
-            <Card variant="outlined" sx={{ borderRadius: 1 }}>
-              <CardContent>
-                <Stack direction="row" spacing={2} alignItems="flex-start">
-                  <ReceiptLongIcon color="primary" />
-                  <Box>
-                    <Typography fontWeight={600}>Billing</Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      Invoice and payment history integrate in a later release.
-                    </Typography>
-                  </Box>
-                </Stack>
-              </CardContent>
-            </Card>
-            <Card variant="outlined" sx={{ borderRadius: 1 }}>
-              <CardContent>
-                <Stack direction="row" spacing={2} alignItems="flex-start">
-                  <EventAvailableIcon color="primary" />
-                  <Box>
-                    <Typography fontWeight={600}>Support</Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      Trouble tickets and SLA tracking can plug into this panel.
-                    </Typography>
-                  </Box>
-                </Stack>
-              </CardContent>
-            </Card>
-          </Stack>
-        </Box>
-      </Box>
+      <CustomerDashboardPanels initialSubscriptions={subscriptions} />
     </Stack>
   );
 }

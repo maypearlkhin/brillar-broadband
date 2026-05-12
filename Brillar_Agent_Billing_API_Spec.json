@@ -1,0 +1,426 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Brillar Agent Billing API",
+    "description": "Agent-facing endpoints for **account plus billing**: profile, subscriptions (canonical app shape including populated `planId` / appointment refs), invoices (paid date, invoice number, amounts), and a small `billingSummary` for quick prompts. Mirrors `GET /api/me/subscription` logic with an envelope `{ \"success\", \"data\" }` suited to conversational agents.\n\n**Companion documents:** Personal API (narrow extract views), Plans API (catalogue), Scheduling API.\n\n**Canonical app route:** `GET /api/me/subscription` returns the same core fields as `data` inside `GET /api/agent/my-account-billing`, but **without** the outer `success` wrapper.",
+    "version": "1.0.1",
+    "contact": {
+      "name": "Brillar API Support",
+      "email": "api-support@brillarbroadband.com"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://api-brillarbroadband.atenxion.ai",
+      "description": "Production server"
+    }
+  ],
+  "paths": {
+    "/api/agent/my-account-billing": {
+      "get": {
+        "summary": "Account, current plan row, invoices, and billing summary",
+        "description": "Returns the authenticated customer’s **`user`** profile, **`subscription`** (latest order row — same ordering as dashboard), **`subscriptions`** (all orders, newest first), **`invoices`** (payment records sorted by **`paidAt` descending), **`activeOutage`** if any at the customer’s zone, plus **`billingSummary`** (`latestPaidAt`, `latestInvoiceNumber`, counts). Use this when the assistant needs paid date plus service context in one call.\n\nService window fields:** `startDate` / `endDate` on subscriptions are **null** until installation is marked complete on a **first install** order; prepaid term then runs from that completion timestamp. Renewals where an existing router is carried forward start dates at payment.",
+        "tags": ["Protected – Billing"],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "description": "Bearer JWT. Format: `Bearer <token>`",
+            "schema": { "type": "string", "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." }
+          }
+        ],
+        "security": [{ "BearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Account profile, subscriptions, invoices, and billing summary returned successfully",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AccountBillingResponse" },
+                "example": {
+                  "success": true,
+                  "data": {
+                    "user": {
+                      "id": "664a1b2c3d4e5f6a7b8c9d0f",
+                      "email": "john@example.com",
+                      "name": "John Doe",
+                      "phone": "+65 9123 4567",
+                      "role": "customer",
+                      "serviceZone": {
+                        "country": "Singapore",
+                        "district": "Jurong East",
+                        "postalCode": "609606"
+                      }
+                    },
+                    "subscription": {
+                      "_id": "664a1b2c3d4e5f6a7b8c9d0e",
+                      "userId": "664a1b2c3d4e5f6a7b8c9d0f",
+                      "planId": {
+                        "_id": "674000000000000000000001",
+                        "id": "fibre_pro_500",
+                        "name": "Fibre Pro 500",
+                        "monthlyPrice": 49.99,
+                        "downloadSpeedMbps": 500,
+                        "price90Days": 120,
+                        "price180Days": 230,
+                        "price365Days": 450,
+                        "features": ["Unlimited data"],
+                        "categoryId": "residential",
+                        "categoryTitle": "Residential",
+                        "categorySortOrder": 0,
+                        "planSortOrder": 0,
+                        "isActive": true
+                      },
+                      "status": "Active",
+                      "planStatus": "active",
+                      "billingTerm": "90",
+                      "amount": 120,
+                      "startDate": "2026-05-01T00:00:00.000Z",
+                      "endDate": "2026-07-30T00:00:00.000Z",
+                      "routerId": "RT-9F2A",
+                      "installationAppointmentId": null,
+                      "installedAt": "2026-04-28T14:00:00.000Z",
+                      "activatedAt": "2026-05-01T08:00:00.000Z",
+                      "blockedAt": null,
+                      "createdAt": "2026-04-20T09:00:00.000Z"
+                    },
+                    "subscriptions": [
+                      {
+                        "_id": "664a1b2c3d4e5f6a7b8c9d0e",
+                        "userId": "664a1b2c3d4e5f6a7b8c9d0f",
+                        "planId": {
+                          "_id": "674000000000000000000001",
+                          "id": "fibre_pro_500",
+                          "name": "Fibre Pro 500",
+                          "monthlyPrice": 49.99,
+                          "downloadSpeedMbps": 500,
+                          "price90Days": 120,
+                          "price180Days": 230,
+                          "price365Days": 450,
+                          "features": ["Unlimited data"],
+                          "categoryId": "residential",
+                          "categoryTitle": "Residential",
+                          "categorySortOrder": 0,
+                          "planSortOrder": 0,
+                          "isActive": true
+                        },
+                        "status": "Active",
+                        "planStatus": "active",
+                        "billingTerm": "90",
+                        "amount": 120,
+                        "startDate": "2026-05-01T00:00:00.000Z",
+                        "endDate": "2026-07-30T00:00:00.000Z",
+                        "routerId": "RT-9F2A",
+                        "installationAppointmentId": null,
+                        "installedAt": "2026-04-28T14:00:00.000Z",
+                        "activatedAt": "2026-05-01T08:00:00.000Z",
+                        "blockedAt": null,
+                        "createdAt": "2026-04-20T09:00:00.000Z"
+                      }
+                    ],
+                    "invoices": [
+                      {
+                        "id": "674a1b2c3d4e5f6a7b8c9d08",
+                        "invoiceNumber": "BR-INV-20260501-A1B2C3D4",
+                        "subscriptionId": "664a1b2c3d4e5f6a7b8c9d0e",
+                        "paidAt": "2026-05-01T12:00:00.000Z",
+                        "amount": 120,
+                        "currency": "SGD",
+                        "billingTermDays": 90,
+                        "planName": "Fibre Pro 500",
+                        "planDownloadSpeedMbps": 500,
+                        "customerName": "John Doe"
+                      }
+                    ],
+                    "activeOutage": null,
+                    "billingSummary": {
+                      "latestPaidAt": "2026-05-01T12:00:00.000Z",
+                      "latestInvoiceNumber": "BR-INV-20260501-A1B2C3D4",
+                      "latestInvoiceAmount": 120,
+                      "latestInvoiceCurrency": "SGD",
+                      "invoiceRowCount": 1
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid token",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorEnvelope" },
+                "example": { "success": false, "message": "Authentication required." }
+              }
+            }
+          },
+          "500": {
+            "description": "Unable to assemble billing snapshot",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorEnvelope" },
+                "example": { "success": false, "message": "Unable to load account and billing." }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/agent/billing-history": {
+      "get": {
+        "summary": "Invoices plus full subscription / order rows",
+        "description": "Returns **`data.invoices`** (each linked to **`subscriptionId`**) and **`data.subscriptions`** (same serialization as `/api/me/subscription`) for building payment timelines, PDF references, or past-plan explanations. Newest invoices first; newest subscriptions first.",
+        "tags": ["Protected – Billing"],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "description": "Bearer JWT. Format: `Bearer <token>`",
+            "schema": { "type": "string", "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." }
+          }
+        ],
+        "security": [{ "BearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Invoice and subscription history returned successfully",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/BillingHistoryResponse" },
+                "example": {
+                  "success": true,
+                  "data": {
+                    "invoices": [
+                      {
+                        "id": "674a1b2c3d4e5f6a7b8c9d08",
+                        "invoiceNumber": "BR-INV-20260501-A1B2C3D4",
+                        "subscriptionId": "664a1b2c3d4e5f6a7b8c9d0e",
+                        "paidAt": "2026-05-01T12:00:00.000Z",
+                        "amount": 120,
+                        "currency": "SGD",
+                        "billingTermDays": 90,
+                        "planName": "Fibre Pro 500",
+                        "planDownloadSpeedMbps": 500,
+                        "customerName": "John Doe"
+                      }
+                    ],
+                    "subscriptions": [
+                      {
+                        "_id": "664a1b2c3d4e5f6a7b8c9d0e",
+                        "userId": "664a1b2c3d4e5f6a7b8c9d0f",
+                        "planId": {
+                          "_id": "674000000000000000000001",
+                          "id": "fibre_pro_500",
+                          "name": "Fibre Pro 500",
+                          "monthlyPrice": 49.99,
+                          "downloadSpeedMbps": 500,
+                          "price90Days": 120,
+                          "price180Days": 230,
+                          "price365Days": 450,
+                          "features": ["Unlimited data"],
+                          "categoryId": "residential",
+                          "categoryTitle": "Residential",
+                          "categorySortOrder": 0,
+                          "planSortOrder": 0,
+                          "isActive": true
+                        },
+                        "status": "Active",
+                        "planStatus": "active",
+                        "billingTerm": "90",
+                        "amount": 120,
+                        "startDate": "2026-05-01T00:00:00.000Z",
+                        "endDate": "2026-07-30T00:00:00.000Z",
+                        "routerId": "RT-9F2A",
+                        "installationAppointmentId": null,
+                        "installedAt": "2026-04-28T14:00:00.000Z",
+                        "activatedAt": "2026-05-01T08:00:00.000Z",
+                        "blockedAt": null,
+                        "createdAt": "2026-04-20T09:00:00.000Z"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid token",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorEnvelope" },
+                "example": { "success": false, "message": "Authentication required." }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error loading history",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorEnvelope" },
+                "example": { "success": false, "message": "Unable to load billing history." }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "Customer JWT (`role: customer` for normal storefront flows)."
+      }
+    },
+    "schemas": {
+      "ErrorEnvelope": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean", "example": false },
+          "message": { "type": "string", "example": "Authentication required." }
+        }
+      },
+      "ServiceZone": {
+        "type": "object",
+        "properties": {
+          "country": { "type": "string" },
+          "district": { "type": "string" },
+          "postalCode": { "type": "string" }
+        }
+      },
+      "CustomerProfile": {
+        "type": "object",
+        "nullable": true,
+        "properties": {
+          "id": { "type": "string" },
+          "email": { "type": "string" },
+          "name": { "type": "string" },
+          "phone": { "type": "string" },
+          "role": { "type": "string" },
+          "serviceZone": { "$ref": "#/components/schemas/ServiceZone" }
+        }
+      },
+      "ActiveOutage": {
+        "type": "object",
+        "description": "Present when an unresolved network incident matches the customer’s `serviceZone`.",
+        "properties": {
+          "id": { "type": "string" },
+          "message": { "type": "string" },
+          "location": {
+            "type": "object",
+            "properties": {
+              "country": { "type": "string" },
+              "district": { "type": "string" },
+              "postalCode": { "type": "string" }
+            }
+          },
+          "createdAt": { "type": "string", "format": "date-time" }
+        }
+      },
+      "InvoiceRecord": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "description": "Invoice document id" },
+          "invoiceNumber": { "type": "string", "example": "BR-INV-20260512-A1B2C3D4" },
+          "subscriptionId": { "type": "string", "description": "Links to the subscription created at checkout" },
+          "paidAt": { "type": "string", "format": "date-time" },
+          "amount": { "type": "number" },
+          "currency": { "type": "string", "example": "SGD" },
+          "billingTermDays": { "type": "integer", "enum": [30, 90, 180, 365] },
+          "planName": { "type": "string", "description": "Snapshot at checkout" },
+          "planDownloadSpeedMbps": { "type": "number" },
+          "customerName": { "type": "string" }
+        }
+      },
+      "SubscriptionCanonical": {
+        "type": "object",
+        "description": "Subscription row as returned by the app API (populated `planId` object when available).",
+        "properties": {
+          "_id": { "type": "string" },
+          "userId": { "type": "string" },
+          "planId": { "type": "object", "description": "Populated plan document or id" },
+          "status": {
+            "type": "string",
+            "enum": ["Pending", "Scheduled", "Installed", "Active", "Blocked", "Cancelled", "Rejected"]
+          },
+          "planStatus": { "type": "string" },
+          "billingTerm": { "type": "string", "example": "90" },
+          "amount": { "type": "number" },
+          "startDate": { "type": "string", "format": "date-time", "nullable": true },
+          "endDate": { "type": "string", "format": "date-time", "nullable": true },
+          "routerId": { "type": "string", "nullable": true },
+          "installationAppointmentId": { "type": "object", "nullable": true },
+          "installedAt": { "type": "string", "format": "date-time", "nullable": true },
+          "activatedAt": { "type": "string", "format": "date-time", "nullable": true },
+          "blockedAt": { "type": "string", "format": "date-time", "nullable": true },
+          "createdAt": { "type": "string", "format": "date-time" }
+        }
+      },
+      "BillingSummary": {
+        "type": "object",
+        "properties": {
+          "latestPaidAt": { "type": "string", "format": "date-time", "nullable": true },
+          "latestInvoiceNumber": { "type": "string", "nullable": true },
+          "latestInvoiceAmount": { "type": "number", "nullable": true },
+          "latestInvoiceCurrency": { "type": "string", "nullable": true },
+          "invoiceRowCount": { "type": "integer" }
+        }
+      },
+      "AccountBillingData": {
+        "type": "object",
+        "properties": {
+          "user": { "$ref": "#/components/schemas/CustomerProfile" },
+          "subscription": { "oneOf": [{ "$ref": "#/components/schemas/SubscriptionCanonical" }, { "type": "null" }] },
+          "subscriptions": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/SubscriptionCanonical" }
+          },
+          "invoices": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/InvoiceRecord" }
+          },
+          "activeOutage": {
+            "nullable": true,
+            "allOf": [{ "$ref": "#/components/schemas/ActiveOutage" }]
+          },
+          "billingSummary": { "$ref": "#/components/schemas/BillingSummary" }
+        }
+      },
+      "AccountBillingResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean", "example": true },
+          "data": { "$ref": "#/components/schemas/AccountBillingData" }
+        }
+      },
+      "BillingHistoryData": {
+        "type": "object",
+        "properties": {
+          "invoices": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/InvoiceRecord" }
+          },
+          "subscriptions": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/SubscriptionCanonical" }
+          }
+        }
+      },
+      "BillingHistoryResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean", "example": true },
+          "data": { "$ref": "#/components/schemas/BillingHistoryData" }
+        }
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Protected – Billing",
+      "description": "Bearer-authenticated customer billing and subscription bundle endpoints."
+    }
+  ]
+}

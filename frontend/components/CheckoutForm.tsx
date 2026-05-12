@@ -90,15 +90,21 @@ function formatDateLabel(date: Date) {
   });
 }
 
-function getServiceWindow(from: Date, term: BillingTerm) {
-  const startDate = addDays(from, 3);
-  const endDate = addDays(startDate, getTermDays(term));
+/** Service dates: renewals start at payment; first installs begin after ISP completes installation. */
+function getCheckoutServiceLabels(orderDate: Date, term: BillingTerm, routerCarryOver: boolean) {
+  if (routerCarryOver) {
+    const termDays = getTermDays(term);
+    const endDate = addDays(orderDate, termDays);
+    return {
+      startLabel: formatDateLabel(orderDate),
+      endLabel: formatDateLabel(endDate),
+    };
+  }
 
+  const termDays = getTermDays(term);
   return {
-    startDate,
-    endDate,
-    startLabel: formatDateLabel(startDate),
-    endLabel: formatDateLabel(endDate)
+    startLabel: "After installation completes",
+    endLabel: `${termDays} days after service starts`,
   };
 }
 
@@ -385,8 +391,8 @@ function ReceiptSummary({
         <ReceiptRow label="Plan" value={plan.name} />
         <ReceiptRow label="Billing" value={amountLabel} />
         <ReceiptRow label="Amount" value={`S$${amountText}`} emphasize />
-        <ReceiptRow label="Start date" value={startDateLabel} />
-        <ReceiptRow label="End date" value={endDateLabel} />
+        <ReceiptRow label="Service start" value={startDateLabel} />
+        <ReceiptRow label="Service end" value={endDateLabel} />
         <Divider sx={{ borderStyle: "dashed" }} />
         <ReceiptRow label="Cardholder" value={nameLine} mono />
         <ReceiptRow label="Card" value={panLine} mono small />
@@ -435,7 +441,19 @@ function ReceiptRow({
   );
 }
 
-export default function CheckoutForm({ plan, selectedTerm }: { plan: PlanCardData; selectedTerm?: string }) {
+export default function CheckoutForm({
+  plan,
+  selectedTerm,
+  hasPriorSubscription = false,
+  routerCarryOverExpected = false,
+}: {
+  plan: PlanCardData;
+  selectedTerm?: string;
+  /** True if this account already has (or had) at least one subscription before this checkout completes. */
+  hasPriorSubscription?: boolean;
+  /** Mirrors checkout backend: existing router → service starts at payment without new installation. */
+  routerCarryOverExpected?: boolean;
+}) {
   const router = useRouter();
   const billingTerm = normalizeBillingTerm(selectedTerm);
   const [error, setError] = useState("");
@@ -450,14 +468,20 @@ export default function CheckoutForm({ plan, selectedTerm }: { plan: PlanCardDat
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [processingOpen, setProcessingOpen] = useState(false);
   const [successOpen, setSuccessOpen] = useState(false);
-  const [confirmedWindow, setConfirmedWindow] = useState<ReturnType<typeof getServiceWindow> | null>(null);
+  const [confirmedLabels, setConfirmedLabels] = useState<{
+    startLabel: string;
+    endLabel: string;
+  } | null>(null);
   const checkoutAmount = getCheckoutAmount(plan, billingTerm);
   const checkoutLabel = getCheckoutLabel(billingTerm);
   const checkoutSuffix = getCheckoutSuffix(billingTerm);
-  const previewWindow = useMemo(() => getServiceWindow(new Date(), billingTerm), [billingTerm]);
-  const serviceWindow = confirmedWindow ?? previewWindow;
-  const startDateLabel = serviceWindow.startLabel;
-  const endDateLabel = serviceWindow.endLabel;
+  const previewLabels = useMemo(
+    () => getCheckoutServiceLabels(new Date(), billingTerm, routerCarryOverExpected),
+    [billingTerm, routerCarryOverExpected],
+  );
+  const serviceLabels = confirmedLabels ?? previewLabels;
+  const startDateLabel = serviceLabels.startLabel;
+  const endDateLabel = serviceLabels.endLabel;
 
   const orderDateLabel = useMemo(
     () =>
@@ -546,11 +570,16 @@ export default function CheckoutForm({ plan, selectedTerm }: { plan: PlanCardDat
       });
 
       const completedAt = new Date();
-      const nextServiceWindow = getServiceWindow(completedAt, billingTerm);
-      setConfirmedWindow(nextServiceWindow);
+      setConfirmedLabels(getCheckoutServiceLabels(completedAt, billingTerm, routerCarryOverExpected));
       setProcessingOpen(false);
       setIsSubmitting(false);
-      setSuccessOpen(true);
+
+      if (hasPriorSubscription) {
+        router.push("/dashboard");
+        router.refresh();
+      } else {
+        setSuccessOpen(true);
+      }
     } catch (err) {
       setProcessingOpen(false);
       setIsSubmitting(false);
@@ -564,7 +593,7 @@ export default function CheckoutForm({ plan, selectedTerm }: { plan: PlanCardDat
 
   function handleSuccessContinue() {
     setSuccessOpen(false);
-    router.push("/dashboard");
+    router.push("/dashboard/schedule-installation");
     router.refresh();
   }
 
@@ -615,13 +644,14 @@ export default function CheckoutForm({ plan, selectedTerm }: { plan: PlanCardDat
               {"We'll email your confirmation shortly."}
             </Typography>
             <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.65 }}>
-              Our installation team will contact you to schedule a visit — usually within one week.
+              <strong>Next step:</strong> Book your installation appointment so our technician can set up your router.
+              {" "}This is required to complete your order.
             </Typography>
           </Stack>
         </DialogContent>
-        <DialogActions sx={{ px: 3, pb: 3, pt: 0 }}>
+        <DialogActions sx={{ px: 3, pb: 3, pt: 0, flexDirection: "column", gap: 1 }}>
           <Button variant="contained" size="large" fullWidth onClick={handleSuccessContinue} sx={{ py: 1.15 }}>
-            Continue to dashboard
+            Schedule installation now
           </Button>
         </DialogActions>
       </Dialog>

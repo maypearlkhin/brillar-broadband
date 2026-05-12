@@ -2,8 +2,8 @@
   "openapi": "3.0.3",
   "info": {
     "title": "Brillar Agent Personal API",
-    "description": "API documentation for the Agent extraction endpoints. Includes protected routes for fetching user's current plan and order history.",
-    "version": "1.0.0",
+    "description": "API documentation for the Agent extraction endpoints. Includes protected routes for fetching the user's current plan, order history, purchasing a plan (with card fields for a realistic checkout — not stored or charged by the backend), and cancelling. Use `GET /api/agent/my-account-billing` / `GET /api/agent/billing-history` (Billing spec) for invoices and full subscription rows.\n\n**Note:** `POST /api/agent/buy-plan` and `POST /api/agent/cancel-plan` return **flat** JSON (no top-level `success`), same as `POST /api/checkout` and `POST /api/cancel-plan`. `GET /api/agent/get-my-plan` and `GET /api/agent/my-order-history` return **`{ success, data }`**.",
+    "version": "1.2.2",
     "contact": {
       "name": "Brillar API Support",
       "email": "api-support@brillarbroadband.com"
@@ -19,10 +19,8 @@
     "/api/agent/get-my-plan": {
       "get": {
         "summary": "Get Current Plan",
-        "description": "Retrieves the current subscription plan for the authenticated user.",
-        "tags": [
-          "Protected Endpoints"
-        ],
+        "description": "Retrieves the current subscription plan for the authenticated user (most recent order). Response: `{ success, data }` where `data` is a narrow row with nested `plan`, or `null`.",
+        "tags": ["Protected Endpoints"],
         "parameters": [
           {
             "name": "Authorization",
@@ -35,18 +33,58 @@
             }
           }
         ],
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ],
+        "security": [{ "BearerAuth": [] }],
         "responses": {
           "200": {
             "description": "Current plan fetched successfully",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SubscriptionResponse"
+                  "$ref": "#/components/schemas/NarrowPlanResponse"
+                },
+                "example": {
+                  "success": true,
+                  "data": {
+                    "id": "664a1b2c3d4e5f6a7b8c9d0e",
+                    "userId": "664a1b2c3d4e5f6a7b8c9d0f",
+                    "status": "Pending",
+                    "planStatus": "active",
+                    "billingTerm": "90",
+                    "amount": 120,
+                    "purchasedPrice": 120,
+                    "currentTermPrice": 120,
+                    "hasPriceChanged": false,
+                    "startDate": null,
+                    "endDate": null,
+                    "createdAt": "2026-05-12T10:00:00.000Z",
+                    "plan": {
+                      "id": "fibre_pro_500",
+                      "name": "Fibre Pro 500",
+                      "monthlyPrice": 49.99,
+                      "downloadSpeedMbps": 500,
+                      "price90Days": 120,
+                      "price180Days": 230,
+                      "price365Days": 450,
+                      "features": ["Unlimited data"],
+                      "categoryId": "residential",
+                      "categoryTitle": "Residential",
+                      "categorySortOrder": 0,
+                      "planSortOrder": 0,
+                      "isActive": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Token missing userId claim",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" },
+                "example": {
+                  "success": false,
+                  "message": "userId is required in request body."
                 }
               }
             }
@@ -55,9 +93,7 @@
             "description": "Unauthorized - Invalid or missing token",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                },
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" },
                 "example": {
                   "success": false,
                   "message": "Authentication required."
@@ -71,10 +107,8 @@
     "/api/agent/my-order-history": {
       "get": {
         "summary": "Get My Order History",
-        "description": "Retrieves all past and present subscriptions (order history) for the authenticated user.",
-        "tags": [
-          "Protected Endpoints"
-        ],
+        "description": "Retrieves all past and present subscriptions (order history) for the authenticated user. Response: `{ success, data: [] }`.",
+        "tags": ["Protected Endpoints"],
         "parameters": [
           {
             "name": "Authorization",
@@ -87,11 +121,7 @@
             }
           }
         ],
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ],
+        "security": [{ "BearerAuth": [] }],
         "responses": {
           "200": {
             "description": "Order history fetched successfully",
@@ -99,6 +129,40 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/OrderHistoryResponse"
+                },
+                "example": {
+                  "success": true,
+                  "data": [
+                    {
+                      "id": "664a1b2c3d4e5f6a7b8c9d0e",
+                      "userId": "664a1b2c3d4e5f6a7b8c9d0f",
+                      "status": "Cancelled",
+                      "planStatus": "cancelled",
+                      "billingTerm": "30",
+                      "amount": 32,
+                      "purchasedPrice": 32,
+                      "currentTermPrice": 32,
+                      "hasPriceChanged": false,
+                      "startDate": "2026-04-01T00:00:00.000Z",
+                      "endDate": "2026-05-12T00:00:00.000Z",
+                      "createdAt": "2026-03-28T10:00:00.000Z",
+                      "plan": {
+                        "id": "plan_004",
+                        "name": "100Mbps Essential",
+                        "monthlyPrice": 32,
+                        "downloadSpeedMbps": 100,
+                        "price90Days": 111,
+                        "price180Days": 120,
+                        "price365Days": 260,
+                        "features": ["Unlimited data"],
+                        "categoryId": "res_everyday",
+                        "categoryTitle": "Residential · Everyday fibre",
+                        "categorySortOrder": 0,
+                        "planSortOrder": 0,
+                        "isActive": true
+                      }
+                    }
+                  ]
                 }
               }
             }
@@ -107,9 +171,7 @@
             "description": "Unauthorized - Invalid or missing token",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                },
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" },
                 "example": {
                   "success": false,
                   "message": "Authentication required."
@@ -123,10 +185,8 @@
     "/api/agent/buy-plan": {
       "post": {
         "summary": "Buy a New Plan",
-        "description": "Purchases a new subscription plan for the authenticated user using the provided plan ID. Extracts userId securely from the JWT token. Do NOT pass userId in the body.",
-        "tags": [
-          "Protected Endpoints"
-        ],
+        "description": "Purchases a new subscription for the authenticated user (same handler as `POST /api/checkout`). Extracts userId from the JWT — do NOT pass userId in the body. Creates an **invoice** record. Returns **`subscription.id`** for use as **`subscriptionId`** when booking an **installation** appointment. Card fields are required for a realistic flow; they are **not** used by the billing backend (only `planId`, `billingTerm`, `amount` are stored). One active subscription at a time — **409** if already active.",
+        "tags": ["Protected Endpoints"],
         "parameters": [
           {
             "name": "Authorization",
@@ -139,11 +199,7 @@
             }
           }
         ],
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ],
+        "security": [{ "BearerAuth": [] }],
         "requestBody": {
           "required": true,
           "content": {
@@ -159,7 +215,7 @@
                   "billingTerm": {
                     "type": "string",
                     "enum": ["30", "90", "180", "365"],
-                    "description": "Subscription duration in days. Defaults to '30' if omitted.",
+                    "description": "Subscription duration in days. Defaults to '30' if omitted. Some clients send 'monthly' — backend treats it as '30'.",
                     "default": "30"
                   },
                   "amount": {
@@ -168,7 +224,7 @@
                   },
                   "cardNumber": {
                     "type": "string",
-                    "description": "The customer's credit card number (dummy/false data accepted for simulation)."
+                    "description": "The customer's credit card number (dummy/false data accepted for simulation; not stored by API)."
                   },
                   "expiryDate": {
                     "type": "string",
@@ -183,25 +239,81 @@
                     "description": "The full name exactly as it appears on the credit card."
                   }
                 }
+              },
+              "example": {
+                "planId": "fibre_pro_500",
+                "billingTerm": "90",
+                "amount": 120.0,
+                "cardNumber": "4242424242424242",
+                "expiryDate": "12/29",
+                "cvc": "123",
+                "nameOnCard": "JANE DOE"
               }
             }
           }
         },
         "responses": {
           "201": {
-            "description": "Purchase complete. Subscription status is 'Installation Pending'.",
+            "description": "Purchase complete. Includes subscription id and invoice summary.",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "message": {
-                      "type": "string",
-                      "example": "Purchase complete. Your subscription is Installation Pending."
+                    "message": { "type": "string" },
+                    "isRenewal": { "type": "boolean" },
+                    "routerCarriedOver": { "type": "string", "nullable": true },
+                    "invoice": {
+                      "type": "object",
+                      "properties": {
+                        "id": { "type": "string" },
+                        "invoiceNumber": { "type": "string" },
+                        "paidAt": { "type": "string", "format": "date-time" },
+                        "billingTermDays": { "type": "integer" },
+                        "amount": { "type": "number" },
+                        "currency": { "type": "string" }
+                      }
                     },
                     "subscription": {
-                      "$ref": "#/components/schemas/Subscription"
+                      "type": "object",
+                      "properties": {
+                        "id": { "type": "string" },
+                        "status": { "type": "string" },
+                        "planId": { "type": "string" },
+                        "userId": { "type": "string" },
+                        "billingTerm": { "type": "string" },
+                        "amount": { "type": "number" },
+                        "routerId": { "type": "string", "nullable": true },
+                        "startDate": { "type": "string", "format": "date-time", "nullable": true },
+                        "endDate": { "type": "string", "format": "date-time", "nullable": true },
+                        "createdAt": { "type": "string", "format": "date-time" }
+                      }
                     }
+                  }
+                },
+                "example": {
+                  "message": "Purchase complete. Please schedule your installation appointment.",
+                  "isRenewal": false,
+                  "routerCarriedOver": null,
+                  "invoice": {
+                    "id": "674a1b2c3d4e5f6a7b8c9d0e",
+                    "invoiceNumber": "BR-INV-20260512-A1B2C3D4",
+                    "paidAt": "2026-05-12T12:00:00.000Z",
+                    "billingTermDays": 90,
+                    "amount": 120,
+                    "currency": "SGD"
+                  },
+                  "subscription": {
+                    "id": "674a1b2c3d4e5f6a7b8c9d0f",
+                    "status": "Pending",
+                    "planId": "fibre_pro_500",
+                    "userId": "664a1b2c3d4e5f6a7b8c9d0f",
+                    "billingTerm": "90",
+                    "amount": 120,
+                    "routerId": null,
+                    "startDate": null,
+                    "endDate": null,
+                    "createdAt": "2026-05-12T12:00:00.000Z"
                   }
                 }
               }
@@ -211,7 +323,8 @@
             "description": "Bad Request - Missing planId",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+                "schema": { "$ref": "#/components/schemas/FlatErrorResponse" },
+                "example": { "message": "planId is required." }
               }
             }
           },
@@ -219,15 +332,41 @@
             "description": "Unauthorized - Invalid or missing token",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+                "schema": { "$ref": "#/components/schemas/FlatErrorResponse" },
+                "example": { "message": "Authentication required." }
               }
             }
           },
           "404": {
-            "description": "Not Found - Plan not found or no longer active",
+            "description": "Not Found - Plan not found, inactive, or user not found",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+                "schema": { "$ref": "#/components/schemas/FlatErrorResponse" },
+                "example": { "message": "Plan not found." }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict - User already has an active subscription",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ConflictActivePlanResponse" },
+                "example": {
+                  "message": "You already have an active plan. Please cancel your current plan before purchasing a new one.",
+                  "existingSubscription": {
+                    "id": "664a1b2c3d4e5f6a7b8c9d0e",
+                    "status": "Pending"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unable to complete checkout or finalize billing record",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/FlatErrorResponse" },
+                "example": { "message": "Unable to finalize billing record. Please try again." }
               }
             }
           }
@@ -237,10 +376,8 @@
     "/api/agent/cancel-plan": {
       "post": {
         "summary": "Cancel Active Plan",
-        "description": "Cancels the authenticated user's active subscription. If subscriptionId is omitted, the most recent non-cancelled subscription is cancelled. Sets status to 'Cancelled' and endDate to today.",
-        "tags": [
-          "Protected Endpoints"
-        ],
+        "description": "Cancels the authenticated user's active subscription (same as `POST /api/cancel-plan`). If subscriptionId is omitted, the most recent non-cancelled subscription is cancelled. Sets status to 'Cancelled' and endDate to cancellation time.",
+        "tags": ["Protected Endpoints"],
         "parameters": [
           {
             "name": "Authorization",
@@ -253,11 +390,7 @@
             }
           }
         ],
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ],
+        "security": [{ "BearerAuth": [] }],
         "requestBody": {
           "required": false,
           "content": {
@@ -268,8 +401,16 @@
                   "subscriptionId": {
                     "type": "string",
                     "description": "Optional. MongoDB _id of the specific subscription to cancel. If omitted, the most recent active subscription is cancelled."
+                  },
+                  "reason": {
+                    "type": "string",
+                    "description": "Optional cancellation reason for reference (not stored on backend)."
                   }
                 }
+              },
+              "example": {
+                "subscriptionId": "64f1a2b3c4e5d6f7a8b9c0d1",
+                "reason": "Moving to a different provider"
               }
             }
           }
@@ -282,31 +423,55 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "message": {
-                      "type": "string",
-                      "example": "Subscription successfully cancelled."
-                    },
+                    "message": { "type": "string" },
                     "subscription": {
-                      "$ref": "#/components/schemas/Subscription"
+                      "type": "object",
+                      "description": "Full subscription row (same shape as /api/me/subscription list items).",
+                      "additionalProperties": true
                     }
+                  }
+                },
+                "example": {
+                  "message": "Subscription successfully cancelled.",
+                  "subscription": {
+                    "_id": "664a1b2c3d4e5f6a7b8c9d0e",
+                    "userId": "664a1b2c3d4e5f6a7b8c9d0f",
+                    "status": "Cancelled",
+                    "planStatus": "cancelled",
+                    "billingTerm": "90",
+                    "amount": 120,
+                    "startDate": "2026-05-01T00:00:00.000Z",
+                    "endDate": "2026-05-12T14:30:00.000Z",
+                    "createdAt": "2026-05-01T08:00:00.000Z"
                   }
                 }
               }
             }
           },
           "401": {
-            "description": "Unauthorized - Invalid or missing token",
+            "description": "Unauthorized",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+                "schema": { "$ref": "#/components/schemas/FlatErrorResponse" },
+                "example": { "message": "Authentication required." }
               }
             }
           },
           "404": {
-            "description": "Not Found - No active subscription found to cancel",
+            "description": "No active subscription found to cancel",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+                "schema": { "$ref": "#/components/schemas/FlatErrorResponse" },
+                "example": { "message": "No active subscription found to cancel." }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/FlatErrorResponse" },
+                "example": { "message": "Unable to cancel plan." }
               }
             }
           }
@@ -327,141 +492,81 @@
       "ErrorResponse": {
         "type": "object",
         "properties": {
-          "success": {
-            "type": "boolean"
-          },
-          "message": {
-            "type": "string"
+          "success": { "type": "boolean" },
+          "message": { "type": "string" }
+        }
+      },
+      "FlatErrorResponse": {
+        "type": "object",
+        "properties": {
+          "message": { "type": "string" }
+        }
+      },
+      "ConflictActivePlanResponse": {
+        "type": "object",
+        "properties": {
+          "message": { "type": "string" },
+          "existingSubscription": {
+            "type": "object",
+            "properties": {
+              "id": { "type": "string" },
+              "status": { "type": "string" }
+            }
           }
         }
       },
       "Plan": {
         "type": "object",
         "properties": {
-          "id": {
-            "type": "string"
-          },
-          "name": {
-            "type": "string"
-          },
-          "monthlyPrice": {
-            "type": "number"
-          },
-          "downloadSpeedMbps": {
-            "type": "number"
-          },
-          "price90Days": {
-            "type": "number"
-          },
-          "price180Days": {
-            "type": "number"
-          },
-          "price365Days": {
-            "type": "number"
-          },
-          "features": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "categoryId": {
-            "type": "string"
-          },
-          "categoryTitle": {
-            "type": "string"
-          },
-          "categorySortOrder": {
-            "type": "number"
-          },
-          "planSortOrder": {
-            "type": "number"
-          },
-          "isActive": {
-            "type": "boolean"
-          }
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "monthlyPrice": { "type": "number" },
+          "downloadSpeedMbps": { "type": "number" },
+          "price90Days": { "type": "number" },
+          "price180Days": { "type": "number" },
+          "price365Days": { "type": "number" },
+          "features": { "type": "array", "items": { "type": "string" } },
+          "categoryId": { "type": "string" },
+          "categoryTitle": { "type": "string" },
+          "categorySortOrder": { "type": "number" },
+          "planSortOrder": { "type": "number" },
+          "isActive": { "type": "boolean" }
         }
       },
-      "Subscription": {
+      "NarrowSubscription": {
         "type": "object",
         "properties": {
-          "id": {
-            "type": "string"
-          },
-          "userId": {
-            "type": "string"
-          },
-          "status": {
-            "type": "string",
-            "description": "Order/Installation status"
-          },
-          "planStatus": {
-            "type": "string",
-            "description": "Network access status for the purchased plan",
-            "enum": ["active", "blocked", "suspended", "pending"]
-          },
-          "billingTerm": {
-            "type": "string"
-          },
-          "amount": {
-            "type": "number",
-            "description": "The amount paid at the time of purchase"
-          },
-          "purchasedPrice": {
-            "type": "number",
-            "description": "Alias for amount. The price locked in when the user purchased the plan."
-          },
-          "currentTermPrice": {
-            "type": "number",
-            "description": "The current retail price for this exact billing term. If this differs from purchasedPrice, the plan price has changed."
-          },
-          "hasPriceChanged": {
-            "type": "boolean",
-            "description": "True if the current retail price no longer matches what the user originally paid."
-          },
-          "startDate": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
-          "endDate": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "plan": {
-            "$ref": "#/components/schemas/Plan"
-          }
+          "id": { "type": "string" },
+          "userId": { "type": "string" },
+          "status": { "type": "string" },
+          "planStatus": { "type": "string" },
+          "billingTerm": { "type": "string" },
+          "amount": { "type": "number" },
+          "purchasedPrice": { "type": "number" },
+          "currentTermPrice": { "type": "number" },
+          "hasPriceChanged": { "type": "boolean" },
+          "startDate": { "type": "string", "format": "date-time", "nullable": true },
+          "endDate": { "type": "string", "format": "date-time", "nullable": true },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "plan": { "$ref": "#/components/schemas/Plan" }
         }
       },
-      "SubscriptionResponse": {
+      "NarrowPlanResponse": {
         "type": "object",
         "properties": {
-          "success": {
-            "type": "boolean",
-            "example": true
-          },
+          "success": { "type": "boolean", "example": true },
           "data": {
-            "$ref": "#/components/schemas/Subscription"
+            "oneOf": [{ "$ref": "#/components/schemas/NarrowSubscription" }, { "type": "null" }]
           }
         }
       },
       "OrderHistoryResponse": {
         "type": "object",
         "properties": {
-          "success": {
-            "type": "boolean",
-            "example": true
-          },
+          "success": { "type": "boolean", "example": true },
           "data": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Subscription"
-            }
+            "items": { "$ref": "#/components/schemas/NarrowSubscription" }
           }
         }
       }

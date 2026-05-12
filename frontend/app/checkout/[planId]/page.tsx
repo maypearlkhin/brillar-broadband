@@ -28,6 +28,19 @@ type PlanPayload = {
   };
 };
 
+type SubscriptionLite = {
+  routerId?: string | null;
+  status: string;
+};
+
+function expectsRouterCarryOver(subscriptions: SubscriptionLite[]): boolean {
+  return subscriptions.some(
+    (s) =>
+      Boolean(s.routerId) &&
+      ["Cancelled", "Rejected", "Active", "Blocked"].includes(s.status),
+  );
+}
+
 export default async function CheckoutPage({ params, searchParams }: CheckoutPageProps) {
   let payload: PlanPayload;
 
@@ -41,6 +54,19 @@ export default async function CheckoutPage({ params, searchParams }: CheckoutPag
   }
 
   const plan = payload.plan;
+
+  let subscriptionsLite: SubscriptionLite[] = [];
+  try {
+    const { data } = await axiosServer().get<{ subscriptions?: SubscriptionLite[] }>(
+      "/api/me/subscription",
+    );
+    subscriptionsLite = data.subscriptions ?? [];
+  } catch {
+    subscriptionsLite = [];
+  }
+
+  const routerCarryOverExpected = expectsRouterCarryOver(subscriptionsLite);
+  const hasPriorSubscription = subscriptionsLite.length > 0;
 
   return (
     <>
@@ -59,6 +85,8 @@ export default async function CheckoutPage({ params, searchParams }: CheckoutPag
           features: plan.features,
         }}
         selectedTerm={searchParams.term}
+        hasPriorSubscription={hasPriorSubscription}
+        routerCarryOverExpected={routerCarryOverExpected}
       />
     </>
   );

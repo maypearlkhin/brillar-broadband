@@ -2,8 +2,8 @@
   "openapi": "3.0.3",
   "info": {
     "title": "Brillar Agent Plans API",
-    "description": "API documentation for broadband plan discovery and subscription management via the agent extraction layer. Includes endpoints to browse all plans, purchase a plan, and cancel an active subscription.",
-    "version": "1.1.0",
+    "description": "Public **catalogue** endpoints for agents. **Purchasing and cancelling** subscriptions are documented in **Brillar_Agent_Personal_API_Spec.json** (`POST /api/agent/buy-plan`, `POST /api/agent/cancel-plan`) and share handlers with the web app.\n\nBilling snapshots: **Brillar_Agent_Billing_API_Spec.json**.",
+    "version": "1.2.1",
     "contact": {
       "name": "Brillar API Support",
       "email": "api-support@brillarbroadband.com"
@@ -18,245 +18,82 @@
   "paths": {
     "/api/agent/all-plans": {
       "get": {
-        "summary": "Get All Available Plans",
-        "description": "Returns all active broadband plans grouped by category. No authentication required. Use this to show the customer what plans are available before they decide to buy.",
-        "tags": ["Public Endpoints"],
+        "summary": "List all active broadband plans",
+        "description": "Returns every **active** retail plan sorted by category order, then plan order, then price — same handler as used by the storefront. Response uses **`{ success: true, data: Plan[] }`** (not a bare array). No authentication.",
+        "tags": ["Public – Catalogue"],
         "responses": {
           "200": {
-            "description": "Plans fetched successfully",
+            "description": "Active broadband plans fetched successfully",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/AllPlansResponse" }
+                "schema": { "$ref": "#/components/schemas/AllPlansEnvelope" },
+                "example": {
+                  "success": true,
+                  "data": [
+                    {
+                      "id": "plan_004",
+                      "name": "100Mbps Essential",
+                      "monthlyPrice": 32,
+                      "downloadSpeedMbps": 100,
+                      "price90Days": 111,
+                      "price180Days": 120,
+                      "price365Days": 260,
+                      "features": ["Unlimited data"],
+                      "categoryId": "res_everyday",
+                      "categoryTitle": "Residential · Everyday fibre",
+                      "categorySortOrder": 0,
+                      "planSortOrder": 0,
+                      "isActive": true
+                    }
+                  ]
+                }
               }
             }
           }
-        }
-      }
-    },
-    "/api/agent/buy-plan": {
-      "post": {
-        "summary": "Buy / Subscribe to a Plan",
-        "description": "Creates a new subscription for the authenticated customer. The userId is automatically extracted from the Bearer token — do NOT pass userId in the body. After purchase, the subscription starts with status 'Installation Pending'. A home installation appointment should be scheduled separately.",
-        "tags": ["Protected Endpoints – Plan Management"],
-        "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "required": true,
-            "description": "Bearer JWT token of the authenticated customer. Format: `Bearer <token>`",
-            "schema": { "type": "string", "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." }
-          }
-        ],
-        "security": [{ "BearerAuth": [] }],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": { "$ref": "#/components/schemas/BuyPlanRequest" },
-              "example": {
-                "planId": "fibre_pro_500",
-                "billingTerm": "90",
-                "amount": 120.00,
-                "paymentMethod": "Visa",
-                "cardLast4": "4242"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "Subscription created successfully. Status is 'Installation Pending'.",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/BuyPlanResponse" }
-              }
-            }
-          },
-          "400": { "description": "Missing planId or invalid billingTerm" },
-          "401": { "description": "Missing or invalid token" },
-          "404": { "description": "Plan not found or no longer active" }
-        }
-      }
-    },
-    "/api/agent/cancel-plan": {
-      "post": {
-        "summary": "Cancel Active Subscription",
-        "description": "Cancels the authenticated user's active subscription. If the user has multiple subscriptions, you can optionally specify which one by passing `subscriptionId`. If omitted, the most recent non-cancelled subscription is cancelled. The subscription status is set to 'Cancelled' and endDate is set to today.",
-        "tags": ["Protected Endpoints – Plan Management"],
-        "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "required": true,
-            "description": "Bearer JWT token of the authenticated customer. Format: `Bearer <token>`",
-            "schema": { "type": "string", "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." }
-          }
-        ],
-        "security": [{ "BearerAuth": [] }],
-        "requestBody": {
-          "required": false,
-          "content": {
-            "application/json": {
-              "schema": { "$ref": "#/components/schemas/CancelPlanRequest" },
-              "example": {
-                "subscriptionId": "64f1a2b3c4e5d6f7a8b9c0d1",
-                "reason": "Moving to a different provider"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Subscription cancelled successfully.",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/CancelPlanResponse" }
-              }
-            }
-          },
-          "401": { "description": "Missing or invalid token" },
-          "404": { "description": "No active subscription found to cancel" }
         }
       }
     }
   },
   "components": {
-    "securitySchemes": {
-      "BearerAuth": {
-        "type": "http",
-        "scheme": "bearer",
-        "bearerFormat": "JWT"
-      }
-    },
     "schemas": {
       "Plan": {
         "type": "object",
         "properties": {
           "id": { "type": "string", "example": "fibre_pro_500" },
-          "name": { "type": "string", "example": "Fibre Pro 500" },
-          "monthlyPrice": { "type": "number", "example": 49.99 },
-          "downloadSpeedMbps": { "type": "number", "example": 500 },
-          "price90Days": { "type": "number", "example": 120.00 },
-          "price180Days": { "type": "number", "example": 230.00 },
-          "price365Days": { "type": "number", "example": 450.00 },
+          "name": { "type": "string" },
+          "monthlyPrice": { "type": "number" },
+          "downloadSpeedMbps": { "type": "number" },
+          "price90Days": { "type": "number" },
+          "price180Days": { "type": "number" },
+          "price365Days": { "type": "number" },
           "features": {
             "type": "array",
-            "items": { "type": "string" },
-            "example": ["Unlimited data", "Static IP", "24/7 support"]
+            "items": { "type": "string" }
           },
-          "categoryId": { "type": "string", "example": "residential" },
-          "categoryTitle": { "type": "string", "example": "Residential Plans" },
+          "categoryId": { "type": "string" },
+          "categoryTitle": { "type": "string" },
           "categorySortOrder": { "type": "number" },
           "planSortOrder": { "type": "number" },
           "isActive": { "type": "boolean", "example": true }
         }
       },
-      "AllPlansResponse": {
+      "AllPlansEnvelope": {
         "type": "object",
         "properties": {
-          "plans": {
+          "success": { "type": "boolean", "example": true },
+          "data": {
             "type": "array",
             "items": { "$ref": "#/components/schemas/Plan" }
           }
-        }
-      },
-      "BuyPlanRequest": {
-        "type": "object",
-        "required": ["planId"],
-        "properties": {
-          "planId": {
-            "type": "string",
-            "description": "The plan's string ID (e.g. 'fibre_pro_500') or MongoDB _id.",
-            "example": "fibre_pro_500"
-          },
-          "billingTerm": {
-            "type": "string",
-            "enum": ["30", "90", "180", "365"],
-            "description": "Subscription duration in days. Defaults to '30' if omitted.",
-            "example": "90"
-          },
-          "amount": {
-            "type": "number",
-            "description": "Total amount paid by the customer (for record-keeping). The backend does not process live payments.",
-            "example": 120.00
-          },
-          "paymentMethod": {
-            "type": "string",
-            "description": "Payment method label shown to the user (UI only, not stored on backend).",
-            "example": "Visa"
-          },
-          "cardLast4": {
-            "type": "string",
-            "description": "Last 4 digits of card for display purposes (UI only).",
-            "example": "4242"
-          }
-        }
-      },
-      "BuyPlanResponse": {
-        "type": "object",
-        "properties": {
-          "message": { "type": "string", "example": "Purchase complete. Your subscription is Installation Pending." },
-          "subscription": {
-            "type": "object",
-            "properties": {
-              "id": { "type": "string" },
-              "status": { "type": "string", "example": "Installation Pending" },
-              "planId": { "type": "string" },
-              "userId": { "type": "string" },
-              "billingTerm": { "type": "string", "example": "90" },
-              "amount": { "type": "number" },
-              "startDate": { "type": "string", "format": "date-time" },
-              "endDate": { "type": "string", "format": "date-time" },
-              "createdAt": { "type": "string", "format": "date-time" }
-            }
-          }
-        }
-      },
-      "CancelPlanRequest": {
-        "type": "object",
-        "properties": {
-          "subscriptionId": {
-            "type": "string",
-            "description": "Optional. MongoDB _id of the subscription to cancel. If omitted, the most recent active subscription is cancelled.",
-            "example": "64f1a2b3c4e5d6f7a8b9c0d1"
-          },
-          "reason": {
-            "type": "string",
-            "description": "Optional cancellation reason for user reference (not stored on backend).",
-            "example": "Moving to a different provider"
-          }
-        }
-      },
-      "CancelPlanResponse": {
-        "type": "object",
-        "properties": {
-          "message": { "type": "string", "example": "Subscription successfully cancelled." },
-          "subscription": {
-            "type": "object",
-            "properties": {
-              "_id": { "type": "string" },
-              "userId": { "type": "string" },
-              "planId": { "type": "string" },
-              "status": { "type": "string", "example": "Cancelled" },
-              "billingTerm": { "type": "string" },
-              "amount": { "type": "number" },
-              "startDate": { "type": "string", "format": "date-time" },
-              "endDate": { "type": "string", "format": "date-time", "description": "Set to the cancellation date." },
-              "createdAt": { "type": "string", "format": "date-time" }
-            }
-          }
-        }
+        },
+        "required": ["success", "data"]
       }
     }
   },
   "tags": [
     {
-      "name": "Public Endpoints",
-      "description": "No authentication required"
-    },
-    {
-      "name": "Protected Endpoints – Plan Management",
-      "description": "Require a valid Bearer JWT token. userId is always derived from the token — do not pass it in the request body."
+      "name": "Public – Catalogue",
+      "description": "Read-only catalogue; no Bearer token."
     }
   ]
 }

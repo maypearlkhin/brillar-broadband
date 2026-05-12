@@ -27,6 +27,7 @@ export default function RegisterForm({ nextPath }: { nextPath?: string }) {
   const router = useRouter();
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [zones, setZones] = useState<ServiceZone[]>([]);
   /** Stable key for MUI Select — avoids index/string coercion bugs with MenuItem values. */
@@ -82,6 +83,11 @@ export default function RegisterForm({ nextPath }: { nextPath?: string }) {
       return;
     }
 
+    if (!phone.trim()) {
+      setError("Please enter your phone number.");
+      return;
+    }
+
     const zone = zones.find((z) => z.postalCode === selectedPostal);
 
     if (!zone) {
@@ -96,6 +102,7 @@ export default function RegisterForm({ nextPath }: { nextPath?: string }) {
         name: fullName.trim(),
         email,
         password,
+        phone: phone.trim(),
         serviceZone: zone
       });
 
@@ -160,6 +167,18 @@ export default function RegisterForm({ nextPath }: { nextPath?: string }) {
                 InputLabelProps={{ shrink: true }}
                 required
                 fullWidth
+              />
+              <TextField
+                label="Phone number"
+                placeholder="+65 9123 4567"
+                value={phone}
+                onChange={(event) => setPhone(event.target.value)}
+                InputLabelProps={{ shrink: true }}
+                required
+                fullWidth
+                type="tel"
+                autoComplete="tel"
+                helperText="Include country code (e.g. +65, +60, +66, +95, +62)."
               />
               <TextField
                 label="Password"

@@ -1,7 +1,8 @@
 "use client";
 
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import SubscriptionsIcon from "@mui/icons-material/Subscriptions";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
+import PaymentsIcon from "@mui/icons-material/Payments";
 import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
 import RouterIcon from "@mui/icons-material/Router";
 import SupportAgentIcon from "@mui/icons-material/SupportAgent";
@@ -10,7 +11,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const LINKS = [
-  { href: "/dashboard", label: "Overview", icon: AccountCircleIcon },
+  { href: "/dashboard", label: "Subscriptions", icon: SubscriptionsIcon },
+  { href: "/dashboard/billing", label: "Billing", icon: PaymentsIcon },
   { href: "/plans", label: "Plans & upgrade", icon: ReceiptLongIcon },
   { href: "/service-status", label: "Service status", icon: RouterIcon },
   { href: "/dashboard/tickets", label: "Support Tickets", icon: SupportAgentIcon },
@@ -22,7 +24,7 @@ function linkSelected(pathname: string, href: string) {
     return pathname === "/dashboard";
   }
 
-  return pathname.startsWith(href);
+  return pathname === href || pathname.startsWith(`${href}/`);
 }
 
 export default function CustomerSidebar() {

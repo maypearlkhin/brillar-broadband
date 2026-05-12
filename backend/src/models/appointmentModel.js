@@ -7,6 +7,16 @@ const appointmentSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
+    type: {
+      type: String,
+      enum: ["installation", "home_service"],
+      default: "home_service",
+    },
+    subscriptionId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Subscription",
+      default: null,
+    },
     scheduledDate: {
       // Store as YYYY-MM-DD string for easy slot comparison
       type: String,

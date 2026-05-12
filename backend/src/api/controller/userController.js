@@ -5,7 +5,7 @@ import User from "../../models/userModel.js";
 
 export async function register(req, res) {
   try {
-    const { name, email, password, serviceZone } = req.body;
+    const { name, email, password, serviceZone, phone } = req.body;
     const fullName = typeof name === "string" ? name.trim() : "";
 
     if (!fullName || fullName.length < 2 || fullName.length > 80) {
@@ -51,6 +51,7 @@ export async function register(req, res) {
       name: fullName,
       email,
       passwordHash,
+      phone: typeof phone === "string" ? phone.trim() : "",
       serviceZone: {
         country: serviceZone.country,
         district: serviceZone.district,
@@ -65,6 +66,7 @@ export async function register(req, res) {
         id: user._id,
         name: user.name,
         email: user.email,
+        phone: user.phone || "",
         role: user.role,
         serviceZone: user.serviceZone
       }
@@ -112,6 +114,7 @@ export async function login(req, res) {
         id: user._id,
         name: user.name || "",
         email: user.email,
+        phone: user.phone || "",
         role: user.role,
         serviceZone: user.serviceZone
       }

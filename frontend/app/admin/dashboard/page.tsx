@@ -20,14 +20,25 @@ export const dynamic = "force-dynamic";
 type ApiSubscription = {
   _id: string;
   status: string;
+  planStatus?: string;
   billingTerm?: string;
   amount?: number;
   startDate?: string | null;
   endDate?: string | null;
+  routerId?: string | null;
+  installationAppointmentId?: {
+    scheduledDate?: string;
+    timeSlot?: string;
+    status?: string;
+  } | null;
+  installedAt?: string | null;
+  activatedAt?: string | null;
+  blockedAt?: string | null;
   createdAt: string;
   userId: {
     email: string;
     name?: string;
+    phone?: string;
     serviceZone: {
       country: string;
       district: string;
@@ -69,28 +80,48 @@ export default async function AdminDashboardPage() {
     monthlyPrice: subscription.planId.monthlyPrice,
     downloadSpeedMbps: subscription.planId.downloadSpeedMbps,
     status: subscription.status,
+    planStatus: subscription.planStatus ?? "active",
     billingTerm: subscription.billingTerm ?? "30",
     amount: subscription.amount ?? subscription.planId.monthlyPrice,
+    routerId: subscription.routerId ?? null,
+    installationDate: subscription.installationAppointmentId?.scheduledDate ?? null,
+    installedAt: subscription.installedAt ?? null,
+    activatedAt: subscription.activatedAt ?? null,
+    blockedAt: subscription.blockedAt ?? null,
     startDate: subscription.startDate ?? null,
     endDate: subscription.endDate ?? null,
     createdAt: subscription.createdAt
   }));
 
-  const pendingCount = rows.filter((row) => row.status === "Installation Pending").length;
-  const approvedCount = rows.filter((row) => row.status === "Installation Approved").length;
-  const rejectedCount = rows.filter((row) => row.status === "Rejected").length;
+  const pendingCount = rows.filter((r) => r.status === "Pending").length;
+  const scheduledCount = rows.filter((r) => r.status === "Scheduled").length;
+  const installedCount = rows.filter((r) => r.status === "Installed").length;
+  const activeCount = rows.filter((r) => r.status === "Active").length;
+  const blockedCount = rows.filter((r) => r.status === "Blocked").length;
 
   const sortedRows = [...rows].sort((a, b) => {
-    if (a.status === "Installation Pending" && b.status !== "Installation Pending") {
-      return -1;
-    }
-
-    if (a.status !== "Installation Pending" && b.status === "Installation Pending") {
-      return 1;
-    }
-
+    const order: Record<string, number> = {
+      Installed: 0,   // needs admin action (activate)
+      Pending: 1,
+      Scheduled: 2,
+      Active: 3,
+      Blocked: 4,
+      Cancelled: 5,
+      Rejected: 6,
+    };
+    const oa = order[a.status] ?? 99;
+    const ob = order[b.status] ?? 99;
+    if (oa !== ob) return oa - ob;
     return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
   });
+
+  const statCards: [string, number, string][] = [
+    ["Pending", pendingCount, "warning.main"],
+    ["Scheduled", scheduledCount, "primary.main"],
+    ["Installed (awaiting activation)", installedCount, "info.main"],
+    ["Active", activeCount, "success.main"],
+    ["Blocked", blockedCount, "error.main"],
+  ];
 
   return (
     <Container maxWidth="lg" disableGutters>
@@ -101,20 +132,16 @@ export default async function AdminDashboardPage() {
             Subscriptions
           </Typography>
           <Typography color="text.secondary" sx={{ mt: 1 }}>
-            Review orders pending installation or reject requests that cannot be fulfilled.
+            Manage the full provisioning lifecycle — from pending orders to WiFi activation and access control.
           </Typography>
         </Box>
 
         <Grid container spacing={2}>
-          {[
-            ["Pending installation", pendingCount, "warning.main"],
-            ["Approved", approvedCount, "success.main"],
-            ["Rejected", rejectedCount, "error.main"]
-          ].map(([label, count, color]) => (
-            <Grid item xs={12} md={4} key={String(label)}>
+          {statCards.map(([label, count, color]) => (
+            <Grid item xs={6} md key={String(label)}>
               <Card variant="outlined" sx={{ borderRadius: 1 }}>
-                <CardContent>
-                  <Typography color="text.secondary" variant="body2">
+                <CardContent sx={{ py: 1.5, px: 2, "&:last-child": { pb: 1.5 } }}>
+                  <Typography color="text.secondary" variant="body2" noWrap>
                     {label}
                   </Typography>
                   <Typography variant="h4" sx={{ color, mt: 0.5, fontWeight: 700 }}>

@@ -2,8 +2,8 @@
   "openapi": "3.0.3",
   "info": {
     "title": "Brillar Agent Announcements & Notices API",
-    "description": "API documentation for the Agent extraction endpoints. Includes public routes for fetching announcements, incident impacts, and notices.",
-    "version": "1.0.0",
+    "description": "Public agent routes for **network incidents** and **company notices** (no authentication).\n\n**Related:** catalogue → Plans spec; account/checkout → Personal + Billing specs; appointments → Scheduling spec.",
+    "version": "1.1.1",
     "contact": {
       "name": "Brillar API Support",
       "email": "api-support@brillarbroadband.com"
@@ -15,7 +15,6 @@
       "description": "Production server"
     }
   ],
-  
   "paths": {
     "/api/agent/announcements-impacts": {
       "get": {
@@ -31,6 +30,66 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ImpactsResponse"
+                },
+                "example": {
+                  "success": true,
+                  "data": {
+                    "activeImpacts": [
+                      {
+                        "id": "674a1b2c3d4e5f6a7b8c9d01",
+                        "country": "Singapore",
+                        "district": "Jurong East",
+                        "postalCode": "609606",
+                        "message": "Planned maintenance may cause brief outages overnight.",
+                        "createdAt": "2026-05-10T08:00:00.000Z",
+                        "resolvedAt": null
+                      }
+                    ],
+                    "resolvedImpacts": [
+                      {
+                        "id": "674a1b2c3d4e5f6a7b8c9d02",
+                        "country": "Singapore",
+                        "district": "Jurong East",
+                        "postalCode": "609606",
+                        "message": "Fiber link restored after vendor repair.",
+                        "createdAt": "2026-05-08T08:00:00.000Z",
+                        "resolvedAt": "2026-05-09T12:00:00.000Z"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/agent/resolved-histories": {
+      "get": {
+        "summary": "List resolved incidents (history only)",
+        "description": "Returns **past** resolved network incidents (**`resolvedAt` set), newest resolution first.** Flat list suitable for timelines. Distinct from `GET /api/agent/announcements-impacts`, which returns **`activeImpacts`** and **`resolvedImpacts`** nested under `data`.",
+        "tags": ["Public Endpoints"],
+        "responses": {
+          "200": {
+            "description": "Resolved incident history fetched successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResolvedHistoriesResponse"
+                },
+                "example": {
+                  "success": true,
+                  "data": [
+                    {
+                      "id": "674a1b2c3d4e5f6a7b8c9d02",
+                      "country": "Singapore",
+                      "district": "Jurong East",
+                      "postalCode": "609606",
+                      "message": "Fiber link restored after vendor repair.",
+                      "createdAt": "2026-05-08T08:00:00.000Z",
+                      "resolvedAt": "2026-05-09T12:00:00.000Z"
+                    }
+                  ]
                 }
               }
             }
@@ -52,6 +111,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/NoticesResponse"
+                },
+                "example": {
+                  "success": true,
+                  "data": [
+                    {
+                      "id": "674a1b2c3d4e5f6a7b8c9d03",
+                      "message": "Brillar office closed on the next public holiday; support remains online.",
+                      "createdAt": "2026-05-01T10:00:00.000Z"
+                    }
+                  ]
                 }
               }
             }
@@ -147,6 +216,23 @@
             }
           }
         }
+      },
+      "ResolvedHistoriesResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "data": {
+            "type": "array",
+            "description": "Resolved incidents only, sorted newest `resolvedAt` first.",
+            "items": {
+              "$ref": "#/components/schemas/Impact"
+            }
+          }
+        },
+        "required": ["success", "data"]
       }
     }
   },

@@ -19,6 +19,10 @@ export function registerExtractApiRoutes(router) {
   router.get("/agent/get-my-plan", extractApiController.getPlanById);
   router.get("/agent/my-order-history", extractApiController.getMyOrderHistory);
 
+  // ─── Token-protected: consolidated account + invoices (canonical /me/subscription shape) ─
+  router.get("/agent/my-account-billing", extractApiController.getAgentMyAccountBilling);
+  router.get("/agent/billing-history", extractApiController.getAgentBillingHistory);
+
   // ─── Token-protected: plan management ──────────────────────────────────────
   // Buy a plan (creates a new subscription). Token required — userId is derived from token.
   router.post("/agent/buy-plan", subscriptionController.checkout);

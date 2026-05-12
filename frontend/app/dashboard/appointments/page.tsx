@@ -6,6 +6,7 @@ import {
   Box,
   Button,
   Chip,
+  Divider,
   Stack,
   Tab,
   Table,
@@ -18,11 +19,18 @@ import {
   Typography,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
+import BuildIcon from "@mui/icons-material/Build";
+import HomeRepairServiceIcon from "@mui/icons-material/HomeRepairService";
 import { getData } from "@/lib/api";
 import { useRouter } from "next/navigation";
 
+type AppointmentPlan = {
+  planId?: { name: string } | null;
+};
+
 type Appointment = {
   _id: string;
+  type: "installation" | "home_service";
   scheduledDate: string;
   timeSlot: "morning" | "afternoon";
   notes: string;
@@ -31,6 +39,7 @@ type Appointment = {
   approvedAt?: string | null;
   completedAt?: string | null;
   cancelledAt?: string | null;
+  subscriptionId?: AppointmentPlan | null;
 };
 
 const STATUS_TABS = ["All", "Pending", "Approved", "Completed", "Cancelled"];
@@ -46,6 +55,39 @@ function getStatusColor(status: string) {
 
 function formatSlot(timeSlot: string) {
   return timeSlot === "morning" ? "Morning (9am – 1pm)" : "Afternoon (1pm – 5pm)";
+}
+
+function AppointmentRows({ appointments }: { appointments: Appointment[] }) {
+  return (
+    <>
+      {appointments.map((appt) => (
+        <TableRow key={appt._id}>
+          <TableCell>
+            <Chip
+              size="small"
+              icon={appt.type === "installation" ? <BuildIcon /> : <HomeRepairServiceIcon />}
+              label={appt.type === "installation" ? "Installation" : "Home Service"}
+              variant="outlined"
+              color={appt.type === "installation" ? "info" : "default"}
+              sx={{ fontWeight: 600 }}
+            />
+          </TableCell>
+          <TableCell>{appt.scheduledDate}</TableCell>
+          <TableCell>{formatSlot(appt.timeSlot)}</TableCell>
+          <TableCell>
+            {appt.type === "installation" && appt.subscriptionId?.planId
+              ? appt.subscriptionId.planId.name
+              : "—"}
+          </TableCell>
+          <TableCell>{appt.notes || "—"}</TableCell>
+          <TableCell>
+            <Chip size="small" label={appt.status} color={getStatusColor(appt.status) as "default" | "success" | "warning" | "error" | "info"} />
+          </TableCell>
+          <TableCell>{new Date(appt.createdAt).toLocaleDateString()}</TableCell>
+        </TableRow>
+      ))}
+    </>
+  );
 }
 
 export default function CustomerAppointmentsPage() {
@@ -64,6 +106,9 @@ export default function CustomerAppointmentsPage() {
     ? appointments
     : appointments.filter((a) => a.status === tab);
 
+  const installation = filtered.filter((a) => a.type === "installation");
+  const homeService = filtered.filter((a) => a.type === "home_service");
+
   return (
     <Stack spacing={3}>
       <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
@@ -72,10 +117,10 @@ export default function CustomerAppointmentsPage() {
             Appointments
           </Typography>
           <Typography variant="h5" sx={{ fontWeight: 600 }}>
-            Home Installation Scheduling
+            My Appointments
           </Typography>
           <Typography color="text.secondary" variant="body2" sx={{ mt: 0.5 }}>
-            Schedule a technician visit for your home installation.
+            Installation and home service visits are grouped separately below (same filters apply to both).
           </Typography>
         </Box>
         <Button
@@ -83,7 +128,7 @@ export default function CustomerAppointmentsPage() {
           startIcon={<AddIcon />}
           onClick={() => router.push("/dashboard/appointments/new")}
         >
-          New Appointment
+          Home Service Appointment
         </Button>
       </Box>
 
@@ -98,50 +143,83 @@ export default function CustomerAppointmentsPage() {
       {filtered.length === 0 ? (
         <Typography color="text.secondary">No appointments found.</Typography>
       ) : (
-        <TableContainer>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>Date</TableCell>
-                <TableCell>Time Slot</TableCell>
-                <TableCell>Notes</TableCell>
-                <TableCell>Status</TableCell>
-                <TableCell>Booked On</TableCell>
-                <TableCell>Approved</TableCell>
-                <TableCell>Completed</TableCell>
-                <TableCell>Cancelled</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {filtered.map((appt) => (
-                <TableRow key={appt._id}>
-                  <TableCell>{appt.scheduledDate}</TableCell>
-                  <TableCell>{formatSlot(appt.timeSlot)}</TableCell>
-                  <TableCell>{appt.notes || "—"}</TableCell>
-                  <TableCell>
-                    <Chip
-                      size="small"
-                      label={appt.status}
-                      color={getStatusColor(appt.status) as any}
-                    />
-                  </TableCell>
-                  <TableCell>
-                    {new Date(appt.createdAt).toLocaleDateString()}
-                  </TableCell>
-                  <TableCell>
-                    {appt.approvedAt ? new Date(appt.approvedAt).toLocaleString() : "—"}
-                  </TableCell>
-                  <TableCell>
-                    {appt.completedAt ? new Date(appt.completedAt).toLocaleString() : "—"}
-                  </TableCell>
-                  <TableCell>
-                    {appt.cancelledAt ? new Date(appt.cancelledAt).toLocaleString() : "—"}
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+        <Stack spacing={4}>
+          <Box>
+            <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 0.75 }} flexWrap="wrap" useFlexGap>
+              <BuildIcon sx={{ color: "info.main" }} fontSize="small" aria-hidden />
+              <Typography variant="h6" sx={{ fontWeight: 700 }}>
+                Installation
+              </Typography>
+              <Chip size="small" variant="outlined" color="info" label={`${installation.length} booked`} />
+            </Stack>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 1.5 }}>
+              Router installation visits tied to your fibre subscription order.
+            </Typography>
+            {installation.length === 0 ? (
+              <Typography variant="body2" color="text.secondary">
+                No installation appointments for this filter.
+              </Typography>
+            ) : (
+              <TableContainer>
+                <Table>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>Type</TableCell>
+                      <TableCell>Date</TableCell>
+                      <TableCell>Time Slot</TableCell>
+                      <TableCell>Plan</TableCell>
+                      <TableCell>Notes</TableCell>
+                      <TableCell>Status</TableCell>
+                      <TableCell>Booked On</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    <AppointmentRows appointments={installation} />
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            )}
+          </Box>
+
+          <Divider />
+
+          <Box>
+            <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 0.75 }} flexWrap="wrap" useFlexGap>
+              <HomeRepairServiceIcon sx={{ color: "text.secondary" }} fontSize="small" aria-hidden />
+              <Typography variant="h6" sx={{ fontWeight: 700 }}>
+                Home service
+              </Typography>
+              <Chip size="small" variant="outlined" label={`${homeService.length} booked`} />
+            </Stack>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 1.5 }}>
+              Repairs and equipment visits booked from your account (not initial installation).
+            </Typography>
+            {homeService.length === 0 ? (
+              <Typography variant="body2" color="text.secondary">
+                No home service appointments for this filter.
+              </Typography>
+            ) : (
+              <TableContainer>
+                <Table>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>Type</TableCell>
+                      <TableCell>Date</TableCell>
+                      <TableCell>Time Slot</TableCell>
+                      <TableCell>Plan</TableCell>
+                      <TableCell>Notes</TableCell>
+                      <TableCell>Status</TableCell>
+                      <TableCell>Booked On</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    <AppointmentRows appointments={homeService} />
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            )}
+          </Box>
+        </Stack>
       )}
     </Stack>
   );

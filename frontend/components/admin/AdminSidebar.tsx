@@ -5,6 +5,7 @@ import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import CampaignIcon from "@mui/icons-material/Campaign";
 import DashboardCustomizeIcon from "@mui/icons-material/DashboardCustomize";
 import ExtensionIcon from "@mui/icons-material/Extension";
+import PaymentsIcon from "@mui/icons-material/Payments";
 import PeopleIcon from "@mui/icons-material/People";
 import RouterIcon from "@mui/icons-material/Router";
 import SupportAgentIcon from "@mui/icons-material/SupportAgent";
@@ -14,6 +15,7 @@ import { usePathname } from "next/navigation";
 
 const LINKS = [
   { href: "/admin/dashboard", label: "Subscriptions", icon: AssignmentTurnedInIcon },
+  { href: "/admin/billing", label: "Billing", icon: PaymentsIcon },
   { href: "/admin/plans", label: "Plan CMS", icon: DashboardCustomizeIcon },
   { href: "/admin/network", label: "Service status", icon: RouterIcon },
   { href: "/admin/announcements", label: "Announcements", icon: CampaignIcon },
@@ -26,6 +28,9 @@ const LINKS = [
 function linkSelected(pathname: string, href: string) {
   if (href === "/admin/dashboard") {
     return pathname === "/admin/dashboard";
+  }
+  if (href === "/admin/billing") {
+    return pathname === "/admin/billing" || pathname.startsWith(`${href}/`);
   }
 
   return pathname.startsWith(href);

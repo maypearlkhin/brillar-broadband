@@ -1,4 +1,5 @@
 import { getTokenFromRequest, verifyJwt } from "../../auth.js";
+import { getMySubscriptionPayload } from "./subscriptionController.js";
 import Announcement from "../../models/announcementModel.js";
 import NetworkIncident from "../../models/networkIncidentModel.js";
 import Plan from "../../models/planModel.js";
@@ -191,4 +192,72 @@ export async function getMyOrderHistory(req, res) {
     success: true,
     data: subscriptions.map(serializeSubscription),
   });
+}
+
+/**
+ * Agent-compatible bundle: profile, current/latest subscription row, all subscription rows,
+ * invoices (paidAt, invoice numbers), and optional area outage — same semantics as GET /api/me/subscription
+ * wrapped in { success, data }.
+ */
+export async function getAgentMyAccountBilling(req, res) {
+  const currentUser = getCurrentUser(req);
+
+  if (!currentUser) {
+    return res
+      .status(401)
+      .json({ success: false, message: "Authentication required." });
+  }
+
+  try {
+    const data = await getMySubscriptionPayload(currentUser.userId);
+    const latest = data.invoices?.[0] ?? null;
+
+    return res.json({
+      success: true,
+      data: {
+        ...data,
+        billingSummary: {
+          latestPaidAt: latest?.paidAt ?? null,
+          latestInvoiceNumber: latest?.invoiceNumber ?? null,
+          latestInvoiceAmount: typeof latest?.amount === "number" ? latest.amount : null,
+          latestInvoiceCurrency: latest?.currency ?? null,
+          invoiceRowCount: data.invoices?.length ?? 0,
+        },
+      },
+    });
+  } catch (error) {
+    console.error("getAgentMyAccountBilling", error);
+    return res.status(500).json({
+      success: false,
+      message: "Unable to load account and billing.",
+    });
+  }
+}
+
+/** Invoices plus full subscription/order rows (canonical app shape) for receipts and timelines. */
+export async function getAgentBillingHistory(req, res) {
+  const currentUser = getCurrentUser(req);
+
+  if (!currentUser) {
+    return res
+      .status(401)
+      .json({ success: false, message: "Authentication required." });
+  }
+
+  try {
+    const payload = await getMySubscriptionPayload(currentUser.userId);
+    return res.json({
+      success: true,
+      data: {
+        invoices: payload.invoices,
+        subscriptions: payload.subscriptions,
+      },
+    });
+  } catch (error) {
+    console.error("getAgentBillingHistory", error);
+    return res.status(500).json({
+      success: false,
+      message: "Unable to load billing history.",
+    });
+  }
 }

@@ -27,8 +27,6 @@ export function verifyJwt(token) {
 
 export function getTokenFromRequest(request) {
   const authHeader = request.headers.authorization;
-  console.log("Auth", authHeader);
-  console.log(request.headers);
   if (!authHeader) return null;
 
   if (authHeader.startsWith("Bearer ")) {

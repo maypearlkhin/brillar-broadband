@@ -13,8 +13,8 @@ const subscriptionSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ["Installation Pending", "Installation Approved", "Rejected", "Cancelled"],
-    default: "Installation Pending"
+    enum: ["Pending", "Scheduled", "Installed", "Active", "Blocked", "Cancelled", "Rejected"],
+    default: "Pending"
   },
   planStatus: {
     type: String,
@@ -35,6 +35,28 @@ const subscriptionSchema = new mongoose.Schema({
   },
   endDate: {
     type: Date
+  },
+  routerId: {
+    type: String,
+    default: null,
+    trim: true
+  },
+  installationAppointmentId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Appointment",
+    default: null
+  },
+  installedAt: {
+    type: Date,
+    default: null
+  },
+  activatedAt: {
+    type: Date,
+    default: null
+  },
+  blockedAt: {
+    type: Date,
+    default: null
   },
   createdAt: {
     type: Date,

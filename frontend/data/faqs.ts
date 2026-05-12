@@ -85,7 +85,7 @@ export const FAQs: FaqItem[] = [
     id: "loc-1",
     category: "Contact & Locations",
     question: "Where are Brillar Broadband's headquarters and physical service centers located?",
-    answer: "Our global headquarters is located at 7 Temasek Boulevard #12-07 Suntec Tower One, Singapore 038987. In Malaysia, our primary regional office is located at Level 5, Jalan Cempaka SD12/5, Bandar Sri Damansara, 52200 Kuala Lumpur. We also have a presence in Myanmar at #201, Novotel Yangon Max 459 Pyay Road, Kamayut Tsp, Yangon. You can visit any of these locations for equipment drop-offs or face-to-face support."
+    answer: "Our global headquarters is located at 7 Temasek Boulevard #12-07 Suntec Tower One, Singapore 038987. In Malaysia, our primary regional office is located at Level 5, Jalan Cempaka SD12/5, Bandar Sri Damansara, 52200 Kuala Lumpur. Service counters for equipment drop-offs or face-to-face support operate in major hubs across Singapore and Malaysia — check your Brillar account or email support for the nearest location."
   },
   {
     id: "loc-2",
@@ -97,6 +97,6 @@ export const FAQs: FaqItem[] = [
     id: "loc-3",
     category: "Coverage Regions",
     question: "What regions and countries does Brillar Broadband currently serve?",
-    answer: "We currently provide high-speed residential and enterprise fiber broadband across Singapore and Malaysia. In Singapore, our coverage includes major districts such as Jurong East, Tampines, Orchard, Bishan, Woodlands, and the Marina Bay Downtown area. In Malaysia, our fiber network covers key urban centers including Kuala Lumpur (Bukit Bintang, Ampang), Selangor (Subang Jaya), Penang (Georgetown), Johor Bahru (Skudai), and Sabah (Kota Kinabalu)."
+    answer: "We provide residential and enterprise fibre across Singapore and Malaysia only. Singapore coverage spans core towns from Jurong and Woodlands to Tampines, Punggol, the CBD, and the East Coast. In Malaysia we serve Kuala Lumpur and Greater KV, Johor (JB and Iskandar), Penang island and Seberang Perai, plus Ipoh, Melaka, Seremban, Kuantan, Kota Bharu, Alor Setar, East Malaysia (Kota Kinabalu, Kuching, Miri, Sandakan), and other seeded service zones shown at registration."
   }
 ];

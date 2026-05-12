@@ -1,177 +1,38 @@
-# Mentor API Extract (Additive Endpoints)
+# Agent / extract API overview
 
-These APIs were added as **new extract endpoints** to avoid changing existing application flow/routes.
+Additive **`/api/agent/*`** routes share handlers with storefront routes where noted. Canonical registration: `backend/src/api/router/extractApiRoutes.js`.
 
-Base URL (local):
+**OpenAPI specs (repo root):**  
+`Brillar_Agent_Plans_API_Spec.json`, `Brillar_Agent_Personal_API_Spec.json`, `Brillar_Agent_Billing_API_Spec.json`, `Brillar_Agent_Scheduling_API_Spec.json`, `Brillar_Agent_Announcements_Notices_API_Spec.json`.
 
-- `http://localhost:4000/api`
+Base URL (local): `http://localhost:4000/api`
 
-## Public (no middleware)
+## Public
 
-### 1) Get all announcements (impacts)
+| Agent path | App equivalent | Notes |
+|------------|----------------|-------|
+| `GET /agent/all-plans` | — | `{ success, data: Plan[] }` |
+| `GET /agent/appointment-slots` | `GET /appointments/slots` | Next 7 days |
+| `GET /agent/announcements-impacts` | — | Nested active + resolved |
+| `GET /agent/resolved-histories` | — | Flat list of resolved incidents only |
+| `GET /agent/notices` | — | |
 
-- `GET /extract/announcements-impacts`
-- Latest first
-- Returns active impacts only (`resolvedAt = null`)
+## Bearer JWT (customer unless noted)
 
-Response:
-
-```json
-{
-  "success": true,
-  "data": [
-    {
-      "id": "...",
-      "country": "Singapore",
-      "district": "Jurong East",
-      "postalCode": "609606",
-      "message": "....",
-      "createdAt": "....",
-      "resolvedAt": null
-    }
-  ]
-}
-```
-
-### 2) Get all resolved histories
-
-- `GET /extract/resolved-histories`
-- Latest resolved first
-
-Response:
-
-```json
-{
-  "success": true,
-  "data": [
-    {
-      "id": "...",
-      "country": "Singapore",
-      "district": "Tampines",
-      "postalCode": "529653",
-      "message": "....",
-      "createdAt": "....",
-      "resolvedAt": "...."
-    }
-  ]
-}
-```
-
-### 3) Get notices
-
-- `GET /extract/notices`
-- Latest first
-
-Response:
-
-```json
-{
-  "success": true,
-  "data": [
-    {
-      "id": "...",
-      "message": "....",
-      "createdAt": "...."
-    }
-  ]
-}
-```
-
-### 4) Get all plans
-
-- `GET /extract/all-plans`
-- Sorted by category and plan order
-
-Response:
-
-```json
-{
-  "success": true,
-  "data": [
-    {
-      "id": "plan_004",
-      "name": "100Mbps Essential",
-      "monthlyPrice": 32,
-      "downloadSpeedMbps": 100,
-      "price90Days": 111,
-      "price180Days": 120,
-      "price365Days": 260,
-      "features": ["Unlimited data"],
-      "categoryId": "res_everyday",
-      "categoryTitle": "Residential · Everyday fibre",
-      "categorySortOrder": 0,
-      "planSortOrder": 0,
-      "isActive": true
-    }
-  ]
-}
-```
-
-## Middleware (token required)
-
-Token can be provided via:
-
-- `Authorization: Bearer <jwt>`
-- or `brillar_token` cookie
-
-### 5) Get current plan / getmyplan
-
-- `POST /extract/getmyplan`
-- Body: `{ "userId": "<token_user_id>" }`
-
-Response:
-
-```json
-{
-  "success": true,
-  "data": {
-    "id": "...",
-    "userId": "...",
-    "status": "Installation Pending",
-    "billingTerm": "90",
-    "amount": 111,
-    "startDate": "....",
-    "endDate": "....",
-    "createdAt": "....",
-    "plan": {
-      "id": "plan_004",
-      "name": "100Mbps Essential"
-    }
-  }
-}
-```
-
-### 6) My order history
-
-- `GET /extract/my-order-history`
-
-Response:
-
-```json
-{
-  "success": true,
-  "data": [
-    {
-      "id": "...",
-      "userId": "...",
-      "status": "Installation Pending",
-      "billingTerm": "30",
-      "amount": 32,
-      "startDate": "....",
-      "endDate": "....",
-      "createdAt": "....",
-      "plan": {
-        "id": "plan_004",
-        "name": "100Mbps Essential"
-      }
-    }
-  ]
-}
-```
+| Agent path | App equivalent | Envelope / notes |
+|------------|----------------|------------------|
+| `GET /agent/get-my-plan` | — | `{ success, data }` narrow extract |
+| `GET /agent/my-order-history` | — | `{ success, data[] }` narrow extract |
+| `GET /agent/my-account-billing` | `GET /me/subscription` | `{ success, data }` + `billingSummary` |
+| `GET /agent/billing-history` | — | `{ success, data: { invoices, subscriptions } }` |
+| `POST /agent/buy-plan` | `POST /checkout` | Flat JSON; **card fields required for agents** (not stored server-side) |
+| `POST /agent/cancel-plan` | `POST /cancel-plan` | Flat JSON |
+| `POST /agent/schedule-appointment` | `POST /appointments` | `type`: `installation` \| `home_service`; installation needs `subscriptionId` from `buy-plan` → `subscription.id` |
+| `GET /agent/my-appointments` | `GET /appointments` | Customers: own only; admin / isp_team: all |
 
 ## Code locations
 
-- Route registration: `backend/src/api/router/extractApiRoutes.js`
-- Controller logic: `backend/src/api/controller/extractApiController.js`
-- API router mount: `backend/src/api/router/index.js`
-
+- `backend/src/api/router/extractApiRoutes.js` — agent route table  
+- `backend/src/api/controller/extractApiController.js` — catalogue, narrow views, billing wrappers  
+- `backend/src/api/controller/subscriptionController.js` — `checkout`, `cancelPlan`, `getMySubscription`, `getMySubscriptionPayload`  
+- `backend/src/api/controller/appointmentController.js` — slots, create, list, status updates  

@@ -115,18 +115,75 @@ const DEFAULT_PLAN_CATEGORIES = [
 ];
 
 const DEMO_SERVICE_ZONES = [
+  // ── Singapore ────────────────────────────────────────────────
   { country: "Singapore", district: "Jurong East", postalCode: "609606" },
   { country: "Singapore", district: "Tampines", postalCode: "529653" },
   { country: "Singapore", district: "Orchard / Somerset", postalCode: "238858" },
   { country: "Singapore", district: "Bishan", postalCode: "570623" },
   { country: "Singapore", district: "Woodlands", postalCode: "730651" },
   { country: "Singapore", district: "Marina Bay / Downtown", postalCode: "018956" },
+  { country: "Singapore", district: "Ang Mo Kio", postalCode: "560123" },
+  { country: "Singapore", district: "Bedok", postalCode: "460025" },
+  { country: "Singapore", district: "Clementi", postalCode: "120456" },
+  { country: "Singapore", district: "Toa Payoh", postalCode: "310789" },
+  { country: "Singapore", district: "Sengkang", postalCode: "540321" },
+  { country: "Singapore", district: "Punggol", postalCode: "820654" },
+  { country: "Singapore", district: "Bukit Batok", postalCode: "651234" },
+  { country: "Singapore", district: "Bukit Panjang / Cashew", postalCode: "671234" },
+  { country: "Singapore", district: "Choa Chu Kang", postalCode: "689812" },
+  { country: "Singapore", district: "Hougang", postalCode: "530234" },
+  { country: "Singapore", district: "Pasir Ris", postalCode: "510567" },
+  { country: "Singapore", district: "Serangoon", postalCode: "557890" },
+  { country: "Singapore", district: "Bukit Timah / Holland", postalCode: "588123" },
+  { country: "Singapore", district: "Queenstown / Commonwealth", postalCode: "140078" },
+  { country: "Singapore", district: "Geylang / Tanjong Katong", postalCode: "427378" },
+  { country: "Singapore", district: "Marine Parade / Joo Chiat", postalCode: "438786" },
+  { country: "Singapore", district: "Sembawang / Canberra", postalCode: "752034" },
+  { country: "Singapore", district: "Yishun", postalCode: "761234" },
+  { country: "Singapore", district: "West Coast / Dover", postalCode: "126567" },
+  { country: "Singapore", district: "Kallang / Lavender / Balestier", postalCode: "328456" },
+  { country: "Singapore", district: "Newton / Novena", postalCode: "307591" },
+  { country: "Singapore", district: "Little India / Rochor", postalCode: "218456" },
+  { country: "Singapore", district: "Chinatown / Tanjong Pagar", postalCode: "089012" },
+  { country: "Singapore", district: "HarbourFront / Sentosa Gateway", postalCode: "098585" },
+
+  // ── Malaysia ───────────────────────────────────────────────────
   { country: "Malaysia", district: "Kuala Lumpur — Bukit Bintang", postalCode: "55100" },
   { country: "Malaysia", district: "Kuala Lumpur — Ampang", postalCode: "50450" },
-  { country: "Malaysia", district: "Johor Bahru — Skudai", postalCode: "81300" },
-  { country: "Malaysia", district: "Penang — Georgetown", postalCode: "10200" },
+  { country: "Malaysia", district: "Kuala Lumpur — Bangsar", postalCode: "59100" },
+  { country: "Malaysia", district: "Kuala Lumpur — Mont Kiara / Sri Hartamas", postalCode: "50480" },
+  { country: "Malaysia", district: "Kuala Lumpur — KLCC / Kampung Baru", postalCode: "50088" },
+  { country: "Malaysia", district: "Kuala Lumpur — Cheras", postalCode: "56000" },
   { country: "Malaysia", district: "Selangor — Subang Jaya", postalCode: "47500" },
-  { country: "Malaysia", district: "Sabah — Kota Kinabalu", postalCode: "88000" }
+  { country: "Malaysia", district: "Selangor — Petaling Jaya", postalCode: "46050" },
+  { country: "Malaysia", district: "Selangor — Petaling Jaya (Damansara)", postalCode: "46000" },
+  { country: "Malaysia", district: "Selangor — Shah Alam", postalCode: "40150" },
+  { country: "Malaysia", district: "Selangor — Shah Alam (Sections)", postalCode: "40000" },
+  { country: "Malaysia", district: "Selangor — Cyberjaya", postalCode: "63000" },
+  { country: "Malaysia", district: "Selangor — Klang / Port Klang", postalCode: "41050" },
+  { country: "Malaysia", district: "Selangor — Kajang / Bangi", postalCode: "43000" },
+  { country: "Malaysia", district: "Selangor — Serdang / South KV", postalCode: "43400" },
+  { country: "Malaysia", district: "Selangor — Puchong", postalCode: "47100" },
+  { country: "Malaysia", district: "Selangor — Rawang", postalCode: "48000" },
+  { country: "Malaysia", district: "Johor — Johor Bahru City Centre", postalCode: "80000" },
+  { country: "Malaysia", district: "Johor — Skudai / Universiti", postalCode: "81300" },
+  { country: "Malaysia", district: "Johor — Iskandar Puteri / Nusajaya", postalCode: "79100" },
+  { country: "Malaysia", district: "Johor — Pasir Gudang / Masai", postalCode: "81750" },
+  { country: "Malaysia", district: "Penang — George Town", postalCode: "10200" },
+  { country: "Malaysia", district: "Penang — Bayan Lepas / Industrial", postalCode: "11900" },
+  { country: "Malaysia", district: "Penang — Butterworth / Seberang Perai", postalCode: "12300" },
+  { country: "Malaysia", district: "Penang — Bukit Mertajam", postalCode: "14000" },
+  { country: "Malaysia", district: "Sabah — Kota Kinabalu", postalCode: "88000" },
+  { country: "Malaysia", district: "Sabah — Sandakan", postalCode: "90000" },
+  { country: "Malaysia", district: "Sarawak — Kuching", postalCode: "93050" },
+  { country: "Malaysia", district: "Sarawak — Miri", postalCode: "98000" },
+  { country: "Malaysia", district: "Perak — Ipoh", postalCode: "30450" },
+  { country: "Malaysia", district: "Melaka — Melaka City", postalCode: "75000" },
+  { country: "Malaysia", district: "Negeri Sembilan — Seremban", postalCode: "70200" },
+  { country: "Malaysia", district: "Pahang — Kuantan", postalCode: "25000" },
+  { country: "Malaysia", district: "Terengganu — Kuala Terengganu", postalCode: "20400" },
+  { country: "Malaysia", district: "Kedah — Alor Setar", postalCode: "05100" },
+  { country: "Malaysia", district: "Kelantan — Kota Bharu", postalCode: "15300" },
 ];
 
 let seedPromise = null;
@@ -174,6 +231,8 @@ export async function seedDatabase() {
       )
     );
 
+    const keepPostalCodes = DEMO_SERVICE_ZONES.map((z) => z.postalCode);
+    await ServiceZone.deleteMany({ postalCode: { $nin: keepPostalCodes } });
 
   })();
 
