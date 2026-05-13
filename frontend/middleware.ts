@@ -36,7 +36,12 @@ export async function middleware(request: NextRequest) {
   // Signed-in users use dashboards only — no marketing homepage
   if (pathname === "/" && currentUser) {
     const url = request.nextUrl.clone();
-    url.pathname = currentUser.role === "admin" ? "/admin/dashboard" : "/dashboard";
+    url.pathname =
+      currentUser.role === "admin"
+        ? "/admin/dashboard"
+        : currentUser.role === "isp_team"
+          ? "/isp/dashboard"
+          : "/dashboard";
     url.search = "";
     return NextResponse.redirect(url);
   }

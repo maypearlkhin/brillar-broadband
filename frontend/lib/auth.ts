@@ -6,10 +6,17 @@ import { TOKEN_COOKIE } from "@/lib/authConstants";
 export type JwtUser = {
   userId: string;
   email: string;
-  role: "customer" | "admin";
+  role: "customer" | "admin" | "isp_team";
   /** Display name; may be missing on tokens issued before this field existed. */
   name?: string;
 };
+
+/** Default signed-in home for header / nav (not login post-auth redirect). */
+export function getAccountHomePath(role: string | undefined): string {
+  if (role === "admin") return "/admin/dashboard";
+  if (role === "isp_team") return "/isp/dashboard";
+  return "/dashboard";
+}
 
 function getJwtSecret() {
   const secret = process.env.JWT_SECRET;

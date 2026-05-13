@@ -322,7 +322,7 @@ export default async function HomePage() {
             borderRadius: 2,
             position: "relative",
             overflow: "hidden",
-            backgroundImage: "url('/images/plans-section-bg.png?v=2')",
+            backgroundImage: "url('/images/plans-section-bg.png')",
             backgroundSize: "cover",
             backgroundPosition: "center",
             backgroundRepeat: "no-repeat",

@@ -27,6 +27,10 @@ export default async function PlansPage() {
     redirect("/admin/dashboard");
   }
 
+  if (currentUser.role === "isp_team") {
+    redirect("/isp/dashboard");
+  }
+
   const plans = await getPlans();
 
   return (

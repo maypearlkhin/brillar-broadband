@@ -18,16 +18,12 @@ export default async function DashboardPage() {
     redirect("/login?next=/dashboard");
   }
 
-  if (currentUser.role === "admin") {
-    redirect("/admin/dashboard");
-  }
-
   type DashboardResponse = {
     user: {
       email: string;
       name: string;
       phone: string;
-      serviceZone: { country: string; district: string; postalCode: string };
+      serviceZone?: { country: string; district: string; postalCode: string } | null;
     } | null;
     subscriptions: SubscriptionPayload[];
     activeOutage?: {

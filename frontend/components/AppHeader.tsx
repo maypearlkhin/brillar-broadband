@@ -9,15 +9,14 @@ import {
   Typography
 } from "@mui/material";
 import Link from "next/link";
-import { getCurrentUserFromCookies } from "@/lib/auth";
+import { getAccountHomePath, getCurrentUserFromCookies } from "@/lib/auth";
 import NavActions from "@/components/NavActions";
 import DesktopNav from "@/components/DesktopNav";
 
 export default function AppHeader() {
   const user = getCurrentUserFromCookies();
 
-  const logoHref =
-    user?.role === "admin" ? "/admin/dashboard" : user ? "/dashboard" : "/";
+  const logoHref = user ? getAccountHomePath(user.role) : "/";
 
   return (
     <AppBar

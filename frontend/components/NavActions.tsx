@@ -3,7 +3,7 @@ import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 import LoginIcon from "@mui/icons-material/Login";
 import { Box, Button } from "@mui/material";
 import Link from "next/link";
-import { getCurrentUserFromCookies } from "@/lib/auth";
+import { getAccountHomePath, getCurrentUserFromCookies } from "@/lib/auth";
 import LogoutButton from "@/components/LogoutButton";
 
 export default function NavActions() {
@@ -45,7 +45,7 @@ export default function NavActions() {
       ) : (
         <Button
           component={Link}
-          href="/dashboard"
+          href={getAccountHomePath(currentUser.role)}
           startIcon={<AccountCircleIcon />}
           sx={{ color: "common.white" }}
           size="small"
