@@ -666,11 +666,11 @@ export default async function HomePage() {
               <Stack spacing={2}>
                 <Box>
                   <Typography variant="body2" color="text.primary" sx={{ fontWeight: 600 }}>Singapore HQ</Typography>
-                  <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.6 }}>1 Raffles Place, #44-01<br/>One Raffles Place Tower 1<br/>Singapore 048616</Typography>
+                  <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.6 }}>7 Temasek Boulevard #12-07<br/>Suntec Tower One<br/>Singapore 038987</Typography>
                 </Box>
                 <Box>
                   <Typography variant="body2" color="text.primary" sx={{ fontWeight: 600 }}>Malaysia Office</Typography>
-                  <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.6 }}>Level 20, Menara Maxis<br/>KLCC, 50088 Kuala Lumpur</Typography>
+                  <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.6 }}>Level 5, Jalan Cempaka SD12/5<br/>Bandar Sri Damansara<br/>52200 Kuala Lumpur</Typography>
                 </Box>
               </Stack>
             </Grid>

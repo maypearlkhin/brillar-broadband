@@ -3,6 +3,7 @@ import BusinessCenterOutlinedIcon from "@mui/icons-material/BusinessCenterOutlin
 import SpeedOutlinedIcon from "@mui/icons-material/SpeedOutlined";
 import SecurityOutlinedIcon from "@mui/icons-material/SecurityOutlined";
 import Link from "next/link";
+import SiteFooter from "@/components/SiteFooter";
 
 export const dynamic = "force-dynamic";
 
@@ -187,6 +188,7 @@ export default function EnterprisePage() {
           </Button>
         </Container>
       </Box>
+      <SiteFooter />
     </Box>
   );
 }

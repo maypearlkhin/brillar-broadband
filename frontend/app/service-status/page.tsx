@@ -3,6 +3,8 @@ import ServiceStatusClient, {
   type IncidentPublic,
 } from "@/components/service-status/ServiceStatusClient";
 import { axiosServer } from "@/lib/axiosServer";
+import { Box } from "@mui/material";
+import SiteFooter from "@/components/SiteFooter";
 
 export const metadata = {
   title: "Service status · Brillar Broadband",
@@ -50,10 +52,13 @@ export default async function ServiceStatusPage({
   const { incidents, announcements } = await loadStatus();
 
   return (
-    <ServiceStatusClient
-      incidents={incidents}
-      announcements={announcements}
-      initialTab={initialTab}
-    />
+    <Box sx={{ bgcolor: "background.default", minHeight: "100vh" }}>
+      <ServiceStatusClient
+        incidents={incidents}
+        announcements={announcements}
+        initialTab={initialTab}
+      />
+      <SiteFooter />
+    </Box>
   );
 }

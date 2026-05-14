@@ -2,6 +2,7 @@ import { Box, Container, Typography, Stack, Grid, Paper, Avatar } from "@mui/mat
 import PublicOutlinedIcon from "@mui/icons-material/PublicOutlined";
 import HandshakeOutlinedIcon from "@mui/icons-material/HandshakeOutlined";
 import GroupsOutlinedIcon from "@mui/icons-material/GroupsOutlined";
+import SiteFooter from "@/components/SiteFooter";
 
 export const dynamic = "force-dynamic";
 
@@ -102,11 +103,11 @@ export default function AboutPage() {
       </Container>
 
       {/* Milestones */}
-      <Box sx={{ py: { xs: 8, md: 12 }, bgcolor: "grey.100", borderTop: "1px solid", borderColor: "divider" }}>
+      <Box sx={{ py: { xs: 8, md: 12 }, bgcolor: "#0D1B32", borderTop: "1px solid", borderColor: "rgba(255,255,255,0.12)" }}>
         <Container maxWidth="lg">
           <Stack spacing={2} alignItems="center" sx={{ textAlign: "center", mb: 6 }}>
-             <Typography variant="h3" sx={{ fontWeight: 800, textAlign: "center" }}>Our Journey</Typography>
-             <Typography color="text.secondary" sx={{ maxWidth: 600, textAlign: "center" }}>
+             <Typography variant="h3" sx={{ fontWeight: 800, textAlign: "center", color: "common.white" }}>Our Journey</Typography>
+             <Typography sx={{ maxWidth: 600, textAlign: "center", color: "rgba(255, 255, 255, 0.82)" }}>
                From a local startup to a regional telecom leader.
              </Typography>
           </Stack>
@@ -118,16 +119,17 @@ export default function AboutPage() {
               { year: "2026", title: "Enterprise Excellence", text: "Recognized as the top Enterprise ISP in Southeast Asia." }
             ].map((milestone) => (
               <Grid item xs={12} sm={6} md={3} key={milestone.year}>
-                <Paper elevation={0} sx={{ p: 4, height: "100%", bgcolor: "grey.50", borderTop: "4px solid", borderColor: "primary.main" }}>
-                   <Typography variant="h4" color="primary.main" sx={{ fontWeight: 900, mb: 1 }}>{milestone.year}</Typography>
-                   <Typography variant="h6" sx={{ fontWeight: 700, mb: 1 }}>{milestone.title}</Typography>
-                   <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.6 }}>{milestone.text}</Typography>
+                <Paper elevation={0} sx={{ p: 4, height: "100%", bgcolor: "common.white", borderTop: "4px solid", borderColor: "primary.main" }}>
+                   <Typography variant="h4" color="text.primary" sx={{ fontWeight: 900, mb: 1 }}>{milestone.year}</Typography>
+                   <Typography variant="h6" sx={{ fontWeight: 700, mb: 1, color: "text.primary" }}>{milestone.title}</Typography>
+                   <Typography variant="body2" sx={{ lineHeight: 1.6, color: "text.secondary" }}>{milestone.text}</Typography>
                 </Paper>
               </Grid>
             ))}
           </Grid>
         </Container>
       </Box>
+      <SiteFooter />
     </Box>
   );
 }

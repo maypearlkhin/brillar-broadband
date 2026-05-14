@@ -134,7 +134,18 @@ export default function RegisterForm({ nextPath }: { nextPath?: string }) {
   const zonesReady = zones.length > 0 && Boolean(selectedCountry) && Boolean(selectedPostal);
 
   return (
-    <Box sx={{ bgcolor: "background.default", minHeight: "calc(100vh - 64px)", py: 6 }}>
+    <Box
+      sx={{
+        bgcolor: "background.default",
+        minHeight: "calc(100vh - 64px)",
+        py: 6,
+        backgroundImage:
+          "linear-gradient(rgba(7, 16, 35, 0.68), rgba(7, 16, 35, 0.68)), url('/images/login-register-bg.jpg')",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat"
+      }}
+    >
       <Container maxWidth="sm">
         <Paper variant="outlined" sx={{ p: { xs: 3, md: 4 } }}>
           <Stack spacing={3}>

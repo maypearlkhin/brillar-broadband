@@ -125,6 +125,11 @@ export default function LoginForm({ nextPath }: { nextPath?: string }) {
         bgcolor: "background.default",
         minHeight: "calc(100vh - 64px)",
         py: 6,
+        backgroundImage:
+          "linear-gradient(rgba(7, 16, 35, 0.68), rgba(7, 16, 35, 0.68)), url('/images/login-register-bg.jpg')",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
       }}
     >
       <Container maxWidth="sm">
