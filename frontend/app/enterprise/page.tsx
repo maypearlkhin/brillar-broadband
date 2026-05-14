@@ -44,7 +44,7 @@ export default function EnterprisePage() {
           <Grid container spacing={6} alignItems="center">
             <Grid item xs={12} md={8}>
               <Stack spacing={3}>
-                <Typography variant="overline" sx={{ color: "primary.main", fontWeight: 700, letterSpacing: 1.5 }}>
+                <Typography variant="overline" sx={{ color: "common.white", fontWeight: 700, letterSpacing: 1.5 }}>
                   Brillar Enterprise
                 </Typography>
                 <Typography variant="h2" sx={{ fontWeight: 800, letterSpacing: "-0.02em", lineHeight: 1.1 }}>
@@ -54,10 +54,31 @@ export default function EnterprisePage() {
                   Scale your operations with dedicated fiber, SD-WAN, and zero-trust security. Engineered for high-growth enterprises in Singapore and Malaysia.
                 </Typography>
                 <Stack direction={{ xs: "column", sm: "row" }} spacing={2} sx={{ pt: 2 }}>
-                  <Button variant="contained" color="primary" size="large" sx={{ px: 4 }}>
+                  <Button
+                    variant="contained"
+                    size="large"
+                    sx={{
+                      px: 4,
+                      bgcolor: "#FEC556",
+                      color: "#000000",
+                      "&:hover": { bgcolor: "#FDB840" }
+                    }}
+                  >
                     Contact Sales
                   </Button>
-                  <Button variant="outlined" color="primary" size="large" sx={{ px: 4 }}>
+                  <Button
+                    variant="outlined"
+                    size="large"
+                    sx={{
+                      px: 4,
+                      color: "common.white",
+                      borderColor: "common.white",
+                      "&:hover": {
+                        borderColor: "common.white",
+                        bgcolor: "rgba(255, 255, 255, 0.1)"
+                      }
+                    }}
+                  >
                     View Solutions
                   </Button>
                 </Stack>

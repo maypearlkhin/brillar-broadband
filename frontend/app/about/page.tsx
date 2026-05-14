@@ -40,7 +40,7 @@ export default function AboutPage() {
         }}
       >
         <Container maxWidth="md" sx={{ textAlign: "center" }}>
-          <Typography variant="overline" sx={{ color: "primary.main", fontWeight: 700, letterSpacing: 1.5 }}>
+          <Typography variant="overline" sx={{ color: "common.white", fontWeight: 700, letterSpacing: 1.5 }}>
             Our Story
           </Typography>
           <Typography variant="h2" sx={{ fontWeight: 800, letterSpacing: "-0.02em", mt: 2, mb: 3, color: "common.white" }}>
@@ -104,9 +104,11 @@ export default function AboutPage() {
       {/* Milestones */}
       <Box sx={{ py: { xs: 8, md: 12 }, bgcolor: "grey.100", borderTop: "1px solid", borderColor: "divider" }}>
         <Container maxWidth="lg">
-          <Stack spacing={2} sx={{ textAlign: "center", mb: 6 }}>
-             <Typography variant="h3" sx={{ fontWeight: 800 }}>Our Journey</Typography>
-             <Typography color="text.secondary" sx={{ maxWidth: 600, mx: "auto" }}>From a local startup to a regional telecom leader.</Typography>
+          <Stack spacing={2} alignItems="center" sx={{ textAlign: "center", mb: 6 }}>
+             <Typography variant="h3" sx={{ fontWeight: 800, textAlign: "center" }}>Our Journey</Typography>
+             <Typography color="text.secondary" sx={{ maxWidth: 600, textAlign: "center" }}>
+               From a local startup to a regional telecom leader.
+             </Typography>
           </Stack>
           <Grid container spacing={4}>
             {[
