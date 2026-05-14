@@ -25,6 +25,36 @@ export const FAQs: FaqItem[] = [
     question: "My connection drops frequently during video calls. What should I do?",
     answer: "Frequent drops usually indicate Wi-Fi interference or channel congestion. Try logging into your router's admin portal to change the Wi-Fi channel (channels 1, 6, and 11 are best for 2.4GHz). Additionally, ensure your router is placed in an open, elevated location away from thick walls or large metal objects. If the issue persists, reboot your ONT and router by unplugging them for 2 minutes."
   },
+  {
+    id: "net-4",
+    category: "Network Troubleshooting",
+    question: "My internet is not working. What should I do?",
+    answer: "Please try the following steps:\n\n- Restart your router and ONT/modem.\n- Check if the power light is ON.\n- Check if the LOS light is red or blinking.\n- Make sure all cables are connected properly.\n- Wait 3 to 5 minutes after rebooting.\n\nIf the issue continues, contact support for further checking."
+  },
+  {
+    id: "net-5",
+    category: "Network Troubleshooting",
+    question: "Why is the PON light blinking?",
+    answer: "A blinking PON light may indicate:\n\n- The device is trying to connect.\n- Weak optical signal.\n- A network issue.\n\nPlease restart the ONT/router first. If the issue continues, contact support."
+  },
+  {
+    id: "net-6",
+    category: "Network Troubleshooting",
+    question: "Why is my internet slow?",
+    answer: "Slow speed can happen because of:\n\n- Weak WiFi signal.\n- Too many connected devices.\n- Peak-hour congestion.\n- Background downloads.\n- Old router.\n- Distance from router.\n\nFor best performance:\n\n- Use a LAN cable for testing.\n- Stay close to the router.\n- Disconnect unused devices.\n- Restart your router."
+  },
+  {
+    id: "net-7",
+    category: "Network Troubleshooting",
+    question: "Why can't my phone connect to WiFi?",
+    answer: "Possible reasons:\n\n- Wrong password.\n- WiFi disabled.\n- Device too far from the router.\n- Router issue.\n\nPlease restart both your phone and router first."
+  },
+  {
+    id: "net-8",
+    category: "Network Troubleshooting",
+    question: "Why is WiFi weak in some rooms?",
+    answer: "WiFi signal can be affected by:\n\n- Walls.\n- Distance.\n- Furniture.\n- Electronic interference.\n\nSolutions:\n\n- Move the router to a central location.\n- Use a WiFi extender or mesh system.\n- Use 2.4GHz for longer range."
+  },
   
   // Setup & Equipment
   {

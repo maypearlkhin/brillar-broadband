@@ -5,6 +5,69 @@ import { FAQs } from "@/data/faqs";
 
 export const dynamic = "force-dynamic";
 
+function renderAnswer(answer: string) {
+  const lines = answer.split("\n");
+  const blocks: Array<{ type: "p"; text: string } | { type: "ul"; items: string[] }> = [];
+  let currentList: string[] = [];
+  let currentParagraph: string[] = [];
+
+  const flushParagraph = () => {
+    if (currentParagraph.length > 0) {
+      blocks.push({ type: "p", text: currentParagraph.join(" ") });
+      currentParagraph = [];
+    }
+  };
+
+  const flushList = () => {
+    if (currentList.length > 0) {
+      blocks.push({ type: "ul", items: currentList });
+      currentList = [];
+    }
+  };
+
+  for (const rawLine of lines) {
+    const line = rawLine.trim();
+
+    if (!line) {
+      flushParagraph();
+      flushList();
+      continue;
+    }
+
+    if (line.startsWith("- ")) {
+      flushParagraph();
+      currentList.push(line.slice(2).trim());
+      continue;
+    }
+
+    flushList();
+    currentParagraph.push(line);
+  }
+
+  flushParagraph();
+  flushList();
+
+  return blocks.map((block, idx) => {
+    if (block.type === "ul") {
+      return (
+        <Box key={`ul-${idx}`} component="ul" sx={{ mt: 0.5, mb: 2, pl: 3 }}>
+          {block.items.map((item, itemIdx) => (
+            <Typography key={`li-${idx}-${itemIdx}`} component="li" variant="body2" color="text.secondary" sx={{ lineHeight: 1.7 }}>
+              {item}
+            </Typography>
+          ))}
+        </Box>
+      );
+    }
+
+    return (
+      <Typography key={`p-${idx}`} variant="body2" color="text.secondary" sx={{ lineHeight: 1.7, mb: 1.5 }}>
+        {block.text}
+      </Typography>
+    );
+  });
+}
+
 export default function FaqPage() {
   const faqs = FAQs;
 
@@ -76,9 +139,7 @@ export default function FaqPage() {
                     </Stack>
                   </AccordionSummary>
                   <AccordionDetails sx={{ px: 1, pb: 3, pt: 0 }}>
-                    <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.7 }}>
-                      {faq.answer}
-                    </Typography>
+                    <Box>{renderAnswer(faq.answer)}</Box>
                   </AccordionDetails>
                 </Accordion>
               ))}
