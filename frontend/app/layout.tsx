@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Box } from "@mui/material";
+import { PublicEnvScript } from "next-runtime-env";
 import Providers from "@/components/Providers";
 import AppHeader from "@/components/AppHeader";
 import { getCurrentUserFromCookies } from "@/lib/auth";
@@ -15,6 +16,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
   return (
     <html lang="en">
+      <head>
+        <PublicEnvScript />
+      </head>
       <body>
         <Providers>
           <AppHeader />

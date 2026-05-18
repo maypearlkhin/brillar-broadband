@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { env } from "next-runtime-env";
 import { TOKEN_COOKIE } from "@/lib/authConstants";
 
 function clearTokenCookie(response: NextResponse) {
@@ -10,7 +11,7 @@ function clearTokenCookie(response: NextResponse) {
 }
 
 export async function GET(request: Request) {
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || request.url;
+  const appUrl = env("NEXT_PUBLIC_APP_URL") || request.url;
   const url = new URL("/", appUrl);
   const response = NextResponse.redirect(url);
   clearTokenCookie(response);
@@ -18,10 +19,9 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || request.url;
+  const appUrl = env("NEXT_PUBLIC_APP_URL") || request.url;
   const url = new URL("/", appUrl);
   const response = NextResponse.redirect(url);
   clearTokenCookie(response);
   return response;
 }
-

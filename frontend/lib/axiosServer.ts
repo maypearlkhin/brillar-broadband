@@ -1,8 +1,9 @@
 import axios, { type AxiosInstance } from "axios";
 import { cookies } from "next/headers";
+import { env } from "next-runtime-env";
 import { TOKEN_COOKIE } from "./authConstants";
 
-const baseURL = process.env.NEXT_PUBLIC_URL ?? "http://localhost:4000";
+const baseURL = env("NEXT_PUBLIC_URL") || "http://localhost:4000";
 
 /**
  * Server axios — reads the JWT from the request cookie (set by JS at login) and forwards

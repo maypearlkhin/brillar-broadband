@@ -1,7 +1,8 @@
 import axios, { type AxiosInstance } from "axios";
+import { env } from "next-runtime-env";
 import { getAuthToken } from "./authStorage";
 
-const baseURL = process.env.NEXT_PUBLIC_URL ?? "http://localhost:4000";
+const baseURL = env("NEXT_PUBLIC_URL") || "http://localhost:4000";
 
 /** Browser axios — sends `Authorization: Bearer <token>` from the JS cookie. */
 export const axiosClient: AxiosInstance = axios.create({
