@@ -108,9 +108,7 @@ export default function LoginForm({ nextPath }: { nextPath?: string }) {
       } catch (err) {
         // ignore error
       }
-      console.log(nextPath, data.user?.role);
-      router.push(getSafeRedirect(nextPath, data.user?.role));
-      // window.location.assign(getSafeRedirect(nextPath, data.user?.role));
+      window.location.assign(getSafeRedirect(nextPath, data.user?.role));
     } catch (err) {
       if (isAxiosError(err)) {
         setError(err.response?.data?.message || "Login failed.");
