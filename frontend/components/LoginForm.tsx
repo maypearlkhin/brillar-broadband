@@ -16,6 +16,7 @@ import { FormEvent, useState } from "react";
 import { isAxiosError } from "axios";
 import { getData, postData } from "@/lib/api";
 import { setAuthToken } from "@/lib/authStorage";
+import { useRouter } from "next/navigation";
 
 function getSafeRedirect(
   nextPath: string | undefined,
@@ -46,6 +47,7 @@ export default function LoginForm({ nextPath }: { nextPath?: string }) {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const router = useRouter();
 
   const sendLoginEvent = async (
     userId: string,
@@ -96,7 +98,7 @@ export default function LoginForm({ nextPath }: { nextPath?: string }) {
           data.user?.id &&
           data.user?.role === "customer"
         ) {
-          await sendLoginEvent(
+          sendLoginEvent(
             data.user.id,
             integration.token,
             integration.endpointDomain,
@@ -106,8 +108,9 @@ export default function LoginForm({ nextPath }: { nextPath?: string }) {
       } catch (err) {
         // ignore error
       }
-
-      window.location.assign(getSafeRedirect(nextPath, data.user?.role));
+      console.log(nextPath, data.user?.role);
+      router.push(getSafeRedirect(nextPath, data.user?.role));
+      // window.location.assign(getSafeRedirect(nextPath, data.user?.role));
     } catch (err) {
       if (isAxiosError(err)) {
         setError(err.response?.data?.message || "Login failed.");
