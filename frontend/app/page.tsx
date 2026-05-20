@@ -93,20 +93,23 @@ export default async function HomePage() {
       {/* Hero */}
       <Box
         sx={{
-          borderBottom: "1px solid rgba(15, 23, 42, 0.08)",
-          bgcolor: "#f8fafc",
+          borderBottom: "1px solid",
+          borderColor: "rgba(254, 197, 86, 0.4)",
+          color: "common.white",
           backgroundImage:
-            "linear-gradient(180deg, rgba(254, 197, 86, 0.15) 0%, rgba(248, 250, 252, 0.95) 48%, #f8fafc 100%)"
+            "linear-gradient(rgba(7, 16, 35, 0.72), rgba(7, 16, 35, 0.72)), url('/images/home-hero-banner.jpg?v=1')",
+          backgroundSize: "cover",
+          backgroundPosition: "center"
         }}
       >
-        <Container maxWidth="lg" sx={{ py: { xs: 5, md: 8 } }}>
+        <Container maxWidth="lg" sx={{ pt: { xs: 3, md: 4 }, pb: { xs: 5, md: 8 } }}>
           <Grid container spacing={4} alignItems="center">
             <Grid item xs={12} md={7}>
               <Stack spacing={2.5}>
                 <Typography
                   variant="overline"
                   sx={{
-                    color: "primary.dark",
+                    color: "common.white",
                     fontWeight: 700,
                     letterSpacing: 0.14,
                     fontSize: "0.72rem"
@@ -118,44 +121,76 @@ export default async function HomePage() {
                   component="h1"
                   variant="h3"
                   sx={{
-                    fontWeight: 700,
+                    fontWeight: 800,
                     letterSpacing: "-0.035em",
-                    color: "text.primary",
+                    color: "common.white",
                     lineHeight: 1.15
                   }}
                 >
                   Fibre for homes in Singapore &amp; Malaysia
                 </Typography>
-                <Typography variant="body1" color="text.secondary" sx={{ lineHeight: 1.75, maxWidth: 560 }}>
+                <Typography
+                  variant="body1"
+                  sx={{ lineHeight: 1.75, maxWidth: 560, color: "rgba(255, 255, 255, 0.98)", fontWeight: 500 }}
+                >
                   Compare fibre speeds and pricing for your address, create an account with your service zone, then sign
                   in to subscribe or manage your plan — one straightforward journey from choosing a tier to going live.
                 </Typography>
                 <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5} sx={{ pt: 0.5 }}>
-                  <Button component={Link} href="/register" variant="contained" color="primary" size="large">
+                  <Button
+                    component={Link}
+                    href="/register"
+                    variant="contained"
+                    size="large"
+                    sx={{
+                      bgcolor: "#FEC556",
+                      color: "#001233",
+                      fontWeight: 800,
+                      "&:hover": { bgcolor: "#FDB840" }
+                    }}
+                  >
                     Create account
                   </Button>
-                  <Button component={Link} href="/login" variant="outlined" color="primary" size="large">
+                  <Button
+                    component={Link}
+                    href="/login"
+                    variant="outlined"
+                    size="large"
+                    sx={{
+                      borderColor: "rgba(255, 255, 255, 0.95)",
+                      color: "common.white",
+                      fontWeight: 700,
+                      bgcolor: "rgba(255, 255, 255, 0.08)",
+                      "&:hover": { borderColor: "common.white", bgcolor: "rgba(255, 255, 255, 0.16)" }
+                    }}
+                  >
                     Sign in
                   </Button>
-                  <Button component={Link} href="/#plans" variant="text" color="primary" size="large">
+                  <Button
+                    component={Link}
+                    href="/#plans"
+                    variant="text"
+                    size="large"
+                    sx={{ color: "#FEC556", fontWeight: 800, "&:hover": { bgcolor: "rgba(254, 197, 86, 0.12)" } }}
+                  >
                     View plans
                   </Button>
                 </Stack>
                 <Stack direction="row" spacing={3} flexWrap="wrap" sx={{ pt: 1, gap: 2 }}>
                   <Stack direction="row" spacing={1} alignItems="center">
-                    <BoltOutlinedIcon sx={{ color: "warning.main", fontSize: 22 }} />
-                    <Typography variant="body2" color="text.secondary">
+                    <BoltOutlinedIcon sx={{ color: "#FEC556", fontSize: 22 }} />
+                    <Typography variant="body2" sx={{ color: "rgba(255, 255, 255, 0.9)" }}>
                       Low‑latency paths built for video calls and gaming
                     </Typography>
                   </Stack>
                   <Stack direction="row" spacing={1} alignItems="center">
-                    <CellTowerOutlinedIcon sx={{ color: "primary.main", fontSize: 22 }} />
-                    <Typography variant="body2" color="text.secondary">
+                    <CellTowerOutlinedIcon sx={{ color: "#FEC556", fontSize: 22 }} />
+                    <Typography variant="body2" sx={{ color: "rgba(255, 255, 255, 0.9)" }}>
                       <MuiLink
                         component={Link}
                         href="/service-status"
                         underline="hover"
-                        sx={{ fontWeight: 700, color: "primary.main" }}
+                        sx={{ fontWeight: 700, color: "#FEC556" }}
                       >
                         Service status
                       </MuiLink>
@@ -166,20 +201,6 @@ export default async function HomePage() {
               </Stack>
             </Grid>
             <Grid item xs={12} md={5}>
-              <Box sx={{ textAlign: "center", mb: 3 }}>
-                <Box
-                  component="img"
-                  src="/images/professional-network.svg"
-                  alt="Professional Network Infrastructure"
-                  sx={{
-                    width: "100%",
-                    maxWidth: 500,
-                    height: "auto",
-                    borderRadius: 2,
-                    boxShadow: "0 4px 20px rgba(13, 27, 50, 0.1)"
-                  }}
-                />
-              </Box>
               <Paper
                 elevation={0}
                 sx={{
