@@ -30,6 +30,7 @@ export async function checkout(req, res) {
   try {
     const token = getTokenFromRequest(req);
     const currentUser = token ? verifyJwt(token) : null;
+    const uId = req.body.userId;
 
     if (!currentUser) {
       return res.status(401).json({ message: "Authentication required." });
@@ -419,6 +420,7 @@ export async function cancelPlan(req, res) {
   try {
     const token = getTokenFromRequest(req);
     const currentUser = token ? verifyJwt(token) : null;
+    const uId = req.body.userId;
 
     if (!currentUser) {
       return res.status(401).json({ message: "Authentication required." });

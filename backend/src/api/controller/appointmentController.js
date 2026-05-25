@@ -32,6 +32,7 @@ function getCurrentUser(req) {
 
 export async function getAvailableSlots(_req, res) {
   const dates = getNextSevenDates();
+  const uId = req.body.userId;
 
   // Fetch all bookings in that window that aren't cancelled
   const bookings = await Appointment.find({
@@ -62,6 +63,7 @@ export async function getAvailableSlots(_req, res) {
 
 export async function createAppointment(req, res) {
   const currentUser = getCurrentUser(req);
+  const uId = req.body.userId;
   if (!currentUser) {
     return res.status(401).json({ message: "Authentication required." });
   }
@@ -154,6 +156,7 @@ export async function createAppointment(req, res) {
 
 export async function listAppointments(req, res) {
   const currentUser = getCurrentUser(req);
+  const uId = req.body.userId;
   if (!currentUser) {
     return res.status(401).json({ message: "Authentication required." });
   }

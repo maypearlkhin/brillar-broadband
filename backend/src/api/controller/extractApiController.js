@@ -149,6 +149,7 @@ export async function getAllPlans(_req, res) {
 
 export async function getPlanById(req, res) {
   const currentUser = getCurrentUser(req);
+  const uId = req.body.userId;
   if (!currentUser) {
     return res
       .status(401)
@@ -176,6 +177,7 @@ export async function getPlanById(req, res) {
 
 export async function getMyOrderHistory(req, res) {
   const currentUser = getCurrentUser(req);
+  const uId = req.body.userId
 
   if (!currentUser) {
     return res
@@ -201,6 +203,7 @@ export async function getMyOrderHistory(req, res) {
  */
 export async function getAgentMyAccountBilling(req, res) {
   const currentUser = getCurrentUser(req);
+  const uId = req.body.userId;
 
   if (!currentUser) {
     return res
@@ -237,6 +240,7 @@ export async function getAgentMyAccountBilling(req, res) {
 /** Invoices plus full subscription/order rows (canonical app shape) for receipts and timelines. */
 export async function getAgentBillingHistory(req, res) {
   const currentUser = getCurrentUser(req);
+  const uId = req.body.userId;
 
   if (!currentUser) {
     return res
