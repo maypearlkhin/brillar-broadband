@@ -2,7 +2,6 @@ import RouterIcon from "@mui/icons-material/Router";
 import {
   AppBar,
   Box,
-  Button,
   Container,
   Stack,
   Toolbar,
@@ -12,6 +11,7 @@ import Link from "next/link";
 import { getAccountHomePath, getCurrentUserFromCookies } from "@/lib/auth";
 import NavActions from "@/components/NavActions";
 import DesktopNav from "@/components/DesktopNav";
+import MobileNav from "@/components/MobileNav";
 
 export default function AppHeader() {
   const user = getCurrentUserFromCookies();
@@ -57,17 +57,26 @@ export default function AppHeader() {
           >
             <RouterIcon sx={{ fontSize: 22 }} />
           </Box>
-          <Box>
-            <Typography variant="subtitle1" sx={{ fontWeight: 700, lineHeight: 1.2 }}>
+          <Box sx={{ minWidth: 0 }}>
+            <Typography
+              variant="subtitle1"
+              sx={{ fontWeight: 700, lineHeight: 1.2, fontSize: { xs: "0.95rem", sm: "1rem" } }}
+            >
               Brillar Broadband
             </Typography>
-            <Typography variant="caption" sx={{ opacity: 0.85, display: "block" }}>
+            <Typography
+              variant="caption"
+              sx={{ opacity: 0.85, display: { xs: "none", sm: "block" } }}
+            >
               Fibre · SG &amp; MY
             </Typography>
           </Box>
         </Stack>
-        <DesktopNav user={user} />
-        <NavActions />
+        <Stack direction="row" spacing={0.5} alignItems="center" sx={{ flexShrink: 0 }}>
+          <DesktopNav user={user} />
+          <NavActions />
+          <MobileNav user={user} />
+        </Stack>
       </Toolbar>
     </AppBar>
   );

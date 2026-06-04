@@ -36,4 +36,9 @@ export function getTokenFromRequest(request) {
   return authHeader.trim();
 }
 
+/** JWT `userId` claim takes precedence; `req.body.userId` is the agent-tool fallback. */
+export function resolveRequestUserId(req, currentUser) {
+  return currentUser?.userId || req.body?.userId || null;
+}
+
 export { TOKEN_COOKIE };

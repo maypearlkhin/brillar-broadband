@@ -2,8 +2,8 @@
   "openapi": "3.0.3",
   "info": {
     "title": "Brillar Agent Scheduling API",
-    "description": "Appointment APIs for **`installation`** (fibre/router install tied to a **subscription**) and **`home_service`** (general on-site visits). Mirrors **`/api/appointments/*`** route behaviour but uses **`/api/agent/*`** paths for agents.\n\n• **Installation:** requires **`subscriptionId`** from **`POST /api/agent/buy-plan`** → `subscription.id`.\n• **Slots:** identical data to `GET /api/appointments/slots`.\n\n**Not under `/api/agent/*`:** ISP team and admin update visit status with **`PATCH /api/appointments/{id}/status`** (Approve / Complete / Cancel). Conversational storefront agents typically do not call that endpoint; expose it separately if your tool needs provisioning workflows.",
-    "version": "1.2.1",
+    "description": "Appointment APIs for **`installation`** (fibre/router install tied to a **subscription**) and **`home_service`** (general on-site visits). Mirrors **`/api/appointments/*`** route behaviour but uses **`/api/agent/*`** paths for agents.\n\n• **Installation:** requires **`subscriptionId`** from **`POST /api/agent/buy-plan`** → `subscription.id`.\n• **Slots:** identical data to `GET /api/appointments/slots`; agent route is **`POST /api/agent/appointment-slots`** with **`userId`** in body.\n\n**Agent POST convention:** Protected agent endpoints use **POST** with **`userId`** in the JSON body where noted. Backend resolves **`JWT userId` OR `body.userId`**.\n\n**Not under `/api/agent/*`:** ISP team and admin update visit status with **`PATCH /api/appointments/{id}/status`** (Approve / Complete / Cancel). Conversational storefront agents typically do not call that endpoint; expose it separately if your tool needs provisioning workflows.",
+    "version": "1.3.0",
     "contact": {
       "name": "Brillar API Support",
       "email": "api-support@brillarbroadband.com"
@@ -17,10 +17,19 @@
   ],
   "paths": {
     "/api/agent/appointment-slots": {
-      "get": {
+      "post": {
         "summary": "Available slots (next 7 days)",
-        "description": "Same as **`GET /api/appointments/slots`**. Each date has **`morning`** (9am–1pm) and **`afternoon`** (1pm–5pm); max **5** bookings per window.",
+        "description": "Same slot data as **`GET /api/appointments/slots`**. Agent tools must **POST** with **`userId`** in the body (slot availability is global; `userId` is required for agent context). Each date has **`morning`** (9am–1pm) and **`afternoon`** (1pm–5pm); max **5** bookings per window.",
         "tags": ["Public – Slots"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/AgentUserIdBody" },
+              "example": { "userId": "664a1b2c3d4e5f6a7b8c9d0f" }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "Available slots returned successfully",
@@ -48,7 +57,7 @@
     "/api/agent/schedule-appointment": {
       "post": {
         "summary": "Create installation or home-service appointment",
-        "description": "Same handler as **`POST /api/appointments`**. **`customerId`** comes from JWT — do not send it.\n\n**Installation:** `\"type\":\"installation\"` and **`subscriptionId`** (Mongo id from **`buy-plan`**) required; subscription must be **`Pending`** and belong to caller.\n\n**Home service:** omit type or send **`home_service`**; **`subscriptionId`** not used.",
+        "description": "Same handler as **`POST /api/appointments`**. Include **`userId`** in the body for agent tools (backend uses JWT `userId` OR `body.userId` for the booking customer).\n\n**Installation:** `\"type\":\"installation\"` and **`subscriptionId`** (Mongo id from **`buy-plan`**) required; subscription must be **`Pending`** and belong to caller.\n\n**Home service:** omit type or send **`home_service`**; **`subscriptionId`** not used.",
         "tags": ["Protected – Scheduling"],
         "parameters": [
           {
@@ -69,6 +78,7 @@
                 "installation": {
                   "summary": "Fibre installation after purchase",
                   "value": {
+                    "userId": "664a1b2c3d4e5f6a7b8c9d0f",
                     "type": "installation",
                     "subscriptionId": "664a1b2c3d4e5f6a7b8c9d0e",
                     "scheduledDate": "2026-05-15",
@@ -79,6 +89,7 @@
                 "homeService": {
                   "summary": "Generic home visit",
                   "value": {
+                    "userId": "664a1b2c3d4e5f6a7b8c9d0f",
                     "type": "home_service",
                     "scheduledDate": "2026-05-16",
                     "timeSlot": "afternoon",
@@ -166,9 +177,9 @@
       }
     },
     "/api/agent/my-appointments": {
-      "get": {
+      "post": {
         "summary": "List appointments visible to caller",
-        "description": "**Customers** see **only their** appointments. **`admin`** and **`isp_team`** see **all** visits (installation + home service).\nMatches **`GET /api/appointments`**. Each doc includes **`type`**, **`subscriptionId`** when set, optionally populated **`customerId`** / **`subscriptionId`** subtrees.",
+        "description": "**Customers** see **only their** appointments. **`admin`** and **`isp_team`** see **all** visits (installation + home service).\nMatches **`GET /api/appointments`**. Agent tools must **POST** with **`userId`** in the body. Each doc includes **`type`**, **`subscriptionId`** when set, optionally populated **`customerId`** / **`subscriptionId`** subtrees.",
         "tags": ["Protected – Scheduling"],
         "parameters": [
           {
@@ -179,6 +190,15 @@
           }
         ],
         "security": [{ "BearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/AgentUserIdBody" },
+              "example": { "userId": "664a1b2c3d4e5f6a7b8c9d0f" }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "Appointments returned successfully",
@@ -225,6 +245,15 @@
               }
             }
           },
+          "400": {
+            "description": "Missing userId in JWT and request body (customer role)",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorMessage" },
+                "example": { "message": "userId is required in request body." }
+              }
+            }
+          },
           "401": {
             "description": "Unauthorized",
             "content": {
@@ -247,6 +276,16 @@
       }
     },
     "schemas": {
+      "AgentUserIdBody": {
+        "type": "object",
+        "required": ["userId"],
+        "properties": {
+          "userId": {
+            "type": "string",
+            "description": "MongoDB `_id` of the customer. Required for agent tools. Backend resolves JWT `userId` OR `body.userId` (token takes precedence)."
+          }
+        }
+      },
       "ApiErrorMessage": {
         "type": "object",
         "required": ["message"],
@@ -279,8 +318,12 @@
       },
       "CreateAppointmentBody": {
         "type": "object",
-        "required": ["scheduledDate", "timeSlot"],
+        "required": ["userId", "scheduledDate", "timeSlot"],
         "properties": {
+          "userId": {
+            "type": "string",
+            "description": "MongoDB `_id` of the customer booking the visit. Required for agent tools."
+          },
           "type": {
             "type": "string",
             "enum": ["installation", "home_service"],
@@ -352,7 +395,7 @@
     }
   },
   "tags": [
-    { "name": "Public – Slots", "description": "No auth" },
+    { "name": "Public – Slots", "description": "Agent POST with userId; same slot data as GET /api/appointments/slots" },
     { "name": "Protected – Scheduling", "description": "Bearer JWT; customers create their own visits" }
   ]
 }

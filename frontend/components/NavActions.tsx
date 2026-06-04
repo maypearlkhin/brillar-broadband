@@ -17,10 +17,12 @@ export default function NavActions() {
           href="/login"
           variant="contained"
           size="small"
-          startIcon={<LoginIcon />}
+          startIcon={<LoginIcon sx={{ display: { xs: "none", sm: "inline-flex" } }} />}
           sx={{
             bgcolor: "#FEC556",
             color: "#000000",
+            minWidth: { xs: 72, sm: 64 },
+            px: { xs: 1.5, sm: 2 },
             "&:hover": { bgcolor: "#FDB840" },
           }}
         >
@@ -31,7 +33,7 @@ export default function NavActions() {
   }
 
   return (
-    <Box sx={{ display: "flex", gap: 1.25, alignItems: "center", flexShrink: 0 }}>
+    <Box sx={{ display: { xs: "none", md: "flex" }, gap: 1.25, alignItems: "center", flexShrink: 0 }}>
       {currentUser.role === "admin" ? (
         <Button
           component={Link}

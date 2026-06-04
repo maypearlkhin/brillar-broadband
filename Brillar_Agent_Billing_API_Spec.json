@@ -2,8 +2,8 @@
   "openapi": "3.0.3",
   "info": {
     "title": "Brillar Agent Billing API",
-    "description": "Agent-facing endpoints for **account plus billing**: profile, subscriptions (canonical app shape including populated `planId` / appointment refs), invoices (paid date, invoice number, amounts), and a small `billingSummary` for quick prompts. Mirrors `GET /api/me/subscription` logic with an envelope `{ \"success\", \"data\" }` suited to conversational agents.\n\n**Companion documents:** Personal API (narrow extract views), Plans API (catalogue), Scheduling API.\n\n**Canonical app route:** `GET /api/me/subscription` returns the same core fields as `data` inside `GET /api/agent/my-account-billing`, but **without** the outer `success` wrapper.",
-    "version": "1.0.1",
+    "description": "Agent-facing endpoints for **account plus billing**: profile, subscriptions (canonical app shape including populated `planId` / appointment refs), invoices (paid date, invoice number, amounts), and a small `billingSummary` for quick prompts. Mirrors `GET /api/me/subscription` logic with an envelope `{ \"success\", \"data\" }` suited to conversational agents.\n\n**Agent POST convention:** Protected agent read endpoints use **POST** with **`userId`** in the JSON body. Backend resolves **`JWT userId` OR `body.userId`**.\n\n**Companion documents:** Personal API (narrow extract views), Plans API (catalogue), Scheduling API.\n\n**Canonical app route:** `GET /api/me/subscription` returns the same core fields as `data` inside `POST /api/agent/my-account-billing`, but **without** the outer `success` wrapper.",
+    "version": "1.1.0",
     "contact": {
       "name": "Brillar API Support",
       "email": "api-support@brillarbroadband.com"
@@ -17,9 +17,9 @@
   ],
   "paths": {
     "/api/agent/my-account-billing": {
-      "get": {
+      "post": {
         "summary": "Account, current plan row, invoices, and billing summary",
-        "description": "Returns the authenticated customer’s **`user`** profile, **`subscription`** (latest order row — same ordering as dashboard), **`subscriptions`** (all orders, newest first), **`invoices`** (payment records sorted by **`paidAt` descending), **`activeOutage`** if any at the customer’s zone, plus **`billingSummary`** (`latestPaidAt`, `latestInvoiceNumber`, counts). Use this when the assistant needs paid date plus service context in one call.\n\nService window fields:** `startDate` / `endDate` on subscriptions are **null** until installation is marked complete on a **first install** order; prepaid term then runs from that completion timestamp. Renewals where an existing router is carried forward start dates at payment.",
+        "description": "Returns the authenticated customer’s **`user`** profile, **`subscription`** (latest order row — same ordering as dashboard), **`subscriptions`** (all orders, newest first), **`invoices`** (payment records sorted by **`paidAt` descending), **`activeOutage`** if any at the customer’s zone, plus **`billingSummary`** (`latestPaidAt`, `latestInvoiceNumber`, counts). Agent tools must **POST** with **`userId`** in the body. Use this when the assistant needs paid date plus service context in one call.\n\n**Service window fields:** `startDate` / `endDate` on subscriptions are **null** until installation is marked complete on a **first install** order; prepaid term then runs from that completion timestamp. Renewals where an existing router is carried forward start dates at payment.",
         "tags": ["Protected – Billing"],
         "parameters": [
           {
@@ -31,6 +31,15 @@
           }
         ],
         "security": [{ "BearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/AgentUserIdBody" },
+              "example": { "userId": "664a1b2c3d4e5f6a7b8c9d0f" }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "Account profile, subscriptions, invoices, and billing summary returned successfully",
@@ -145,6 +154,15 @@
               }
             }
           },
+          "400": {
+            "description": "Missing userId in JWT and request body",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorEnvelope" },
+                "example": { "success": false, "message": "userId is required in request body." }
+              }
+            }
+          },
           "401": {
             "description": "Missing or invalid token",
             "content": {
@@ -167,9 +185,9 @@
       }
     },
     "/api/agent/billing-history": {
-      "get": {
+      "post": {
         "summary": "Invoices plus full subscription / order rows",
-        "description": "Returns **`data.invoices`** (each linked to **`subscriptionId`**) and **`data.subscriptions`** (same serialization as `/api/me/subscription`) for building payment timelines, PDF references, or past-plan explanations. Newest invoices first; newest subscriptions first.",
+        "description": "Returns **`data.invoices`** (each linked to **`subscriptionId`**) and **`data.subscriptions`** (same serialization as `/api/me/subscription`) for building payment timelines, PDF references, or past-plan explanations. Agent tools must **POST** with **`userId`** in the body. Newest invoices first; newest subscriptions first.",
         "tags": ["Protected – Billing"],
         "parameters": [
           {
@@ -181,6 +199,15 @@
           }
         ],
         "security": [{ "BearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/AgentUserIdBody" },
+              "example": { "userId": "664a1b2c3d4e5f6a7b8c9d0f" }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "Invoice and subscription history returned successfully",
@@ -243,6 +270,15 @@
               }
             }
           },
+          "400": {
+            "description": "Missing userId in JWT and request body",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorEnvelope" },
+                "example": { "success": false, "message": "userId is required in request body." }
+              }
+            }
+          },
           "401": {
             "description": "Missing or invalid token",
             "content": {
@@ -275,6 +311,16 @@
       }
     },
     "schemas": {
+      "AgentUserIdBody": {
+        "type": "object",
+        "required": ["userId"],
+        "properties": {
+          "userId": {
+            "type": "string",
+            "description": "MongoDB `_id` of the customer. Required for agent tools. Backend resolves JWT `userId` OR `body.userId` (token takes precedence)."
+          }
+        }
+      },
       "ErrorEnvelope": {
         "type": "object",
         "properties": {

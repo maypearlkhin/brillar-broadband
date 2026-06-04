@@ -1,4 +1,4 @@
-import { getTokenFromRequest, verifyJwt } from "../../auth.js";
+import { getTokenFromRequest, verifyJwt, resolveRequestUserId } from "../../auth.js";
 import Appointment from "../../models/appointmentModel.js";
 import Subscription from "../../models/subscriptionModel.js";
 
@@ -32,7 +32,6 @@ function getCurrentUser(req) {
 
 export async function getAvailableSlots(_req, res) {
   const dates = getNextSevenDates();
-  const uId = req.body.userId;
 
   // Fetch all bookings in that window that aren't cancelled
   const bookings = await Appointment.find({
@@ -63,12 +62,16 @@ export async function getAvailableSlots(_req, res) {
 
 export async function createAppointment(req, res) {
   const currentUser = getCurrentUser(req);
-  const uId = req.body.userId;
   if (!currentUser) {
     return res.status(401).json({ message: "Authentication required." });
   }
   if (currentUser.role !== "customer") {
     return res.status(403).json({ message: "Only customers can book appointments." });
+  }
+
+  const userId = resolveRequestUserId(req, currentUser);
+  if (!userId) {
+    return res.status(400).json({ message: "userId is required in request body." });
   }
 
   const { scheduledDate, timeSlot, notes, type, subscriptionId } = req.body;
@@ -107,7 +110,7 @@ export async function createAppointment(req, res) {
       return res.status(404).json({ message: "Subscription not found." });
     }
 
-    if (subscription.userId.toString() !== currentUser.userId) {
+    if (subscription.userId.toString() !== userId) {
       return res.status(403).json({ message: "This subscription does not belong to you." });
     }
 
@@ -128,7 +131,7 @@ export async function createAppointment(req, res) {
   }
 
   const appointment = await Appointment.create({
-    customerId: currentUser.userId,
+    customerId: userId,
     type: appointmentType,
     subscriptionId: appointmentType === "installation" ? subscriptionId : null,
     scheduledDate,
@@ -156,14 +159,18 @@ export async function createAppointment(req, res) {
 
 export async function listAppointments(req, res) {
   const currentUser = getCurrentUser(req);
-  const uId = req.body.userId;
   if (!currentUser) {
     return res.status(401).json({ message: "Authentication required." });
   }
 
+  const userId = resolveRequestUserId(req, currentUser);
+
   let query = {};
   if (currentUser.role === "customer") {
-    query.customerId = currentUser.userId;
+    if (!userId) {
+      return res.status(400).json({ message: "userId is required in request body." });
+    }
+    query.customerId = userId;
   }
   // admin and isp_team see all
 

@@ -2,8 +2,8 @@
   "openapi": "3.0.3",
   "info": {
     "title": "Brillar Agent Personal API",
-    "description": "API documentation for the Agent extraction endpoints. Includes protected routes for fetching the user's current plan, order history, purchasing a plan (with card fields for a realistic checkout — not stored or charged by the backend), and cancelling. Use `GET /api/agent/my-account-billing` / `GET /api/agent/billing-history` (Billing spec) for invoices and full subscription rows.\n\n**Note:** `POST /api/agent/buy-plan` and `POST /api/agent/cancel-plan` return **flat** JSON (no top-level `success`), same as `POST /api/checkout` and `POST /api/cancel-plan`. `GET /api/agent/get-my-plan` and `GET /api/agent/my-order-history` return **`{ success, data }`**.",
-    "version": "1.2.2",
+    "description": "API documentation for the Agent extraction endpoints. Includes protected routes for fetching the user's current plan, order history, purchasing a plan (with card fields for a realistic checkout — not stored or charged by the backend), and cancelling. Use `POST /api/agent/my-account-billing` / `POST /api/agent/billing-history` (Billing spec) for invoices and full subscription rows.\n\n**Agent POST convention:** Protected `/api/agent/*` read endpoints use **POST** with **`userId`** in the JSON body (required for agent tools). Backend resolves **`JWT userId` OR `body.userId`** (token takes precedence). The web app continues to use canonical REST routes (`GET /api/appointments`, `POST /api/checkout`, etc.) without `userId` in the body.\n\n**Note:** `POST /api/agent/buy-plan` and `POST /api/agent/cancel-plan` return **flat** JSON (no top-level `success`), same as `POST /api/checkout` and `POST /api/cancel-plan`. `POST /api/agent/get-my-plan` and `POST /api/agent/my-order-history` return **`{ success, data }`**.",
+    "version": "1.3.0",
     "contact": {
       "name": "Brillar API Support",
       "email": "api-support@brillarbroadband.com"
@@ -17,9 +17,9 @@
   ],
   "paths": {
     "/api/agent/get-my-plan": {
-      "get": {
+      "post": {
         "summary": "Get Current Plan",
-        "description": "Retrieves the current subscription plan for the authenticated user (most recent order). Response: `{ success, data }` where `data` is a narrow row with nested `plan`, or `null`.",
+        "description": "Retrieves the current subscription plan for the authenticated user (most recent order). Same handler semantics as the web app; agent tools must **POST** with **`userId`** in the body. Response: `{ success, data }` where `data` is a narrow row with nested `plan`, or `null`.",
         "tags": ["Protected Endpoints"],
         "parameters": [
           {
@@ -34,6 +34,15 @@
           }
         ],
         "security": [{ "BearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/AgentUserIdBody" },
+              "example": { "userId": "664a1b2c3d4e5f6a7b8c9d0f" }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "Current plan fetched successfully",
@@ -78,7 +87,7 @@
             }
           },
           "400": {
-            "description": "Token missing userId claim",
+            "description": "Missing userId in JWT and request body",
             "content": {
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/ErrorResponse" },
@@ -105,9 +114,9 @@
       }
     },
     "/api/agent/my-order-history": {
-      "get": {
+      "post": {
         "summary": "Get My Order History",
-        "description": "Retrieves all past and present subscriptions (order history) for the authenticated user. Response: `{ success, data: [] }`.",
+        "description": "Retrieves all past and present subscriptions (order history) for the authenticated user. Agent tools must **POST** with **`userId`** in the body. Response: `{ success, data: [] }`.",
         "tags": ["Protected Endpoints"],
         "parameters": [
           {
@@ -122,6 +131,15 @@
           }
         ],
         "security": [{ "BearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/AgentUserIdBody" },
+              "example": { "userId": "664a1b2c3d4e5f6a7b8c9d0f" }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "Order history fetched successfully",
@@ -178,6 +196,18 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "Missing userId in JWT and request body",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" },
+                "example": {
+                  "success": false,
+                  "message": "userId is required in request body."
+                }
+              }
+            }
           }
         }
       }
@@ -185,7 +215,7 @@
     "/api/agent/buy-plan": {
       "post": {
         "summary": "Buy a New Plan",
-        "description": "Purchases a new subscription for the authenticated user (same handler as `POST /api/checkout`). Extracts userId from the JWT — do NOT pass userId in the body. Creates an **invoice** record. Returns **`subscription.id`** for use as **`subscriptionId`** when booking an **installation** appointment. Card fields are required for a realistic flow; they are **not** used by the billing backend (only `planId`, `billingTerm`, `amount` are stored). One active subscription at a time — **409** if already active.",
+        "description": "Purchases a new subscription for the authenticated user (same handler as `POST /api/checkout`). Include **`userId`** in the body for agent tools (backend uses JWT `userId` OR `body.userId`). Creates an **invoice** record. Returns **`subscription.id`** for use as **`subscriptionId`** when booking an **installation** appointment. Card fields are required for a realistic flow; they are **not** used by the billing backend (only `planId`, `billingTerm`, `amount` are stored). One active subscription at a time — **409** if already active.",
         "tags": ["Protected Endpoints"],
         "parameters": [
           {
@@ -206,8 +236,12 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": ["planId", "cardNumber", "expiryDate", "cvc", "nameOnCard"],
+                "required": ["userId", "planId", "cardNumber", "expiryDate", "cvc", "nameOnCard"],
                 "properties": {
+                  "userId": {
+                    "type": "string",
+                    "description": "MongoDB `_id` of the customer. Required for agent tools. Backend resolves JWT `userId` OR `body.userId`."
+                  },
                   "planId": {
                     "type": "string",
                     "description": "The unique identifier of the plan to purchase (e.g. 'fibre_pro_500')."
@@ -241,6 +275,7 @@
                 }
               },
               "example": {
+                "userId": "664a1b2c3d4e5f6a7b8c9d0f",
                 "planId": "fibre_pro_500",
                 "billingTerm": "90",
                 "amount": 120.0,
@@ -376,7 +411,7 @@
     "/api/agent/cancel-plan": {
       "post": {
         "summary": "Cancel Active Plan",
-        "description": "Cancels the authenticated user's active subscription (same as `POST /api/cancel-plan`). If subscriptionId is omitted, the most recent non-cancelled subscription is cancelled. Sets status to 'Cancelled' and endDate to cancellation time.",
+        "description": "Cancels the authenticated user's active subscription (same as `POST /api/cancel-plan`). Include **`userId`** in the body for agent tools. If subscriptionId is omitted, the most recent non-cancelled subscription is cancelled. Sets status to 'Cancelled' and endDate to cancellation time.",
         "tags": ["Protected Endpoints"],
         "parameters": [
           {
@@ -392,12 +427,17 @@
         ],
         "security": [{ "BearerAuth": [] }],
         "requestBody": {
-          "required": false,
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
                 "type": "object",
+                "required": ["userId"],
                 "properties": {
+                  "userId": {
+                    "type": "string",
+                    "description": "MongoDB `_id` of the customer. Required for agent tools."
+                  },
                   "subscriptionId": {
                     "type": "string",
                     "description": "Optional. MongoDB _id of the specific subscription to cancel. If omitted, the most recent active subscription is cancelled."
@@ -409,6 +449,7 @@
                 }
               },
               "example": {
+                "userId": "664a1b2c3d4e5f6a7b8c9d0f",
                 "subscriptionId": "64f1a2b3c4e5d6f7a8b9c0d1",
                 "reason": "Moving to a different provider"
               }
@@ -489,6 +530,16 @@
       }
     },
     "schemas": {
+      "AgentUserIdBody": {
+        "type": "object",
+        "required": ["userId"],
+        "properties": {
+          "userId": {
+            "type": "string",
+            "description": "MongoDB `_id` of the customer. Required for agent tools. Backend resolves JWT `userId` OR `body.userId` (token takes precedence)."
+          }
+        }
+      },
       "ErrorResponse": {
         "type": "object",
         "properties": {

@@ -1,4 +1,4 @@
-import { getTokenFromRequest, verifyJwt } from "../../auth.js";
+import { getTokenFromRequest, verifyJwt, resolveRequestUserId } from "../../auth.js";
 import { getMySubscriptionPayload } from "./subscriptionController.js";
 import Announcement from "../../models/announcementModel.js";
 import NetworkIncident from "../../models/networkIncidentModel.js";
@@ -149,14 +149,13 @@ export async function getAllPlans(_req, res) {
 
 export async function getPlanById(req, res) {
   const currentUser = getCurrentUser(req);
-  const uId = req.body.userId;
   if (!currentUser) {
     return res
       .status(401)
       .json({ success: false, message: "Authentication required." });
   }
 
-  const userId = currentUser?.userId;
+  const userId = resolveRequestUserId(req, currentUser);
 
   if (!userId) {
     return res
@@ -177,7 +176,6 @@ export async function getPlanById(req, res) {
 
 export async function getMyOrderHistory(req, res) {
   const currentUser = getCurrentUser(req);
-  const uId = req.body.userId
 
   if (!currentUser) {
     return res
@@ -185,7 +183,15 @@ export async function getMyOrderHistory(req, res) {
       .json({ success: false, message: "Authentication required." });
   }
 
-  const subscriptions = await Subscription.find({ userId: currentUser.userId })
+  const userId = resolveRequestUserId(req, currentUser);
+
+  if (!userId) {
+    return res
+      .status(400)
+      .json({ success: false, message: "userId is required in request body." });
+  }
+
+  const subscriptions = await Subscription.find({ userId })
     .sort({ createdAt: -1 })
     .populate("planId")
     .lean();
@@ -203,7 +209,6 @@ export async function getMyOrderHistory(req, res) {
  */
 export async function getAgentMyAccountBilling(req, res) {
   const currentUser = getCurrentUser(req);
-  const uId = req.body.userId;
 
   if (!currentUser) {
     return res
@@ -211,8 +216,16 @@ export async function getAgentMyAccountBilling(req, res) {
       .json({ success: false, message: "Authentication required." });
   }
 
+  const userId = resolveRequestUserId(req, currentUser);
+
+  if (!userId) {
+    return res
+      .status(400)
+      .json({ success: false, message: "userId is required in request body." });
+  }
+
   try {
-    const data = await getMySubscriptionPayload(currentUser.userId);
+    const data = await getMySubscriptionPayload(userId);
     const latest = data.invoices?.[0] ?? null;
 
     return res.json({
@@ -240,7 +253,6 @@ export async function getAgentMyAccountBilling(req, res) {
 /** Invoices plus full subscription/order rows (canonical app shape) for receipts and timelines. */
 export async function getAgentBillingHistory(req, res) {
   const currentUser = getCurrentUser(req);
-  const uId = req.body.userId;
 
   if (!currentUser) {
     return res
@@ -248,8 +260,16 @@ export async function getAgentBillingHistory(req, res) {
       .json({ success: false, message: "Authentication required." });
   }
 
+  const userId = resolveRequestUserId(req, currentUser);
+
+  if (!userId) {
+    return res
+      .status(400)
+      .json({ success: false, message: "userId is required in request body." });
+  }
+
   try {
-    const payload = await getMySubscriptionPayload(currentUser.userId);
+    const payload = await getMySubscriptionPayload(userId);
     return res.json({
       success: true,
       data: {

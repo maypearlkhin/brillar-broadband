@@ -8,7 +8,14 @@ import DynamicIframeLoader from "@/components/DynamicIframeLoader";
 
 export const metadata: Metadata = {
   title: "Brillar Broadband",
-  description: "Residential fibre broadband — plans, account, and service status"
+  description: "Residential fibre broadband — plans, account, and service status",
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "Broadband"
+  },
+  themeColor: "#0D1B32"
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -18,6 +25,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <head>
         <PublicEnvScript />
+        <link rel="manifest" href="/manifest.json" />
+        <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
+        <meta name="mobile-web-app-capable" content="yes" />
+        <meta name="theme-color" content="#0D1B32" />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `if('serviceWorker' in navigator){navigator.serviceWorker.register('/sw.js');}`,
+          }}
+        />
       </head>
       <body>
         <Providers>

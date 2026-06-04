@@ -1,5 +1,5 @@
 import crypto from "crypto";
-import { getTokenFromRequest, verifyJwt } from "../../auth.js";
+import { getTokenFromRequest, verifyJwt, resolveRequestUserId } from "../../auth.js";
 import Invoice from "../../models/invoiceModel.js";
 import NetworkIncident from "../../models/networkIncidentModel.js";
 import Plan from "../../models/planModel.js";
@@ -30,10 +30,14 @@ export async function checkout(req, res) {
   try {
     const token = getTokenFromRequest(req);
     const currentUser = token ? verifyJwt(token) : null;
-    const uId = req.body.userId;
 
     if (!currentUser) {
       return res.status(401).json({ message: "Authentication required." });
+    }
+
+    const userId = resolveRequestUserId(req, currentUser);
+    if (!userId) {
+      return res.status(400).json({ message: "userId is required in request body." });
     }
 
     const { planId, billingTerm, amount } = req.body;
@@ -44,7 +48,7 @@ export async function checkout(req, res) {
 
     // ── One active plan per user ──────────────────────────────────
     const activeSub = await Subscription.findOne({
-      userId: currentUser.userId,
+      userId,
       status: { $in: ["Pending", "Scheduled", "Installed", "Active", "Blocked"] }
     });
 
@@ -74,7 +78,7 @@ export async function checkout(req, res) {
       return res.status(404).json({ message: "Plan not found." });
     }
 
-    const userDoc = await User.findById(currentUser.userId).select("name email").lean();
+    const userDoc = await User.findById(userId).select("name email").lean();
     if (!userDoc) {
       return res.status(404).json({ message: "User not found." });
     }
@@ -84,7 +88,7 @@ export async function checkout(req, res) {
     // skip the installation flow entirely → status starts at "Installed"
     // so admin can directly activate WiFi access.
     const previousWithRouter = await Subscription.findOne({
-      userId: currentUser.userId,
+      userId,
       routerId: { $ne: null, $exists: true },
       status: { $in: ["Cancelled", "Rejected", "Active", "Blocked"] }
     }).sort({ createdAt: -1 });
@@ -100,7 +104,7 @@ export async function checkout(req, res) {
     const endDate = hasExistingRouter ? addDays(purchasedAt, termDays) : null;
 
     const subscription = await Subscription.create({
-      userId: currentUser.userId,
+      userId,
       planId: plan._id,
       status: hasExistingRouter ? "Installed" : "Pending",
       planStatus: "active",
@@ -120,7 +124,7 @@ export async function checkout(req, res) {
     try {
       invoiceDoc = await Invoice.create({
         invoiceNumber: generateInvoiceNumber(),
-        userId: currentUser.userId,
+        userId,
         subscriptionId: subscription._id,
         amount: recordedAmount,
         currency: "SGD",
@@ -157,7 +161,7 @@ export async function checkout(req, res) {
         id: subscription._id,
         status: subscription.status,
         planId: plan.id,
-        userId: currentUser.userId,
+        userId,
         billingTerm: subscription.billingTerm,
         amount: subscription.amount,
         routerId: subscription.routerId,
@@ -420,14 +424,18 @@ export async function cancelPlan(req, res) {
   try {
     const token = getTokenFromRequest(req);
     const currentUser = token ? verifyJwt(token) : null;
-    const uId = req.body.userId;
 
     if (!currentUser) {
       return res.status(401).json({ message: "Authentication required." });
     }
 
+    const userId = resolveRequestUserId(req, currentUser);
+    if (!userId) {
+      return res.status(400).json({ message: "userId is required in request body." });
+    }
+
     const { subscriptionId } = req.body;
-    const query = { userId: currentUser.userId };
+    const query = { userId };
 
     if (subscriptionId) {
       query._id = subscriptionId;
