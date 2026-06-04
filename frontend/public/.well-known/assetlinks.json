@@ -1,0 +1,8 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "ai.atenxion.brillarbroadband.twa",
+        "sha256_cert_fingerprints": ["5E:0A:4A:F8:45:B5:6C:93:58:5E:D5:32:8D:26:C4:8A:13:74:8C:66:30:73:E1:B1:00:BF:7B:EC:7A:14:2F:96"]
+      }
+    }]
