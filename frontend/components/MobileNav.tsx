@@ -17,7 +17,7 @@ import {
   Typography
 } from "@mui/material";
 import Link from "next/link";
-import { getAccountHomePath } from "@/lib/auth";
+import { getAccountHomePath } from "@/lib/accountPaths";
 import LogoutButton from "@/components/LogoutButton";
 
 type MobileNavUser = {

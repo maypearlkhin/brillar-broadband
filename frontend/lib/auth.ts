@@ -2,6 +2,9 @@ import jwt from "jsonwebtoken";
 import { cookies } from "next/headers";
 import type { NextRequest } from "next/server";
 import { TOKEN_COOKIE } from "@/lib/authConstants";
+import { getAccountHomePath } from "@/lib/accountPaths";
+
+export { getAccountHomePath };
 
 export type JwtUser = {
   userId: string;
@@ -10,13 +13,6 @@ export type JwtUser = {
   /** Display name; may be missing on tokens issued before this field existed. */
   name?: string;
 };
-
-/** Default signed-in home for header / nav (not login post-auth redirect). */
-export function getAccountHomePath(role: string | undefined): string {
-  if (role === "admin") return "/admin/dashboard";
-  if (role === "isp_team") return "/isp/dashboard";
-  return "/dashboard";
-}
 
 function getJwtSecret() {
   const secret = process.env.JWT_SECRET;
